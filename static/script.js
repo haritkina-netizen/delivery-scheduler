@@ -23,18 +23,63 @@ async function init() {
 }
 
 // ── Map ────────────────────────────────────────────────────────────────────
+let myLocMarker = null;
+let myLocCircle = null;
+let myLocWatchId = null;
+let followMe = false;
+
 function initMap() {
   map = L.map('map').setView([13.75, 100.5], 6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors', maxZoom: 19
   }).addTo(map);
-  // Right-click on map → add stop at that location
   map.on('contextmenu', async e => {
     const { lat, lng } = e.latlng;
     const name = prompt('ชื่อลูกค้า / จุดส่ง:');
     if (!name) return;
     await addStopFromSearch(name, lat, lng);
   });
+}
+
+function startMyLocation() {
+  if (!navigator.geolocation) { alert('เบราว์เซอร์นี้ไม่รองรับ GPS'); return; }
+  const btn = document.getElementById('myLocBtn');
+  if (myLocWatchId !== null) {
+    // Toggle off
+    navigator.geolocation.clearWatch(myLocWatchId);
+    myLocWatchId = null;
+    followMe = false;
+    if (myLocMarker) { myLocMarker.remove(); myLocMarker = null; }
+    if (myLocCircle) { myLocCircle.remove(); myLocCircle = null; }
+    btn.textContent = '📍 ตำแหน่งฉัน';
+    btn.style.background = '';
+    return;
+  }
+  btn.textContent = '⏳ รอ GPS...';
+  myLocWatchId = navigator.geolocation.watchPosition(pos => {
+    const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+    const myIcon = L.divIcon({
+      className: '',
+      html: `<div style="width:18px;height:18px;background:#3182ce;border:3px solid white;border-radius:50%;box-shadow:0 0 0 4px rgba(49,130,206,.35)"></div>`,
+      iconSize: [18, 18], iconAnchor: [9, 9]
+    });
+    if (!myLocMarker) {
+      myLocMarker = L.marker([lat, lng], { icon: myIcon, zIndexOffset: 1000 }).addTo(map).bindPopup('📍 ตำแหน่งของคุณ');
+      myLocCircle = L.circle([lat, lng], { radius: accuracy, color: '#3182ce', fillColor: '#3182ce', fillOpacity: 0.1, weight: 1 }).addTo(map);
+      map.setView([lat, lng], 15);
+      followMe = true;
+    } else {
+      myLocMarker.setLatLng([lat, lng]);
+      myLocCircle.setLatLng([lat, lng]).setRadius(accuracy);
+    }
+    if (followMe) map.panTo([lat, lng]);
+    btn.textContent = '🔵 ติดตามตำแหน่ง';
+    btn.style.background = '#2b6cb0';
+  }, err => {
+    btn.textContent = '📍 ตำแหน่งฉัน';
+    alert('ไม่สามารถเข้าถึง GPS: ' + err.message);
+    myLocWatchId = null;
+  }, { enableHighAccuracy: true, maximumAge: 5000 });
 }
 
 let routeLayer = null;

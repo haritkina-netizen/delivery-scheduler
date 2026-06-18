@@ -51,7 +51,10 @@
     <div id="map"></div>
     <div class="map-bottom-bar no-print">
       <span id="mapStatus" class="map-status">📍 พิมพ์ที่อยู่ด้านบนเพื่อเพิ่มจุดส่ง</span>
-      <button class="btn btn-sm btn-gmaps" id="gmapsBtn" onclick="openGoogleMaps()" style="display:none">🗺 เปิดใน Google Maps</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" id="myLocBtn" onclick="startMyLocation()" style="background:#2d3748;color:white">📍 ตำแหน่งฉัน</button>
+        <button class="btn btn-sm btn-gmaps" id="gmapsBtn" onclick="openGoogleMaps()" style="display:none">🗺 Google Maps</button>
+      </div>
     </div>
   </div>
 
