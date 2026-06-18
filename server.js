@@ -51,7 +51,9 @@ if (USE_PG) {
 } else {
   // SQLite (local)
   const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'delivery.db');
-  const db = new (require('better-sqlite3'))(DB_PATH);
+  let BetterSqlite3;
+  try { BetterSqlite3 = require('better-sqlite3'); } catch(e) { console.error('better-sqlite3 not available. Set DATABASE_URL for PostgreSQL.'); process.exit(1); }
+  const db = new BetterSqlite3(DB_PATH);
   db.exec(`
     CREATE TABLE IF NOT EXISTS routes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
