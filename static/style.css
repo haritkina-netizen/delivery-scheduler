@@ -536,14 +536,16 @@ tbody tr.drag-over { background: #e0e7ff; outline: 2px dashed var(--primary); }
 
 /* ── PRINT ────────────────────────────────────────────────────────────────── */
 @media print {
-  .no-print, .topbar, .map-panel, .modal-overlay { display: none !important; }
-  body { background: white; overflow: visible; height: auto; }
-  .app-body { display: block; overflow: visible; }
-  .sheet-panel { overflow: visible; height: auto; }
-  .table-wrap { overflow: visible; }
-  thead { position: static; }
-  table { font-size: 9pt; }
-  thead tr:first-child th, thead tr:last-child th { background: #4f46e5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .route-header { background: #f5f3ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print, .topbar, .map-panel, .modal-overlay, .mobile-tabs { display: none !important; }
+  body { background: white !important; overflow: visible !important; height: auto !important; display: block !important; }
+  .app-body { display: block !important; overflow: visible !important; height: auto !important; }
+  .sheet-panel { display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; }
+  .table-wrap { overflow: visible !important; height: auto !important; }
+  .route-header { display: flex !important; background: #f5f3ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  thead { position: static !important; }
+  table { font-size: 9pt; width: 100%; }
+  thead tr:first-child th, thead tr:last-child th { background: #4f46e5 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   td, th { padding: 4px 6px !important; }
+  tfoot tr { background: #f5f3ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
