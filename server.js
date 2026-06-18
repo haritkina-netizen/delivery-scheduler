@@ -130,15 +130,14 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 
   try {
-    // Geocode proxy using Photon (Komoot) — works from cloud IPs
+    // Geocode proxy using Longdo Map API (Thailand-specific, accurate)
     if (p === '/api/geocode' && m === 'GET') {
       const q = url.searchParams.get('q') || '';
-      // Append ประเทศไทย to force Thailand results regardless of server location
-      const thQuery = q.includes('ไทย') || q.includes('Thailand') ? q : q + ' ประเทศไทย';
-      const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(thQuery)}&limit=8&lat=13.75&lon=100.5`;
+      const LONGDO_KEY = 'd9fbd66c21d68ab8ef4404c01a7de228';
+      const longdoUrl = `https://search.longdo.com/mapsearch/json/search?keyword=${encodeURIComponent(q)}&limit=8&key=${LONGDO_KEY}`;
       const https = require('https');
       const raw = await new Promise((resolve, reject) => {
-        const req = https.get(photonUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0' } }, r => {
+        const req = https.get(longdoUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0' } }, r => {
           let body = '';
           r.on('data', c => body += c);
           r.on('end', () => resolve(body));
@@ -146,16 +145,14 @@ const server = http.createServer(async (req, res) => {
         req.on('error', reject);
         req.setTimeout(8000, () => { req.destroy(); reject(new Error('timeout')); });
       });
-      const geojson = JSON.parse(raw);
-      const results = (geojson.features || [])
-        .filter(f => !f.properties.countrycode || f.properties.countrycode === 'TH')
-        .slice(0, 6)
-        .map(f => ({
-          display_name: [f.properties.name, f.properties.street, f.properties.district, f.properties.city, f.properties.state].filter(Boolean).join(', '),
-          name: f.properties.name || f.properties.city || '',
-          lat: String(f.geometry.coordinates[1]),
-          lon: String(f.geometry.coordinates[0])
-        }));
+      const data = JSON.parse(raw);
+      const items = data.data || data.result || [];
+      const results = items.slice(0, 6).map(item => ({
+        display_name: item.name + (item.address ? ', ' + item.address : ''),
+        name: item.name || '',
+        lat: String(item.lat),
+        lon: String(item.lon)
+      }));
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       return res.end(JSON.stringify(results));
     }
