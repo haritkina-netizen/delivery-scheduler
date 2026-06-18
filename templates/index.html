@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบจัดตารางส่งสินค้า</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="/static/style.css">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <span class="logo">🚚 ระบบจัดตารางส่งสินค้า</span>
+    <nav class="date-nav">
+      <button onclick="changeDate(-1)">&#8592;</button>
+      <input type="date" id="mainDate" onchange="loadRoute()">
+      <button onclick="changeDate(1)">&#8594;</button>
+    </nav>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-outline" onclick="openProductModal()">⚙ ตั้งค่าสินค้า</button>
+    <button class="btn btn-outline" onclick="window.print()">🖨 พิมพ์</button>
+    <button class="btn btn-primary" onclick="openStopModal()">+ เพิ่มจุดส่ง</button>
+  </div>
+</header>
+
+<!-- MOBILE TAB BAR -->
+<div class="mobile-tabs no-print">
+  <button class="mobile-tab active" id="tabMap" onclick="switchTab('map')">🗺 แผนที่</button>
+  <button class="mobile-tab" id="tabList" onclick="switchTab('list')">📋 รายการส่ง</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="app-body">
+
+  <!-- LEFT: MAP -->
+  <div class="map-panel" id="mapPanel">
+    <div class="map-search-bar no-print">
+      <div class="search-input-wrap">
+        <span class="search-icon">📍</span>
+        <input id="addressSearch" type="text" placeholder="พิมพ์ที่อยู่จัดส่ง แล้วกด Enter เพื่อเพิ่มจุดส่ง..." autocomplete="off" onkeydown="onSearchKey(event)">
+        <button class="btn btn-sm btn-primary" onclick="searchAndAdd()">+ เพิ่ม</button>
+      </div>
+      <div id="searchSuggestions" class="search-suggestions"></div>
+    </div>
+    <div id="map"></div>
+    <div class="map-bottom-bar no-print">
+      <span id="mapStatus" class="map-status">📍 พิมพ์ที่อยู่ด้านบนเพื่อเพิ่มจุดส่ง</span>
+      <button class="btn btn-sm btn-gmaps" id="gmapsBtn" onclick="openGoogleMaps()" style="display:none">🗺 เปิดใน Google Maps</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: DELIVERY SHEET -->
+  <div class="sheet-panel" id="sheetPanel">
+
+    <!-- Route header -->
+    <div class="route-header" id="routeHeader">
+      <div class="rh-left">
+        <span>ผู้ส่ง</span>
+        <input id="driverName" placeholder="ชื่อผู้ส่ง" onblur="saveRouteHeader()">
+        <input id="driverPhone" placeholder="เบอร์โทร" onblur="saveRouteHeader()">
+        <input id="truckNumber" placeholder="บร-XXXX" onblur="saveRouteHeader()">
+      </div>
+      <div class="rh-right">
+        <span id="routeDateDisplay" class="route-date"></span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table id="deliveryTable">
+        <thead>
+          <tr>
+            <th rowspan="2" class="col-seq">ลำดับ</th>
+            <th rowspan="2" class="col-addr">ที่อยู่ลูกค้า</th>
+            <th colspan="6" class="col-products-header">สินค้า (ถัง)</th>
+            <th rowspan="2" class="col-price">ราคา</th>
+            <th rowspan="2" class="col-action no-print">จัดการ</th>
+          </tr>
+          <tr id="productHeaders"></tr>
+        </thead>
+        <tbody id="stopTableBody"></tbody>
+        <tfoot id="stopTableFoot"></tfoot>
+      </table>
+      <div id="emptyState" class="empty-state">ยังไม่มีจุดส่งสินค้า — กด "+ เพิ่มจุดส่ง"</div>
+    </div>
+
+    <!-- Notes -->
+    <div id="routeNotes" class="route-notes"></div>
+  </div>
+
+</div>
+
+<!-- STOP DRAWER -->
+<div id="stopDrawer" class="drawer">
+  <div class="drawer-header">
+    <h2 id="stopDrawerTitle">เพิ่มจุดส่ง</h2>
+    <button class="close-btn" onclick="closeDrawer()">✕</button>
+  </div>
+  <form id="stopForm" onsubmit="saveStop(event)">
+    <input type="hidden" id="stopId">
+    <div class="drawer-body">
+      <div class="dform-group">
+        <label>ชื่อลูกค้า / จุดส่ง *</label>
+        <input id="stopCustomer" required placeholder="เช่น Golden Place ราชวัลลภที่ 1">
+      </div>
+      <div class="dform-group">
+        <label>ที่อยู่ *</label>
+        <textarea id="stopAddress" required placeholder="ที่อยู่สำหรับปักหมุดแผนที่"></textarea>
+      </div>
+      <div class="dform-row">
+        <div class="dform-group">
+          <label>หมายเหตุ</label>
+          <input id="stopNote" placeholder="เช่น 12.40 น.">
+        </div>
+        <div class="dform-group">
+          <label>ราคา (บาท)</label>
+          <input type="number" id="stopPrice" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="dform-group">
+        <label>สถานะ</label>
+        <select id="stopStatus">
+          <option value="รอส่ง">รอส่ง</option>
+          <option value="กำลังส่ง">กำลังส่ง</option>
+          <option value="ส่งแล้ว">ส่งแล้ว</option>
+          <option value="ยกเลิก">ยกเลิก</option>
+        </select>
+      </div>
+      <div class="dform-group">
+        <label>จำนวนสินค้า (ถัง)</label>
+        <div class="qty-grid" id="qtyGrid"></div>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeDrawer()">ยกเลิก</button>
+      <button type="submit" class="btn btn-primary">💾 บันทึก</button>
+    </div>
+  </form>
+</div>
+<div id="drawerBackdrop" class="drawer-backdrop" onclick="closeDrawer()"></div>
+
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="modal-overlay" onclick="closeOnBackdrop(event,'productModal')">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2>ตั้งค่าชื่อสินค้า</h2>
+      <button class="close-btn" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div style="padding:20px 24px" id="productInputs"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('productModal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveProducts()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/script.js"></script>
+</body>
+</html>
