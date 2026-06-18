@@ -130,6 +130,45 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 
   try {
+    // Resolve Google Maps short URL → extract lat/lng
+    if (p === '/api/resolve-gmaps' && m === 'GET') {
+      const gmUrl = url.searchParams.get('url') || '';
+      const https = require('https');
+      const http = require('http');
+      const resolveRedirects = (u, hops = 0) => new Promise((resolve, reject) => {
+        if (hops > 6) return reject(new Error('too many redirects'));
+        const lib = u.startsWith('https') ? https : http;
+        const req = lib.get(u, { headers: { 'User-Agent': 'Mozilla/5.0' } }, r => {
+          if (r.statusCode >= 300 && r.statusCode < 400 && r.headers.location) {
+            const next = r.headers.location.startsWith('http') ? r.headers.location : new URL(r.headers.location, u).href;
+            r.resume();
+            resolveRedirects(next, hops + 1).then(resolve).catch(reject);
+          } else {
+            r.resume();
+            resolve(u);
+          }
+        });
+        req.on('error', reject);
+        req.setTimeout(6000, () => { req.destroy(); reject(new Error('timeout')); });
+      });
+      try {
+        const finalUrl = await resolveRedirects(gmUrl);
+        const extractCoords = u => {
+          let m = u.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+          if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+          m = u.match(/[?&](?:q|ll)=(-?\d+\.\d+),(-?\d+\.\d+)/);
+          if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+          m = u.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+          if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+          return null;
+        };
+        const coords = extractCoords(finalUrl);
+        return send(res, 200, coords || { error: 'no coords found' });
+      } catch(e) {
+        return send(res, 200, { error: e.message });
+      }
+    }
+
     // Geocode proxy: Longdo Map (primary) → Photon (fallback)
     if (p === '/api/geocode' && m === 'GET') {
       const q = url.searchParams.get('q') || '';

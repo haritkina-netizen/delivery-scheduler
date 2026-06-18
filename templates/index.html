@@ -43,7 +43,7 @@
     <div class="map-search-bar no-print">
       <div class="search-input-wrap">
         <span class="search-icon">📍</span>
-        <input id="addressSearch" type="text" placeholder="พิมพ์ที่อยู่จัดส่ง แล้วกด Enter เพื่อเพิ่มจุดส่ง..." autocomplete="off" onkeydown="onSearchKey(event)">
+        <input id="addressSearch" type="text" placeholder="พิมพ์ที่อยู่ หรือวาง Link Google Maps..." autocomplete="off" onkeydown="onSearchKey(event)" onpaste="handlePaste(event)">
         <button class="btn btn-sm btn-primary" onclick="searchAndAdd()">+ เพิ่ม</button>
       </div>
       <div id="searchSuggestions" class="search-suggestions"></div>

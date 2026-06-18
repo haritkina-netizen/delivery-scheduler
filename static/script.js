@@ -266,6 +266,49 @@ function onSearchKey(e) {
   if (e.key === 'Enter') { e.preventDefault(); searchAndAdd(); }
 }
 
+// Extract lat/lng from Google Maps URL formats
+function extractCoordsFromGmapsUrl(url) {
+  // Format: @14.1234,100.5678
+  let m = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  // Format: q=14.1234,100.5678 or ll=14.1234,100.5678
+  m = url.match(/[?&](?:q|ll)=(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  // Format: !3d14.1234!4d100.5678
+  m = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  return null;
+}
+
+async function handlePaste(e) {
+  const text = (e.clipboardData || window.clipboardData).getData('text').trim();
+  if (!text.includes('google.com/maps') && !text.includes('maps.app.goo.gl') && !text.includes('goo.gl/maps')) return;
+  e.preventDefault();
+  document.getElementById('addressSearch').value = text;
+  document.getElementById('mapStatus').textContent = '⏳ กำลังอ่านพิกัด...';
+
+  // Try extracting directly from URL first
+  let coords = extractCoordsFromGmapsUrl(text);
+
+  // If short URL or no coords found → ask server to resolve
+  if (!coords) {
+    try {
+      const res = await fetch('/api/resolve-gmaps?url=' + encodeURIComponent(text));
+      const d = await res.json();
+      if (d.lat) coords = { lat: d.lat, lng: d.lng };
+    } catch(e) {}
+  }
+
+  if (!coords) {
+    document.getElementById('mapStatus').textContent = '❌ ไม่สามารถอ่านพิกัดจาก link นี้ได้';
+    return;
+  }
+
+  const name = prompt('ชื่อลูกค้า / จุดส่ง:') || 'จุดส่ง';
+  document.getElementById('addressSearch').value = '';
+  await addStopFromSearch(name, coords.lat, coords.lng);
+}
+
 async function searchAndAdd() {
   const q = document.getElementById('addressSearch').value.trim();
   if (!q) return;
