@@ -130,27 +130,28 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 
   try {
-    // Geocode proxy (Nominatim requires server-side User-Agent)
+    // Geocode proxy using Photon (Komoot) — works from cloud IPs
     if (p === '/api/geocode' && m === 'GET') {
       const q = url.searchParams.get('q') || '';
-      const mode = url.searchParams.get('mode') || 'search';
-      let nominatimUrl;
-      if (mode === 'reverse') {
-        const lat = url.searchParams.get('lat'), lon = url.searchParams.get('lon');
-        nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
-      } else {
-        nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6&countrycodes=th&addressdetails=1`;
-      }
+      const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6&lang=th&bbox=97.3,5.6,105.6,20.5`;
       const https = require('https');
-      const data = await new Promise((resolve, reject) => {
-        https.get(nominatimUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0 (contact@example.com)' } }, r => {
+      const raw = await new Promise((resolve, reject) => {
+        https.get(photonUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0' } }, r => {
           let body = '';
           r.on('data', c => body += c);
           r.on('end', () => resolve(body));
         }).on('error', reject);
       });
+      // Convert Photon GeoJSON → Nominatim-style array for frontend compatibility
+      const geojson = JSON.parse(raw);
+      const results = (geojson.features || []).map(f => ({
+        display_name: [f.properties.name, f.properties.street, f.properties.city, f.properties.state, 'ประเทศไทย'].filter(Boolean).join(', '),
+        name: f.properties.name || f.properties.city || '',
+        lat: String(f.geometry.coordinates[1]),
+        lon: String(f.geometry.coordinates[0])
+      }));
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      return res.end(data);
+      return res.end(JSON.stringify(results));
     }
 
     // Products
