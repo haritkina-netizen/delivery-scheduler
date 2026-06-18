@@ -181,16 +181,37 @@ async function fetchRoute(pts) {
   }
 }
 
+function buildGoogleMapsUrl(originLat, originLng) {
+  const withCoords = stops.filter(s => s.lat && s.lng && s.status !== 'ยกเลิก' && s.status !== 'ส่งแล้ว');
+  if (!withCoords.length) return null;
+  const pts = withCoords.map(s => `${s.lat},${s.lng}`);
+  const origin = (originLat != null) ? `${originLat},${originLng}` : pts[0];
+  const dest = pts[pts.length - 1];
+  const waypoints = pts.slice(0, -1);
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
+  if (waypoints.length) url += `&waypoints=${waypoints.join('|')}`;
+  return url;
+}
+
 function openGoogleMaps() {
-  const withCoords = stops.filter(s => s.lat && s.lng && s.status !== 'ยกเลิก');
-  if (!withCoords.length) return alert('ไม่มีตำแหน่งที่อยู่');
-  const parts = withCoords.map(s => `${s.lat},${s.lng}`);
-  const origin = parts[0];
-  const dest = parts[parts.length - 1];
-  const waypoints = parts.slice(1, -1).join('|');
-  let url = `https://www.google.com/maps/dir/${origin}/${dest}`;
-  if (waypoints) url = `https://www.google.com/maps/dir/${origin}/${waypoints.replace(/\|/g,'/')}/${dest}`;
-  window.open(url, '_blank');
+  const withCoords = stops.filter(s => s.lat && s.lng && s.status !== 'ยกเลิก' && s.status !== 'ส่งแล้ว');
+  if (!withCoords.length) return alert('ไม่มีตำแหน่งที่อยู่ หรือส่งครบแล้ว');
+  const btn = document.getElementById('gmapsBtn');
+  btn.textContent = '⏳ รอ GPS...';
+  btn.disabled = true;
+  if (!navigator.geolocation) {
+    window.open(buildGoogleMapsUrl(), '_blank');
+    btn.textContent = '🗺 Google Maps'; btn.disabled = false; return;
+  }
+  navigator.geolocation.getCurrentPosition(pos => {
+    const url = buildGoogleMapsUrl(pos.coords.latitude, pos.coords.longitude);
+    window.open(url, '_blank');
+    btn.textContent = '🗺 Google Maps'; btn.disabled = false;
+  }, () => {
+    // GPS denied — open without origin
+    window.open(buildGoogleMapsUrl(), '_blank');
+    btn.textContent = '🗺 Google Maps'; btn.disabled = false;
+  }, { enableHighAccuracy: true, timeout: 6000 });
 }
 
 // ── Address Search Bar ─────────────────────────────────────────────────────
