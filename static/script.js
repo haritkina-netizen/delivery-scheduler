@@ -28,6 +28,13 @@ function initMap() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors', maxZoom: 19
   }).addTo(map);
+  // Right-click on map → add stop at that location
+  map.on('contextmenu', async e => {
+    const { lat, lng } = e.latlng;
+    const name = prompt('ชื่อลูกค้า / จุดส่ง:');
+    if (!name) return;
+    await addStopFromSearch(name, lat, lng);
+  });
 }
 
 let routeLayer = null;
@@ -56,9 +63,15 @@ function updateMap() {
       html: `<div style="background:${color};color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,.5)">${s.seq || i+1}</div>`,
       iconSize: [30, 30], iconAnchor: [15, 15]
     });
-    const m = L.marker([s.lat, s.lng], { icon })
-      .bindPopup(`<b>${s.seq || i+1}. ${s.customer_name}</b><br><small>${s.address}</small>`)
+    const m = L.marker([s.lat, s.lng], { icon, draggable: true })
+      .bindPopup(`<b>${s.seq || i+1}. ${s.customer_name}</b><br><small>${s.address}</small><br><small style="color:#e53e3e">🖱️ ลากเพื่อแก้ตำแหน่ง</small>`)
       .addTo(map);
+    m.on('dragend', async e => {
+      const { lat, lng } = e.target.getLatLng();
+      await fetch(`/api/stops/${s.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat, lng }) });
+      s.lat = lat; s.lng = lng;
+      updateMap();
+    });
     markers.push(m);
   });
 
