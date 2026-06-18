@@ -133,19 +133,22 @@ const server = http.createServer(async (req, res) => {
     // Geocode proxy using Photon (Komoot) — works from cloud IPs
     if (p === '/api/geocode' && m === 'GET') {
       const q = url.searchParams.get('q') || '';
-      // Bias toward Thailand center (Bangkok), filter to TH only
-      const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=10&lat=13.75&lon=100.5&location_bias_scale=0.7`;
+      // Append ประเทศไทย to force Thailand results regardless of server location
+      const thQuery = q.includes('ไทย') || q.includes('Thailand') ? q : q + ' ประเทศไทย';
+      const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(thQuery)}&limit=8&lat=13.75&lon=100.5`;
       const https = require('https');
       const raw = await new Promise((resolve, reject) => {
-        https.get(photonUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0' } }, r => {
+        const req = https.get(photonUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0' } }, r => {
           let body = '';
           r.on('data', c => body += c);
           r.on('end', () => resolve(body));
-        }).on('error', reject);
+        });
+        req.on('error', reject);
+        req.setTimeout(8000, () => { req.destroy(); reject(new Error('timeout')); });
       });
       const geojson = JSON.parse(raw);
       const results = (geojson.features || [])
-        .filter(f => f.properties.countrycode === 'TH')
+        .filter(f => !f.properties.countrycode || f.properties.countrycode === 'TH')
         .slice(0, 6)
         .map(f => ({
           display_name: [f.properties.name, f.properties.street, f.properties.district, f.properties.city, f.properties.state].filter(Boolean).join(', '),
