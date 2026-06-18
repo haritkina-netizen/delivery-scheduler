@@ -130,6 +130,29 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 
   try {
+    // Geocode proxy (Nominatim requires server-side User-Agent)
+    if (p === '/api/geocode' && m === 'GET') {
+      const q = url.searchParams.get('q') || '';
+      const mode = url.searchParams.get('mode') || 'search';
+      let nominatimUrl;
+      if (mode === 'reverse') {
+        const lat = url.searchParams.get('lat'), lon = url.searchParams.get('lon');
+        nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+      } else {
+        nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6&countrycodes=th&addressdetails=1`;
+      }
+      const https = require('https');
+      const data = await new Promise((resolve, reject) => {
+        https.get(nominatimUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0 (contact@example.com)' } }, r => {
+          let body = '';
+          r.on('data', c => body += c);
+          r.on('end', () => resolve(body));
+        }).on('error', reject);
+      });
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(data);
+    }
+
     // Products
     if (p === '/api/products' && m === 'GET') {
       return send(res, 200, await query('SELECT * FROM products ORDER BY id'));

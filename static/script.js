@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchSuggestions(q) {
   try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q + ' ประเทศไทย')}&format=json&limit=5&countrycodes=th&addressdetails=1`);
+    const res = await fetch(`/api/geocode?q=${encodeURIComponent(q + ' ประเทศไทย')}`);
     searchResults = await res.json();
     showSuggestions(searchResults);
   } catch(e) { hideSuggestions(); }
@@ -244,7 +244,7 @@ async function geocodeAddress(address) {
 
   for (const q of queries) {
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=th`);
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
       const data = await res.json();
       if (data.length) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     } catch(e) {}
