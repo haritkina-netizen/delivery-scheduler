@@ -95,6 +95,9 @@ tbody tr.drag-over { background: #bee3f8; outline: 2px dashed #3182ce; }
 .suggestion-item { padding: 10px 14px; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 8px; }
 .suggestion-item:hover { background: #ebf8ff; }
 .suggestion-item:last-child { border-bottom: none; }
+.suggestion-saved { background: #fffff0; border-left: 3px solid #d69e2e; }
+.suggestion-saved:hover { background: #fefcbf; }
+.no-result { cursor: default; color: #999; }
 .sugg-icon { color: #e53e3e; flex-shrink: 0; margin-top: 1px; }
 .sugg-text { line-height: 1.4; }
 .sugg-name { font-weight: 600; color: #1a202c; }

@@ -224,28 +224,53 @@ document.addEventListener('DOMContentLoaded', () => {
   input.addEventListener('input', () => {
     clearTimeout(searchTimer);
     const q = input.value.trim();
-    if (q.length < 3) { hideSuggestions(); return; }
-    searchTimer = setTimeout(() => fetchSuggestions(q), 400);
+    if (q.length < 2) { hideSuggestions(); return; }
+    searchTimer = setTimeout(() => fetchSuggestions(q), 350);
   });
   input.addEventListener('blur', () => setTimeout(hideSuggestions, 200));
 });
 
 async function fetchSuggestions(q) {
   try {
-    const res = await fetch(`/api/geocode?q=${encodeURIComponent(q + ' ประเทศไทย')}`);
-    searchResults = await res.json();
+    // Run customer history + geocode in parallel
+    const [custRes, geoRes] = await Promise.allSettled([
+      fetch(`/api/customers?q=${encodeURIComponent(q)}`).then(r => r.json()),
+      fetch(`/api/geocode?q=${encodeURIComponent(q + ' ประเทศไทย')}`).then(r => r.json())
+    ]);
+
+    const customers = (custRes.status === 'fulfilled' ? custRes.value : []).map(c => ({
+      _type: 'customer',
+      name: c.customer_name,
+      display_name: c.address || c.customer_name,
+      lat: String(c.lat),
+      lon: String(c.lng)
+    }));
+
+    const geocoded = (geoRes.status === 'fulfilled' ? geoRes.value : []).map(r => ({
+      ...r, _type: 'geo'
+    }));
+
+    // Deduplicate geocode results that match a saved customer name
+    const custNames = new Set(customers.map(c => c.name.toLowerCase()));
+    const filteredGeo = geocoded.filter(r => !custNames.has((r.name || '').toLowerCase()));
+
+    searchResults = [...customers, ...filteredGeo].slice(0, 8);
     showSuggestions(searchResults);
   } catch(e) { hideSuggestions(); }
 }
 
 function showSuggestions(results) {
   const box = document.getElementById('searchSuggestions');
-  if (!results.length) { box.innerHTML = '<div class="suggestion-item"><span class="sugg-text"><span class="sugg-addr">ไม่พบที่อยู่</span></span></div>'; return; }
+  if (!results.length) {
+    box.innerHTML = '<div class="suggestion-item no-result"><span class="sugg-text"><span class="sugg-addr">ไม่พบที่อยู่</span></span></div>';
+    return;
+  }
   box.innerHTML = results.map((r, i) => {
+    const isCust = r._type === 'customer';
     const name = r.name || r.display_name.split(',')[0];
     const addr = r.display_name;
-    return `<div class="suggestion-item" onclick="selectSuggestion(${i})">
-      <span class="sugg-icon">📍</span>
+    return `<div class="suggestion-item${isCust ? ' suggestion-saved' : ''}" onclick="selectSuggestion(${i})">
+      <span class="sugg-icon">${isCust ? '⭐' : '📍'}</span>
       <span class="sugg-text"><div class="sugg-name">${name}</div><div class="sugg-addr">${addr}</div></span>
     </div>`;
   }).join('');
@@ -257,9 +282,12 @@ function hideSuggestions() {
 
 function selectSuggestion(idx) {
   const r = searchResults[idx];
-  document.getElementById('addressSearch').value = r.display_name;
+  const name = r.name || r.display_name.split(',')[0];
+  document.getElementById('addressSearch').value = name;
   hideSuggestions();
-  addStopFromSearch(r.display_name, parseFloat(r.lat), parseFloat(r.lon));
+  // For saved customers use their name directly; for geocode use display_name as address
+  const address = r._type === 'customer' ? r.display_name : r.display_name;
+  addStopFromSearch(name, parseFloat(r.lat), parseFloat(r.lon), address);
 }
 
 function onSearchKey(e) {
@@ -306,7 +334,7 @@ async function handlePaste(e) {
 
   const name = prompt('ชื่อลูกค้า / จุดส่ง:') || 'จุดส่ง';
   document.getElementById('addressSearch').value = '';
-  await addStopFromSearch(name, coords.lat, coords.lng);
+  await addStopFromSearch(name, coords.lat, coords.lng, name);
 }
 
 async function searchAndAdd() {
@@ -322,24 +350,22 @@ async function searchAndAdd() {
   await addStopFromSearch(q, coords.lat, coords.lng);
 }
 
-async function addStopFromSearch(address, lat, lng) {
-  // Center map on found location first
+async function addStopFromSearch(customerName, lat, lng, address) {
+  address = address || customerName;
   map.setView([lat, lng], 14);
 
-  // Add a temporary pin so user can see before saving
   const tempIcon = L.divIcon({
     className: '',
     html: `<div style="background:#e53e3e;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)">+</div>`,
     iconSize: [30,30], iconAnchor: [15,15]
   });
   const tmp = L.marker([lat, lng], { icon: tempIcon }).addTo(map)
-    .bindPopup(`<b>กำลังเพิ่ม...</b><br>${address}`).openPopup();
+    .bindPopup(`<b>กำลังเพิ่ม...</b><br>${customerName}`).openPopup();
 
-  // Save to DB
   const body = {
     route_id: currentRouteId,
     seq: stops.length + 1,
-    customer_name: address.split(',')[0].trim(),
+    customer_name: customerName,
     address,
     lat, lng,
     qty1:0, qty2:0, qty3:0, qty4:0, qty5:0, qty6:0,

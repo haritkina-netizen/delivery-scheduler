@@ -130,6 +130,20 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 
   try {
+    // Customer history search
+    if (p === '/api/customers' && m === 'GET') {
+      const q = url.searchParams.get('q') || '';
+      const likeOp = USE_PG ? 'ILIKE' : 'LIKE';
+      const results = await query(
+        `SELECT customer_name, address, lat, lng, COUNT(*) as cnt
+         FROM stops WHERE customer_name ${likeOp} $1 AND lat IS NOT NULL
+         GROUP BY customer_name, address, lat, lng
+         ORDER BY cnt DESC LIMIT 8`,
+        [`%${q}%`]
+      );
+      return send(res, 200, results);
+    }
+
     // Resolve Google Maps short URL → extract lat/lng
     if (p === '/api/resolve-gmaps' && m === 'GET') {
       const gmUrl = url.searchParams.get('url') || '';
