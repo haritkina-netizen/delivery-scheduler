@@ -130,14 +130,12 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 
   try {
-    // Geocode proxy using Longdo Map API (Thailand-specific, accurate)
+    // Geocode proxy: Longdo Map (primary) → Photon (fallback)
     if (p === '/api/geocode' && m === 'GET') {
       const q = url.searchParams.get('q') || '';
-      const LONGDO_KEY = 'd9fbd66c21d68ab8ef4404c01a7de228';
-      const longdoUrl = `https://search.longdo.com/mapsearch/json/search?keyword=${encodeURIComponent(q)}&limit=8&key=${LONGDO_KEY}`;
       const https = require('https');
-      const raw = await new Promise((resolve, reject) => {
-        const req = https.get(longdoUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0', 'Referer': 'https://delivery-scheduler-production-5885.up.railway.app/', 'Origin': 'https://delivery-scheduler-production-5885.up.railway.app' } }, r => {
+      const fetchUrl = (reqUrl, headers) => new Promise((resolve, reject) => {
+        const req = https.get(reqUrl, { headers }, r => {
           let body = '';
           r.on('data', c => body += c);
           r.on('end', () => resolve(body));
@@ -145,14 +143,40 @@ const server = http.createServer(async (req, res) => {
         req.on('error', reject);
         req.setTimeout(8000, () => { req.destroy(); reject(new Error('timeout')); });
       });
-      const data = JSON.parse(raw);
-      const items = data.data || data.result || [];
-      const results = items.slice(0, 6).map(item => ({
-        display_name: item.name + (item.address ? ', ' + item.address : ''),
-        name: item.name || '',
-        lat: String(item.lat),
-        lon: String(item.lon)
-      }));
+
+      // 1. Try Longdo (best for Thai POI/business names)
+      const LONGDO_KEY = 'd9fbd66c21d68ab8ef4404c01a7de228';
+      const longdoUrl = `https://search.longdo.com/mapsearch/json/search?keyword=${encodeURIComponent(q)}&limit=8&key=${LONGDO_KEY}`;
+      const longdoRaw = await fetchUrl(longdoUrl, { 'User-Agent': 'delivery-scheduler/1.0', 'Referer': 'https://delivery-scheduler-production-5885.up.railway.app/' });
+      const longdoData = JSON.parse(longdoRaw);
+      const longdoItems = (longdoData.data || []).slice(0, 6);
+      if (longdoItems.length > 0) {
+        const results = longdoItems.map(item => ({
+          display_name: item.name + (item.address ? ', ' + item.address : ''),
+          name: item.name || '',
+          lat: String(item.lat),
+          lon: String(item.lon)
+        }));
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify(results));
+      }
+
+      // 2. Fallback: Photon (good for addresses/streets)
+      const thQuery = q.includes('ไทย') ? q : q + ' ประเทศไทย';
+      const photonRaw = await fetchUrl(
+        `https://photon.komoot.io/api/?q=${encodeURIComponent(thQuery)}&limit=8&lat=13.75&lon=100.5`,
+        { 'User-Agent': 'delivery-scheduler/1.0' }
+      );
+      const geojson = JSON.parse(photonRaw);
+      const results = (geojson.features || [])
+        .filter(f => !f.properties.countrycode || f.properties.countrycode === 'TH')
+        .slice(0, 6)
+        .map(f => ({
+          display_name: [f.properties.name, f.properties.street, f.properties.district, f.properties.city, f.properties.state].filter(Boolean).join(', '),
+          name: f.properties.name || f.properties.city || '',
+          lat: String(f.geometry.coordinates[1]),
+          lon: String(f.geometry.coordinates[0])
+        }));
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       return res.end(JSON.stringify(results));
     }
