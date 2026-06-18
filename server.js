@@ -137,7 +137,7 @@ const server = http.createServer(async (req, res) => {
       const longdoUrl = `https://search.longdo.com/mapsearch/json/search?keyword=${encodeURIComponent(q)}&limit=8&key=${LONGDO_KEY}`;
       const https = require('https');
       const raw = await new Promise((resolve, reject) => {
-        const req = https.get(longdoUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0' } }, r => {
+        const req = https.get(longdoUrl, { headers: { 'User-Agent': 'delivery-scheduler/1.0', 'Referer': 'https://delivery-scheduler-production-5885.up.railway.app/', 'Origin': 'https://delivery-scheduler-production-5885.up.railway.app' } }, r => {
           let body = '';
           r.on('data', c => body += c);
           r.on('end', () => resolve(body));
