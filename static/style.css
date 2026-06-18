@@ -87,7 +87,7 @@ tbody tr.drag-over { background: #bee3f8; outline: 2px dashed #3182ce; }
 .map-panel { width: 55%; flex-shrink: 0; display: flex; flex-direction: column; border-right: 2px solid #e2e8f0; position: relative; z-index: 1; isolation: isolate; }
 #map { flex: 1; }
 
-.map-search-bar { flex-shrink: 0; background: #1a365d; padding: 10px 12px; position: relative; z-index: 10; }
+.map-search-bar { flex-shrink: 0; background: #1a365d; padding: 10px 12px; position: relative; z-index: 800; }
 .search-input-wrap { display: flex; align-items: center; gap: 8px; background: white; border-radius: 8px; padding: 6px 10px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
 .search-icon { font-size: 1rem; }
 .search-input-wrap input { flex: 1; border: none; outline: none; font-size: 0.9rem; font-family: inherit; background: transparent; }
