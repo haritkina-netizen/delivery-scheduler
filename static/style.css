@@ -197,6 +197,11 @@ tfoot tr {
   background: linear-gradient(to right, #f8fafc, #f1f5f9);
   font-weight: 600;
 }
+tfoot td {
+  border-right: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+}
+tfoot tr:last-child td { border-bottom: none; }
 
 td, tfoot td {
   padding: 8px 8px;
