@@ -941,7 +941,8 @@ function toggleTheme() {
     else if(e.key==='*') calcOp('×');
     else if(e.key==='/'){e.preventDefault();calcOp('÷');}
     else if(e.key==='%') calcOp('%');
-    else if(e.key==='Enter'||e.key==='=') calcEquals();
+    else if(e.key==='Enter') calcConfirm();
+    else if(e.key==='=') calcEquals();
     else if(e.key==='Escape') calcClose();
     else if(e.key==='Backspace'){
       cur=cur.length>1?cur.slice(0,-1):'0'; render();
