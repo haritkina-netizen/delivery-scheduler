@@ -577,14 +577,14 @@ function renderTable() {
   const grandTotal = totals.reduce((a,b) => a + b, 0);
   const totalPrice = active.reduce((a,s) => a + (s.price||0), 0);
   tfoot.innerHTML = `<tr>
-    <td colspan="2" style="text-align:right;font-weight:700">รวมแต่ละรส</td>
+    <td colspan="2" style="text-align:right;font-weight:600">รวม</td>
     ${totals.map(t => `<td class="qty-cell">${t || ''}</td>`).join('')}
     <td class="col-price">${totalPrice ? totalPrice.toLocaleString() : ''}</td>
     <td class="no-print"></td>
   </tr><tr>
-    <td colspan="2" style="text-align:right;font-weight:700">รวมทุกรส</td>
-    ${totals.map(t => `<td class="qty-cell" style="color:var(--primary);font-weight:700">${t || ''}</td>`).join('')}
-    <td class="col-price" style="font-weight:700">${grandTotal || ''} ลัง</td>
+    <td colspan="2" style="text-align:right;font-weight:500;color:var(--gray-500);font-size:0.82rem">รวมทั้งหมด</td>
+    <td colspan="6" style="text-align:center;font-weight:600;font-size:1rem">${grandTotal || ''} ลัง</td>
+    <td></td>
     <td class="no-print"></td>
   </tr>`;
 }
