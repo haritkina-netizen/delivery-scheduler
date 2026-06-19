@@ -725,7 +725,7 @@ body.dark tbody tr.drag-over { background: #334155; outline-color: #64748b; }
 body.dark .drag-handle:hover { color: #64748b; }
 
 /* ── PRINT ────────────────────────────────────────────────────────────────── */
-@page { margin: 12mm 10mm; size: A4 landscape; }
+@page { margin: 10mm 8mm; size: A4 portrait; }
 
 @media print {
   .no-print, .topbar, .map-panel, .modal-overlay, .mobile-tabs { display: none !important; }
@@ -756,26 +756,33 @@ body.dark .drag-handle:hover { color: #64748b; }
   /* Table */
   thead { position: static !important; background: white !important; }
   table {
-    font-size: 9pt;
+    font-size: 7pt;
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse !important;
     border: 1px solid #94a3b8 !important;
   }
   td, th {
-    padding: 5px 7px !important;
+    padding: 4px 5px !important;
     border: 1px solid #94a3b8 !important;
     vertical-align: middle !important;
     background: white !important;
     background-image: none !important;
     color: #0f172a !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
+  .col-seq { width: 7% !important; }
+  .col-addr { width: 35% !important; }
+  .col-products-header, thead tr:last-child th { width: auto !important; }
+  .col-price { width: 9% !important; }
   thead tr, thead tr th, thead tr:first-child th, thead tr:last-child th {
     background: white !important;
     background-image: none !important;
     color: #0f172a !important;
   }
-  thead tr:first-child th { font-weight: 700; font-size: 8.5pt; border-bottom: 2px solid #334155 !important; }
-  thead tr:last-child th { font-size: 8pt; }
+  thead tr:first-child th { font-weight: 700; font-size: 7.5pt; border-bottom: 2px solid #334155 !important; }
+  thead tr:last-child th { font-size: 7pt; }
   tbody tr, tbody tr td { background: white !important; background-image: none !important; }
   tfoot tr, tfoot tr td { font-weight: 700; border-top: 2px solid #334155 !important; background: white !important; }
 
