@@ -308,7 +308,7 @@ tbody tr.drag-over { background: #e2e8f0; outline: 2px dashed #334155; }
 }
 .globe-overlay-box {
   position: absolute;
-  top: calc(50% - 100px);
+  top: calc(50% - 76px);
   left: calc(50% - 100px);
   transform-origin: top left;
   display: flex;
