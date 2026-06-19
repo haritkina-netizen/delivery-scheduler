@@ -262,14 +262,15 @@ window.stopGlobeLoader=function(){
   overlay.style.backdropFilter='none';
   overlay.style.webkitBackdropFilter='none';
 
-  // Animate to bottom-left corner, scale down
-  const scale=0.32, pad=14;
-  const targetTop=overlay.offsetHeight-200*scale-pad;
-  const targetLeft=pad;
+  // Animate to bottom-left corner (above bottom bar), scale down
+  const scale=0.34, padL=16, padB=58;
+  const targetTop=overlay.offsetHeight-200*scale-padB;
+  const targetLeft=padL;
   box.style.transition='top 1s cubic-bezier(0.4,0,0.2,1), left 1s cubic-bezier(0.4,0,0.2,1), transform 1s cubic-bezier(0.4,0,0.2,1)';
   box.style.top=targetTop+'px';
   box.style.left=targetLeft+'px';
   box.style.transform='scale('+scale+')';
+  setTimeout(()=>box.classList.add('globe-corner-widget'),800);
 };
 
 initGlobe().then(()=>{
