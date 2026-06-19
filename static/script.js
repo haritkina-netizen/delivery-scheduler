@@ -869,6 +869,7 @@ function toggleTheme() {
     const appW = mapPanel.parentElement.offsetWidth;
     const newW = Math.max(200, Math.min(appW - 280, startW + e.clientX - startX));
     mapPanel.style.width = newW + 'px';
+    if (map) map.invalidateSize();
   });
   window.addEventListener('mouseup', () => {
     if (!dragging) return;
@@ -876,6 +877,7 @@ function toggleTheme() {
     handle.classList.remove('dragging');
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
+    if (map) map.invalidateSize();
   });
 })();
 
