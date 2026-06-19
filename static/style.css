@@ -176,7 +176,9 @@ thead tr:first-child th {
   letter-spacing: .04em;
   font-size: 0.8rem;
   text-transform: uppercase;
+  border-right: 1px solid rgba(255,255,255,.15);
 }
+thead tr:first-child th:last-child { border-right: none; }
 thead tr:last-child th {
   background: #1e293b;
   color: #94a3b8;
@@ -185,17 +187,25 @@ thead tr:last-child th {
   white-space: nowrap;
   font-size: 0.77rem;
   font-weight: 600;
+  border-right: 1px solid rgba(255,255,255,.1);
 }
+thead tr:last-child th:last-child { border-right: none; }
 
-tbody tr { border-bottom: 1px solid var(--gray-100); transition: background .1s; }
+tbody tr { border-bottom: 1px solid var(--gray-200); transition: background .1s; }
 tbody tr:hover { background: #f8fafc; }
 tfoot tr {
   background: linear-gradient(to right, #f8fafc, #f1f5f9);
   font-weight: 700;
-  border-top: 2px solid #e2e8f0;
+  border-top: 2px solid #334155;
 }
 
-td, tfoot td { padding: 8px 8px; vertical-align: middle; text-align: center; }
+td, tfoot td {
+  padding: 8px 8px;
+  vertical-align: middle;
+  text-align: center;
+  border-right: 1px solid var(--gray-200);
+}
+td:last-child { border-right: none; }
 td.col-addr { text-align: left; }
 td.col-seq { font-weight: 700; color: #334155; }
 
