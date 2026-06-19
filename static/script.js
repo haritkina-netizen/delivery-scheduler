@@ -851,6 +851,100 @@ function toggleTheme() {
   }
 })();
 
+// ── Calculator popup ───────────────────────────────────────────────────────
+(function initCalc(){
+  let cur='0', expr='', waitNext=false, lastOp='', lastNum='';
+
+  const popup  = ()=>document.getElementById('calcPopup');
+  const valEl  = ()=>document.getElementById('calcVal');
+  const exprEl = ()=>document.getElementById('calcExpr');
+
+  function render(){ valEl().textContent=cur; exprEl().textContent=expr; }
+
+  function applyOp(a, op, b){
+    a=parseFloat(a); b=parseFloat(b);
+    if(op==='÷') return b===0?'Err':(a/b);
+    if(op==='×') return a*b;
+    if(op==='−') return a-b;
+    if(op==='+') return a+b;
+    return b;
+  }
+
+  window.calcDigit=function(d){
+    if(waitNext){ cur=d; waitNext=false; }
+    else cur=(cur==='0'&&d!=='.')?d:cur+d;
+    render();
+  };
+  window.calcDot=function(){
+    if(waitNext){ cur='0.'; waitNext=false; }
+    else if(!cur.includes('.')) cur+='.';
+    render();
+  };
+  window.calcOp=function(op){
+    if(op==='±'){ cur=String(-parseFloat(cur)||0); render(); return; }
+    if(op==='%'){ cur=String(parseFloat(cur)/100); render(); return; }
+    if(lastOp&&!waitNext){
+      const res=applyOp(lastNum,lastOp,cur);
+      cur=String(Math.round(res*1e10)/1e10);
+    }
+    lastNum=cur; lastOp=op; waitNext=true;
+    expr=lastNum+' '+op; render();
+  };
+  window.calcEquals=function(){
+    if(!lastOp) return;
+    const res=applyOp(lastNum,lastOp,cur);
+    expr=lastNum+' '+lastOp+' '+cur+' =';
+    cur=String(Math.round(res*1e10)/1e10);
+    lastOp=''; waitNext=true; render();
+  };
+  window.calcAC=function(){ cur='0'; expr=''; lastOp=''; lastNum=''; waitNext=false; render(); };
+  window.calcConfirm=function(){
+    calcEquals();
+    const inp=document.getElementById('stopPrice');
+    if(inp){ inp.value=Math.round(parseFloat(cur)||0); }
+    calcClose();
+  };
+  window.calcClose=function(){
+    const p=popup(); if(p) p.classList.remove('open');
+    document.removeEventListener('mousedown',outsideCalc);
+  };
+
+  function outsideCalc(e){
+    const p=popup();
+    if(p&&!p.contains(e.target)&&e.target.id!=='stopPrice') calcClose();
+  }
+
+  window.openCalcForPrice=function(){
+    calcAC();
+    const inp=document.getElementById('stopPrice');
+    if(inp&&inp.value&&inp.value!=='0'){ cur=String(inp.value); render(); }
+    const p=popup(); if(!p) return;
+    // position near the price input
+    const rect=inp.getBoundingClientRect();
+    const top=Math.min(rect.bottom+6, window.innerHeight-310);
+    const left=Math.min(rect.left, window.innerWidth-256);
+    p.style.top=top+'px'; p.style.left=left+'px';
+    p.classList.add('open');
+    setTimeout(()=>document.addEventListener('mousedown',outsideCalc),50);
+  };
+
+  // Keyboard support
+  document.addEventListener('keydown',e=>{
+    const p=popup(); if(!p||!p.classList.contains('open')) return;
+    if(e.key>='0'&&e.key<='9') calcDigit(e.key);
+    else if(e.key==='.') calcDot();
+    else if(e.key==='+'||e.key==='-') calcOp(e.key==='+'?'+':'−');
+    else if(e.key==='*') calcOp('×');
+    else if(e.key==='/'){e.preventDefault();calcOp('÷');}
+    else if(e.key==='%') calcOp('%');
+    else if(e.key==='Enter'||e.key==='=') calcEquals();
+    else if(e.key==='Escape') calcClose();
+    else if(e.key==='Backspace'){
+      cur=cur.length>1?cur.slice(0,-1):'0'; render();
+    }
+  });
+})();
+
 // ── Panel resize ───────────────────────────────────────────────────────────
 (function initResize(){
   const handle = document.getElementById('resizeHandle');

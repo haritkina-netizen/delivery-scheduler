@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจัดตารางส่งสินค้า</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="/static/style.css?v=20260619m">
+<link rel="stylesheet" href="/static/style.css?v=20260619n">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -138,7 +138,7 @@
         </div>
         <div class="dform-group">
           <label>ราคา (บาท)</label>
-          <input type="number" id="stopPrice" min="0" placeholder="0">
+          <input type="number" id="stopPrice" min="0" placeholder="0" onfocus="openCalcForPrice()" autocomplete="off">
         </div>
       </div>
       <div class="dform-group">
@@ -162,6 +162,42 @@
   </form>
 </div>
 <div id="drawerBackdrop" class="drawer-backdrop" onclick="closeDrawer()"></div>
+
+<!-- CALCULATOR POPUP -->
+<div id="calcPopup" class="calc-popup" role="dialog" aria-label="เครื่องคิดเลข">
+  <div class="calc-screen">
+    <div class="calc-expr" id="calcExpr"></div>
+    <div class="calc-val" id="calcVal">0</div>
+  </div>
+  <div class="calc-grid">
+    <button class="calc-btn ac"    onclick="calcAC()">AC</button>
+    <button class="calc-btn op"    onclick="calcOp('±')">±</button>
+    <button class="calc-btn pct"   onclick="calcOp('%')">%</button>
+    <button class="calc-btn op"    onclick="calcOp('÷')">÷</button>
+
+    <button class="calc-btn num"   onclick="calcDigit('7')">7</button>
+    <button class="calc-btn num"   onclick="calcDigit('8')">8</button>
+    <button class="calc-btn num"   onclick="calcDigit('9')">9</button>
+    <button class="calc-btn op"    onclick="calcOp('×')">×</button>
+
+    <button class="calc-btn num"   onclick="calcDigit('4')">4</button>
+    <button class="calc-btn num"   onclick="calcDigit('5')">5</button>
+    <button class="calc-btn num"   onclick="calcDigit('6')">6</button>
+    <button class="calc-btn op"    onclick="calcOp('−')">−</button>
+
+    <button class="calc-btn num"   onclick="calcDigit('1')">1</button>
+    <button class="calc-btn num"   onclick="calcDigit('2')">2</button>
+    <button class="calc-btn num"   onclick="calcDigit('3')">3</button>
+    <button class="calc-btn op"    onclick="calcOp('+')">+</button>
+
+    <button class="calc-btn num zero" onclick="calcDigit('0')">0</button>
+    <button class="calc-btn num"   onclick="calcDot()">.</button>
+    <button class="calc-btn eq"    onclick="calcEquals()">=</button>
+
+    <button class="calc-btn ok" style="grid-column:span 3" onclick="calcConfirm()">✓ ใส่ราคา</button>
+    <button class="calc-btn cls"   onclick="calcClose()">✕</button>
+  </div>
+</div>
 
 <!-- PRODUCT MODAL -->
 <div id="productModal" class="modal-overlay" onclick="closeOnBackdrop(event,'productModal')">

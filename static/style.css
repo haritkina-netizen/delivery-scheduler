@@ -797,3 +797,73 @@ body.dark .drag-handle:hover { color: #64748b; }
   .qty-zero { color: #94a3b8 !important; }
   td.col-seq { font-weight: 700; }
 }
+
+/* ── CALCULATOR POPUP ─────────────────────────────────────────────────────── */
+.calc-popup {
+  position: fixed;
+  z-index: 9999;
+  background: #1e293b;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45), 0 4px 16px rgba(0,0,0,0.25);
+  padding: 14px;
+  width: 240px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  user-select: none;
+}
+.calc-popup.open { display: flex; }
+
+.calc-screen {
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 10px 14px 8px;
+  text-align: right;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+}
+.calc-expr {
+  font-size: 0.72rem;
+  color: #64748b;
+  min-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.calc-val {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.calc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.calc-btn {
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  height: 48px;
+  cursor: pointer;
+  transition: filter 0.1s, transform 0.08s;
+  font-family: inherit;
+}
+.calc-btn:active { transform: scale(0.92); filter: brightness(0.85); }
+.calc-btn.num  { background: #334155; color: #f1f5f9; }
+.calc-btn.op   { background: #475569; color: #f8fafc; }
+.calc-btn.eq   { background: #3b82f6; color: white; grid-column: span 2; }
+.calc-btn.cls  { background: #dc2626; color: white; font-size: 0.8rem; }
+.calc-btn.ac   { background: #64748b; color: #f1f5f9; }
+.calc-btn.ok   { background: #16a34a; color: white; font-size: 0.82rem; }
+.calc-btn.pct  { background: #475569; color: #f8fafc; }
+.calc-btn.zero { grid-column: span 2; }
+body.dark .calc-popup { box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
