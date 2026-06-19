@@ -685,15 +685,70 @@ body.dark .drag-handle:hover { color: #64748b; }
 /* ── PRINT ────────────────────────────────────────────────────────────────── */
 @media print {
   .no-print, .topbar, .map-panel, .modal-overlay, .mobile-tabs { display: none !important; }
-  body { background: white !important; overflow: visible !important; height: auto !important; display: block !important; }
+  body { background: white !important; overflow: visible !important; height: auto !important; display: block !important; font-size: 9pt; }
   .app-body { display: block !important; overflow: visible !important; height: auto !important; }
   .sheet-panel { display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; }
   .table-wrap { overflow: visible !important; height: auto !important; }
-  .route-header { display: flex !important; background: #f5f3ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Route header */
+  .route-header {
+    display: flex !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #334155 !important;
+    border-bottom: none !important;
+    padding: 8px 12px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .route-date { font-size: 10pt; font-weight: 700; color: #1e293b !important; }
+
+  /* Table borders */
   thead { position: static !important; }
-  table { font-size: 9pt; width: 100%; }
-  thead tr:first-child th, thead tr:last-child th { background: #4f46e5 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table {
+    font-size: 9pt;
+    width: 100%;
+    border-collapse: collapse !important;
+    border: 1px solid #334155 !important;
+  }
+  td, th {
+    padding: 5px 7px !important;
+    border: 1px solid #94a3b8 !important;
+    vertical-align: middle !important;
+  }
+
+  /* Header rows */
+  thead tr:first-child th {
+    background: #1e293b !important;
+    color: white !important;
+    font-size: 8.5pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  thead tr:last-child th {
+    background: #334155 !important;
+    color: #e2e8f0 !important;
+    font-size: 8pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Body rows — alternating */
+  tbody tr:nth-child(even) { background: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  tbody tr:nth-child(odd) { background: white !important; }
+
+  /* Footer */
+  tfoot tr {
+    background: #f1f5f9 !important;
+    font-weight: 700;
+    border-top: 2px solid #334155 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Status badges */
   .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  td, th { padding: 4px 6px !important; }
-  tfoot tr { background: #f5f3ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Keep qty zeros visible */
+  .qty-zero { color: #cbd5e1 !important; }
+  td.col-seq { font-weight: 700; }
 }
