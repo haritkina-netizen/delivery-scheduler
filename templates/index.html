@@ -239,14 +239,22 @@ function drawWhirl(){
       wx.lineCap='round'; wx.stroke();
     }
   }
-  // Truck orbiting the globe
-  const truckR=R+18*DPR;
-  const tx=cx+Math.cos(truckRot)*truckR;
-  const ty=cy+Math.sin(truckRot)*truckR;
+  // Truck orbiting on 3D ellipse (always in front)
+  const dark2=isDark();
+  const orbitRx=R+16*DPR, orbitRy=(R+16*DPR)*0.38;
+  wx.beginPath();
+  wx.ellipse(cx,cy,orbitRx,orbitRy,0,0,Math.PI*2);
+  wx.setLineDash([3*DPR,5*DPR]);
+  wx.strokeStyle=dark2?'rgba(148,163,184,0.3)':'rgba(30,28,26,0.18)';
+  wx.lineWidth=DPR;
+  wx.stroke();
+  wx.setLineDash([]);
+  const ex=cx+Math.cos(truckRot)*orbitRx;
+  const ey=cy+Math.sin(truckRot)*orbitRy;
   wx.save();
-  wx.translate(tx,ty);
+  wx.translate(ex,ey);
   wx.rotate(truckRot+Math.PI/2);
-  wx.font=`${Math.round(14*DPR)}px serif`;
+  wx.font=`${Math.round(15*DPR)}px serif`;
   wx.textAlign='center';
   wx.textBaseline='middle';
   wx.fillText('🚚',0,0);
