@@ -51,11 +51,6 @@ body[data-theme="annual"] .sidebar{background:#1a1430}
 .sb-item .ic{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .sb-cap{font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.34);text-transform:uppercase;padding:12px 13px 5px}
 .content{flex:1;min-width:0;display:flex;flex-direction:column}
-@media(max-width:760px){
-  .sidebar{width:54px;padding:12px 6px}
-  .sb-item{justify-content:center;padding:11px 0;gap:0}
-  .sb-item .lbl,.sb-cap{display:none}
-}
 
 /* ── HEADER ── */
 .hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 100%);color:#fff;padding:1.3rem 2rem;display:flex;justify-content:space-between;align-items:center;position:relative}
@@ -577,6 +572,76 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
 .pal-dot{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,.35);transition:transform .12s,border-color .12s;padding:0}
 .pal-dot:hover{transform:scale(1.15)}
 .pal-dot.on{border-color:#fff}
+/* ── MOBILE BOTTOM NAV ── */
+.mnav{display:none}
+@media(max-width:760px){
+  /* hide sidebar, use bottom nav */
+  .sidebar{display:none}
+  .content{padding-bottom:64px}
+  .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--navy-d);justify-content:space-around;padding:5px 2px max(5px,env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.18)}
+  .mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.55);font-size:10px;font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit;padding:4px 0;user-select:none}
+  .mnav-item .mi{font-size:18px;line-height:1}
+  .mnav-item.active{color:#fff}
+  .mnav-item.active .mi{transform:scale(1.12)}
+
+  /* compact header */
+  .wrap{margin:0;border-radius:0}
+  .hdr{padding:9px 14px;flex-wrap:wrap;gap:6px}
+  .hdr h1{font-size:15px}
+  .hdr p{display:none}
+  .hdr-r{display:none}
+  #savedBadge{font-size:10px;padding:3px 9px;margin-top:5px}
+
+  /* filter + meta full width */
+  .meta .fg,.fbar .fg,.fbar .fsearch{min-width:100%;flex:1 1 100%}
+  .fbar,.meta{padding:.6rem 1rem}
+
+  /* TABLE → CARD ROWS (ledger + income overview) */
+  #page-ledger thead,#incsub-overview thead{display:none}
+  #page-ledger .tbl-wrap,#incsub-overview .tbl-wrap{padding:.4rem .8rem;overflow:visible}
+  #tbody tr,#incTbody tr{display:block;background:var(--bg2);border:0.5px solid var(--line);border-radius:10px;margin-bottom:10px;padding:7px 11px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  #tbody tr.hide,#incTbody tr.hide{display:none}
+  #tbody td,#incTbody td{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 0!important;border:none!important;text-align:right;min-height:30px}
+  #tbody td::before,#incTbody td::before{font-size:11px;color:var(--text2);font-weight:700;text-align:left;flex:0 0 auto;white-space:nowrap}
+  #tbody td input,#tbody td select,#incTbody td input,#incTbody td select{width:auto!important;flex:1;min-width:0;text-align:right}
+  #tbody td:nth-of-type(1),#incTbody td:nth-of-type(1){display:none}
+  /* ledger labels */
+  #tbody td:nth-of-type(2)::before{content:"📅 วันที่"}
+  #tbody td:nth-of-type(3)::before{content:"หมวดหมู่"}
+  #tbody td:nth-of-type(4)::before{content:"รายการ"}
+  #tbody td:nth-of-type(5)::before{content:"ผู้รับเงิน"}
+  #tbody td:nth-of-type(6)::before{content:"ผู้ลงบันทึก"}
+  #tbody td:nth-of-type(7)::before{content:"VAT"}
+  #tbody td:nth-of-type(8)::before{content:"จำนวนเงิน"}
+  #tbody td:nth-of-type(9)::before{content:"VAT 7%"}
+  #tbody td:nth-of-type(10)::before{content:"รวมทั้งสิ้น";font-weight:700}
+  #tbody td:nth-of-type(10){border-top:0.5px solid var(--line)!important;margin-top:2px;padding-top:6px!important;font-weight:700;color:var(--text)}
+  #tbody td:nth-of-type(11){justify-content:flex-end}
+  /* income labels */
+  #incTbody td:nth-of-type(2)::before{content:"📅 วันที่"}
+  #incTbody td:nth-of-type(3)::before{content:"หมวดหมู่"}
+  #incTbody td:nth-of-type(4)::before{content:"รายการ"}
+  #incTbody td:nth-of-type(5)::before{content:"ลูกค้า / ผู้จ่าย"}
+  #incTbody td:nth-of-type(6)::before{content:"ผู้ลงบันทึก"}
+  #incTbody td:nth-of-type(7)::before{content:"VAT"}
+  #incTbody td:nth-of-type(8)::before{content:"จำนวนเงิน"}
+  #incTbody td:nth-of-type(9)::before{content:"VAT 7%"}
+  #incTbody td:nth-of-type(10)::before{content:"รวมทั้งสิ้น";font-weight:700}
+  #incTbody td:nth-of-type(10){border-top:0.5px solid var(--line)!important;margin-top:2px;padding-top:6px!important;font-weight:700;color:var(--text)}
+  #incTbody td:nth-of-type(11)::before{content:"สถานะ"}
+  #incTbody td:nth-of-type(12){justify-content:flex-end}
+
+  /* FAB add button */
+  .add-btn{position:fixed;right:16px;bottom:70px;width:54px;height:54px;border-radius:50%;padding:0;margin:0;z-index:55;background:var(--accent);color:#fff;border:none;box-shadow:0 4px 14px rgba(0,0,0,.28);font-size:0;justify-content:center}
+  .add-btn::after{content:"+";font-size:28px;line-height:1}
+
+  /* summary cards stack 1-col on very small, else stay */
+  .scards{flex-wrap:wrap}
+  .sc{min-width:calc(50% - 5px)}
+
+  /* invoice / delivery-note builders stack */
+  .iv-grid,.do-grid,.inc-two-col{grid-template-columns:1fr!important;display:block!important}
+}
 </style>
 <div class="wrap">
 
@@ -1117,6 +1182,15 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
 
 </div><!-- /content -->
 </div><!-- /shell -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mnav" id="mnav">
+  <button class="mnav-item active" data-nav="ledger" onclick="navTo('ledger')"><span class="mi">📝</span>รายจ่าย</button>
+  <button class="mnav-item" data-nav="income:overview" onclick="navTo('income','overview')"><span class="mi">💰</span>รายรับ</button>
+  <button class="mnav-item" data-nav="annual" onclick="navTo('annual')"><span class="mi">📊</span>รายปี</button>
+  <button class="mnav-item" data-nav="income:iv" onclick="navTo('income','iv')"><span class="mi">🧾</span>ใบกำกับ</button>
+  <button class="mnav-item" data-nav="income:do" onclick="navTo('income','do')"><span class="mi">📦</span>ใบส่ง</button>
+</nav>
 
 </div><!-- /wrap -->
 
@@ -1717,7 +1791,7 @@ function showPage(name,tab){
 // Sidebar navigation — routes to a page (+ optional income sub-tab)
 function navTo(name,sub){
   const key=sub?name+':'+sub:name;
-  document.querySelectorAll('.sb-item').forEach(i=>i.classList.toggle('active',i.dataset.nav===key));
+  document.querySelectorAll('.sb-item,.mnav-item').forEach(i=>i.classList.toggle('active',i.dataset.nav===key));
   const el=document.querySelector('.sb-item[data-nav="'+key+'"]');
   showPage(name,el);
   if(sub)incSwitchSub(sub);
