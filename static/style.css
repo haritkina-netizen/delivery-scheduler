@@ -295,6 +295,24 @@ tbody tr.drag-over { background: #e2e8f0; outline: 2px dashed #334155; }
   box-shadow: 0 2px 12px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.08);
 }
 .search-icon { font-size: 1rem; }
+
+.globe-loader { width: 22px; height: 22px; flex-shrink: 0; }
+.globe-spin-lat {
+  transform-origin: 16px 16px;
+  animation: globe-orbit-lat 1.6s linear infinite;
+}
+.globe-spin-lon {
+  transform-origin: 16px 16px;
+  animation: globe-orbit-lon 2.2s linear infinite reverse;
+}
+@keyframes globe-orbit-lat {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes globe-orbit-lon {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 .search-input-wrap input {
   flex: 1;
   border: none;

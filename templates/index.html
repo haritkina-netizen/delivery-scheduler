@@ -43,7 +43,18 @@
   <div class="map-panel" id="mapPanel">
     <div class="map-search-bar no-print">
       <div class="search-input-wrap">
-        <span class="search-icon">📍</span>
+        <span class="search-icon" id="searchIcon">📍</span>
+        <svg id="globeLoader" class="globe-loader" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
+          <circle cx="16" cy="16" r="13" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
+          <line x1="16" y1="3" x2="16" y2="29" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+          <line x1="3" y1="16" x2="29" y2="16" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+          <ellipse cx="16" cy="16" rx="13" ry="4.5" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+          <ellipse cx="16" cy="11" rx="10" ry="3.5" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+          <ellipse cx="16" cy="21" rx="10" ry="3.5" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+          <ellipse class="globe-spin-lat" cx="16" cy="16" rx="13" ry="5.5" stroke="#a5b4fc" stroke-width="1.8" stroke-dasharray="40 82"/>
+          <ellipse class="globe-spin-lon" cx="16" cy="16" rx="5.5" ry="13" stroke="#a5b4fc" stroke-width="1.8" stroke-dasharray="26 82"/>
+          <circle cx="16" cy="16" r="2" fill="#a5b4fc" opacity=".9"/>
+        </svg>
         <input id="addressSearch" type="text" placeholder="พิมพ์ที่อยู่ หรือวาง Link Google Maps..." autocomplete="off" onkeydown="onSearchKey(event)" onpaste="handlePaste(event)">
         <button class="btn btn-sm btn-primary" onclick="searchAndAdd()">+ เพิ่ม</button>
       </div>

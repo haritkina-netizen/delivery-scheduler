@@ -230,7 +230,16 @@ document.addEventListener('DOMContentLoaded', () => {
   input.addEventListener('blur', () => setTimeout(hideSuggestions, 200));
 });
 
+function setGlobeLoading(on) {
+  const icon = document.getElementById('searchIcon');
+  const globe = document.getElementById('globeLoader');
+  if (!icon || !globe) return;
+  icon.style.display = on ? 'none' : '';
+  globe.style.display = on ? 'block' : 'none';
+}
+
 async function fetchSuggestions(q) {
+  setGlobeLoading(true);
   try {
     // Run customer history + geocode in parallel
     const [custRes, geoRes] = await Promise.allSettled([
@@ -257,6 +266,7 @@ async function fetchSuggestions(q) {
     searchResults = [...customers, ...filteredGeo].slice(0, 8);
     showSuggestions(searchResults);
   } catch(e) { hideSuggestions(); }
+  finally { setGlobeLoading(false); }
 }
 
 function showSuggestions(results) {
@@ -313,6 +323,7 @@ async function handlePaste(e) {
   if (!text.includes('google.com/maps') && !text.includes('maps.app.goo.gl') && !text.includes('goo.gl/maps')) return;
   e.preventDefault();
   document.getElementById('addressSearch').value = text;
+  setGlobeLoading(true);
   document.getElementById('mapStatus').textContent = '⏳ กำลังอ่านพิกัด...';
 
   // Try extracting directly from URL first
@@ -328,10 +339,12 @@ async function handlePaste(e) {
   }
 
   if (!coords) {
+    setGlobeLoading(false);
     document.getElementById('mapStatus').textContent = '❌ ไม่สามารถอ่านพิกัดจาก link นี้ได้';
     return;
   }
 
+  setGlobeLoading(false);
   const name = prompt('ชื่อลูกค้า / จุดส่ง:') || 'จุดส่ง';
   document.getElementById('addressSearch').value = '';
   await addStopFromSearch(name, coords.lat, coords.lng, name);
@@ -341,8 +354,10 @@ async function searchAndAdd() {
   const q = document.getElementById('addressSearch').value.trim();
   if (!q) return;
   hideSuggestions();
+  setGlobeLoading(true);
   document.getElementById('mapStatus').textContent = '⏳ กำลังค้นหา...';
   const coords = await geocodeAddress(q);
+  setGlobeLoading(false);
   if (!coords) {
     document.getElementById('mapStatus').textContent = '❌ ไม่พบที่อยู่ — ลองพิมพ์ละเอียดขึ้น';
     return;
