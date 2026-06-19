@@ -566,90 +566,111 @@ tbody tr.drag-over { background: #fed7aa; outline: 2px dashed #c2410c; }
   .rh-left input:last-child { grid-column: span 2; }
 }
 
-/* ── DARK MODE ────────────────────────────────────────────────────────────── */
+/* ── DARK MODE (cool teal — opposite of warm retro) ───────────────────────── */
 body.dark {
-  --gray-50: #1a1a2e;
-  --gray-100: #16213e;
-  --gray-200: #0f3460;
-  --gray-300: #1a2744;
-  --gray-400: #6b7280;
-  --gray-500: #9ca3af;
-  --gray-600: #d1d5db;
-  --gray-700: #e5e7eb;
-  --gray-800: #f3f4f6;
-  --gray-900: #f9fafb;
-  --primary-light: #1e1b4b;
-  background: #0d1117;
-  color: #e5e7eb;
+  --primary: #0d9488;
+  --primary-dark: #0f766e;
+  --primary-light: #0d2f2c;
+  --gray-50: #061a18;
+  --gray-100: #0a2420;
+  --gray-200: #113330;
+  --gray-300: #1a4a45;
+  --gray-400: #4a9e96;
+  --gray-500: #7dd3cc;
+  --gray-600: #a7f3ed;
+  --gray-700: #ccfbf6;
+  --gray-800: #e6fefe;
+  --gray-900: #f0fffe;
+  background: #050f0e;
+  color: #ccfbf6;
 }
 
-body.dark .sheet-panel { background: #161b27; }
-body.dark .table-wrap { background: #161b27; }
-body.dark tbody tr { border-bottom-color: #1f2d3d; }
-body.dark tbody tr:hover { background: #1a2438; }
-body.dark tfoot tr { background: #1a1f35 !important; }
+body.dark .sheet-panel { background: #071a18; }
+body.dark .table-wrap { background: #071a18; }
+body.dark tbody tr { border-bottom-color: #113330; }
+body.dark tbody tr:hover { background: #0d2f2c; }
+body.dark tfoot tr { background: linear-gradient(to right,#0a2420,#0d2f2c) !important; border-top-color: #1a4a45 !important; }
 
-body.dark .route-header { background: linear-gradient(to right,#1c0f05,#3b1f0a); border-bottom-color: #7c2d12; }
-body.dark .rh-left input { background: #2a1a0d; border-color: #7c2d12; color: #fef3c7; }
+body.dark .route-header { background: linear-gradient(to right,#061a18,#0a2f2c); border-bottom-color: #1a4a45; }
+body.dark .rh-left input { background: #0a2420; border-color: #1a4a45; color: #ccfbf6; }
+body.dark .route-date { color: #5eead4; }
 
-body.dark .map-bottom-bar { background: #161b27; border-top-color: #1f2d3d; }
-body.dark .map-panel { border-right-color: #1f2d3d; }
+body.dark .map-bottom-bar { background: #071a18; border-top-color: #113330; }
+body.dark .map-panel { border-right-color: #113330; }
 
-body.dark .search-input-wrap { background: #1a2438; box-shadow: 0 2px 12px rgba(0,0,0,.5); }
-body.dark .search-input-wrap input { color: #e5e7eb; }
-body.dark .search-input-wrap input::placeholder { color: #4b5563; }
-body.dark .search-suggestions { background: #1e2a3a; border-color: #1f2d3d; }
-body.dark .suggestion-item { border-bottom-color: #1f2d3d; }
-body.dark .suggestion-item:hover { background: #1a2d4a; }
-body.dark .suggestion-saved { background: #1c1a0e; border-left-color: #d97706; }
-body.dark .suggestion-saved:hover { background: #2a2210; }
-body.dark .sugg-name { color: #e5e7eb; }
+body.dark .map-search-bar { background: linear-gradient(135deg, #030d0c, #0f766e); }
+body.dark .search-input-wrap { background: #0a2420; box-shadow: 0 2px 12px rgba(0,0,0,.6); }
+body.dark .search-input-wrap input { color: #ccfbf6; }
+body.dark .search-input-wrap input::placeholder { color: #1a4a45; }
+body.dark .search-suggestions { background: #0a2f2c; border-color: #113330; }
+body.dark .suggestion-item { border-bottom-color: #113330; }
+body.dark .suggestion-item:hover { background: #0d3d38; }
+body.dark .suggestion-saved { background: #0a2420; border-left-color: #0d9488; }
+body.dark .suggestion-saved:hover { background: #0d2f2c; }
+body.dark .sugg-name { color: #ccfbf6; }
 
-body.dark .drawer { background: #161b27; }
-body.dark .drawer-footer { background: #0d1117; border-top-color: #1f2d3d; }
-body.dark .drawer-body { background: #161b27; }
+body.dark thead tr:first-child th { background: linear-gradient(135deg,#0f4c3e,#0d9488); color: #e6fefe; }
+body.dark thead tr:last-child th { background: #0f766e; color: #99f6e4; }
+
+body.dark .drawer { background: #071a18; }
+body.dark .drawer-header { background: linear-gradient(135deg,#030d0c,#0f766e); }
+body.dark .drawer-footer { background: #050f0e; border-top-color: #113330; }
+body.dark .drawer-body { background: #071a18; }
 body.dark .dform-group input,
 body.dark .dform-group select,
 body.dark .dform-group textarea {
-  background: #1a2438;
-  border-color: #1f2d3d;
-  color: #e5e7eb;
+  background: #0a2420;
+  border-color: #1a4a45;
+  color: #ccfbf6;
 }
 body.dark .dform-group input:focus,
 body.dark .dform-group select:focus,
 body.dark .dform-group textarea:focus {
-  background: #1e2d45;
-  border-color: var(--primary);
+  background: #0d2f2c;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(13,148,136,.2);
 }
-body.dark .dform-group label { color: #9ca3af; }
-body.dark .qty-item input { background: #1a2438; border-color: #1f2d3d; color: #e5e7eb; }
-body.dark .qty-item input:focus { background: #1e2d45; }
-body.dark .qty-item label { color: #9ca3af; }
+body.dark .dform-group label { color: #4a9e96; }
+body.dark .qty-item input { background: #0a2420; border-color: #1a4a45; color: #ccfbf6; }
+body.dark .qty-item input:focus { background: #0d2f2c; }
+body.dark .qty-item label { color: #4a9e96; }
 
-body.dark .modal { background: #161b27; }
-body.dark .modal-header { border-bottom-color: #1f2d3d; }
-body.dark .modal-footer { background: #0d1117; border-top-color: #1f2d3d; }
-body.dark .modal-header h2 { color: #e5e7eb; }
-body.dark .close-btn { background: #1f2d3d; color: #9ca3af; }
-body.dark .close-btn:hover { background: #2d3f55; color: #e5e7eb; }
+body.dark .modal { background: #071a18; }
+body.dark .modal-header { border-bottom-color: #113330; }
+body.dark .modal-footer { background: #050f0e; border-top-color: #113330; }
+body.dark .modal-header h2 { color: #ccfbf6; }
+body.dark .close-btn { background: #113330; color: #4a9e96; }
+body.dark .close-btn:hover { background: #1a4a45; color: #ccfbf6; }
 
-body.dark .route-notes { border-top-color: #1f2d3d; color: #9ca3af; }
-body.dark .empty-state { color: #374151; }
+body.dark .route-notes { border-top-color: #113330; color: #4a9e96; }
+body.dark .empty-state { color: #1a4a45; }
 
-body.dark .btn-secondary { background: #1f2d3d; color: #d1d5db; border-color: #2d3f55; }
-body.dark .btn-secondary:hover { background: #2d3f55; }
-body.dark .btn-edit { background: #2d2310; color: #fcd34d; border-color: #78350f; }
-body.dark .btn-edit:hover { background: #3d2e10; }
-body.dark .btn-delete { background: #2d1515; color: #fca5a5; border-color: #7f1d1d; }
-body.dark .btn-delete:hover { background: #3d1a1a; }
+body.dark .btn-primary { background: linear-gradient(135deg,#0d9488,#0f766e); box-shadow: 0 2px 8px rgba(13,148,136,.4); color: #e6fefe; }
+body.dark .btn-secondary { background: #0a2420; color: #a7f3ed; border-color: #1a4a45; }
+body.dark .btn-secondary:hover { background: #0d2f2c; }
+body.dark .btn-edit { background: #0a2420; color: #5eead4; border-color: #1a4a45; }
+body.dark .btn-edit:hover { background: #0d2f2c; }
+body.dark .btn-delete { background: #1a0a0a; color: #fca5a5; border-color: #7f1d1d; }
+body.dark .btn-delete:hover { background: #2a1010; }
+body.dark .btn-outline { background: rgba(13,148,136,.15); border-color: rgba(13,148,136,.4); color: #5eead4; }
 
-body.dark .mobile-tabs { background: #1a0f07; border-bottom-color: #3b1f0a; }
-body.dark .mobile-tab { background: #1a0f07; color: #a8896a; }
-body.dark .mobile-tab.active { background: #2a1508; color: #fb923c; border-bottom-color: #c2410c; }
+body.dark .mobile-tabs { background: #071a18; border-bottom-color: #113330; }
+body.dark .mobile-tab { background: #071a18; color: #1a4a45; }
+body.dark .mobile-tab.active { background: #0a2f2c; color: #2dd4bf; border-bottom-color: #0d9488; }
 
-body.dark .addr-name { color: #e5e7eb; }
-body.dark .qty-cell { color: #d1d5db; }
-body.dark .qty-zero { color: #1f2d3d; }
+body.dark .status-รอส่ง    { background:#1a1a0a; color:#fcd34d; border-color:#78350f; }
+body.dark .status-กำลังส่ง { background:#0a2420; color:#5eead4; border-color:#0d9488; }
+body.dark .status-ส่งแล้ว  { background:#0a1f18; color:#6ee7b7; border-color:#065f46; }
+body.dark .status-ยกเลิก   { background:#1a0a0a; color:#fca5a5; border-color:#7f1d1d; }
+
+body.dark .addr-name { color: #ccfbf6; }
+body.dark .qty-cell { color: #a7f3ed; }
+body.dark .qty-zero { color: #113330; }
+body.dark td.col-seq { color: #2dd4bf; }
+
+body.dark tbody tr.dragging { background: #0d2f2c; }
+body.dark tbody tr.drag-over { background: #1a4a45; outline-color: #0d9488; }
+body.dark .drag-handle:hover { color: #0d9488; }
 
 /* ── PRINT ────────────────────────────────────────────────────────────────── */
 @media print {
