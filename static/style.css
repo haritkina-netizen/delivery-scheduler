@@ -732,6 +732,14 @@ body.dark .drag-handle:hover { color: #64748b; }
   .sheet-panel { display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; }
   .table-wrap { overflow: visible !important; height: auto !important; }
 
+  /* Route header inputs — ไม่มีกรอบตอนพิมพ์ */
+  .rh-left input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+  }
+
   /* Route header */
   .route-header {
     display: flex !important;
