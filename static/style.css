@@ -299,13 +299,11 @@ tbody tr.drag-over { background: #e2e8f0; outline: 2px dashed #334155; }
 .globe-overlay {
   position: absolute;
   inset: 0;
-  z-index: 900;
+  z-index: 400;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(240,239,233,0.72);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  pointer-events: none;
 }
 .globe-overlay-box {
   display: flex;
