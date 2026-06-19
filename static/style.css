@@ -189,7 +189,7 @@ thead tr:last-child th {
   font-weight: 600;
   border-right: 1px solid rgba(255,255,255,.1);
 }
-thead tr:last-child th:last-child { border-right: none; }
+thead tr:last-child th:last-child { border-right: 1px solid rgba(255,255,255,.1); }
 
 tbody tr { border-bottom: 1px solid var(--gray-200); transition: background .1s; }
 tbody tr:hover { background: #f8fafc; }
