@@ -242,14 +242,14 @@ function tick(){
 window.startGlobeLoader=async function(){
   await initGlobe();
   document.getElementById('globeOverlay').style.display='flex';
-  document.getElementById('searchIcon').style.display='none';
   if(!rafId) tick();
 };
-window.stopGlobeLoader=function(){
-  document.getElementById('globeOverlay').style.display='none';
-  document.getElementById('searchIcon').style.display='';
-  if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
-};
+window.stopGlobeLoader=function(){};
+
+initGlobe().then(()=>{
+  document.getElementById('globeOverlay').style.display='flex';
+  tick();
+});
 </script>
 </body>
 </html>
