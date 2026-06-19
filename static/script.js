@@ -394,6 +394,7 @@ async function addStopFromSearch(customerName, lat, lng, address) {
   document.getElementById('addressSearch').value = '';
   renderTable();
   updateMap();
+  window.stopGlobeLoader?.();
 }
 
 // ── Geocode ────────────────────────────────────────────────────────────────

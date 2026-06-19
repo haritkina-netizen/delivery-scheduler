@@ -304,6 +304,14 @@ tbody tr.drag-over { background: #e2e8f0; outline: 2px dashed #334155; }
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  background: rgba(240,239,233,0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+.globe-overlay.fade-out {
+  opacity: 0;
 }
 .globe-overlay-box {
   display: flex;

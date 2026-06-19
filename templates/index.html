@@ -244,7 +244,12 @@ window.startGlobeLoader=async function(){
   document.getElementById('globeOverlay').style.display='flex';
   if(!rafId) tick();
 };
-window.stopGlobeLoader=function(){};
+window.stopGlobeLoader=function(){
+  const el=document.getElementById('globeOverlay');
+  if(!el||el.classList.contains('fade-out')) return;
+  el.classList.add('fade-out');
+  setTimeout(()=>{ el.style.display='none'; },850);
+};
 
 initGlobe().then(()=>{
   document.getElementById('globeOverlay').style.display='flex';
