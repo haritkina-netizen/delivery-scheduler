@@ -493,7 +493,7 @@ function renderTable() {
         <div class="addr-name">${s.customer_name}</div>
         ${s.note ? `<div class="addr-note">${s.note}</div>` : ''}
         ${s.address && s.address !== s.customer_name ? `<div class="addr-sub">${s.address}</div>` : ''}
-        <span class="status-badge status-${s.status}" onclick="cycleStatus(${s.id},'${s.status}')">${s.status}</span>
+        ${s.status !== 'รอส่ง' ? `<span class="status-badge status-${s.status}" onclick="cycleStatus(${s.id},'${s.status}')">${s.status}</span>` : ''}
       </td>
       ${qtyCells}
       <td class="col-price">${s.price ? s.price.toLocaleString() : ''}</td>
