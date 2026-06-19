@@ -313,7 +313,7 @@ window.stopGlobeLoader=function(){
   setTimeout(()=>box.classList.add('globe-corner-widget'),800);
 };
 
-// Globe show/hide with map-click fade + 3-min idle return
+// Globe show/hide with map-click corner animation + 3-min idle return
 let globeVisible=true, idleTimer=null;
 const IDLE_MS=3*60*1000;
 
@@ -322,34 +322,30 @@ function showGlobe(){
   globeVisible=true;
   const overlay=document.getElementById('globeOverlay');
   const box=overlay.querySelector('.globe-overlay-box');
-  // Reset corner widget state
   box.classList.remove('globe-corner-widget');
-  box.style.transition='opacity 1s ease';
-  overlay.style.transition='opacity 1s ease';
-  overlay.style.opacity='1';
-  box.style.opacity='1';
-  // Restore centered position
-  box.style.transform='';
-  box.style.top='calc(50% - 76px)';
-  box.style.left='calc(50% - 100px)';
+  // Restore backdrop
+  overlay.style.transition='background 0.7s ease, backdrop-filter 0.7s ease, -webkit-backdrop-filter 0.7s ease';
   overlay.style.background='';
   overlay.style.backdropFilter='';
   overlay.style.webkitBackdropFilter='';
   delete overlay.dataset.settled;
+  // Animate back to center
+  box.style.transition='top 1s cubic-bezier(0.4,0,0.2,1), left 1s cubic-bezier(0.4,0,0.2,1), transform 1s cubic-bezier(0.4,0,0.2,1)';
+  box.style.top='calc(50% - 76px)';
+  box.style.left='calc(50% - 100px)';
+  box.style.transform='scale(1)';
 }
 
 function hideGlobe(){
   if(!globeVisible) return;
   globeVisible=false;
   clearTimeout(idleTimer);
-  const overlay=document.getElementById('globeOverlay');
-  overlay.style.transition='opacity 0.6s ease';
-  overlay.style.opacity='0';
+  window.stopGlobeLoader?.();
   idleTimer=setTimeout(()=>showGlobe(), IDLE_MS);
 }
 
 function resetIdleTimer(){
-  if(!globeVisible) {
+  if(!globeVisible){
     clearTimeout(idleTimer);
     idleTimer=setTimeout(()=>showGlobe(), IDLE_MS);
   }
@@ -361,12 +357,9 @@ initGlobe().then(()=>{
   tick();
   setupDrag();
 
-  // Click on map → hide globe; start idle timer to bring back
-  document.getElementById('map').addEventListener('click', ()=>{
-    hideGlobe();
-  });
+  document.getElementById('map').addEventListener('click', hideGlobe);
   document.getElementById('map').addEventListener('mousemove', resetIdleTimer);
-  document.getElementById('map').addEventListener('touchstart', ()=>hideGlobe(), {passive:true});
+  document.getElementById('map').addEventListener('touchstart', hideGlobe, {passive:true});
 });
 </script>
 </body>
