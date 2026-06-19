@@ -585,6 +585,17 @@ body.dark {
   color: #ccfbf6;
 }
 
+body.dark .topbar {
+  background: linear-gradient(135deg, #030d0c 0%, #0a2f2c 50%, #0d9488 100%);
+  border-bottom-color: #0d9488;
+  box-shadow: 0 2px 12px rgba(13,148,136,.4);
+  color: #ccfbf6;
+}
+body.dark .date-nav button { background: rgba(13,148,136,.2); border-color: rgba(13,148,136,.3); }
+body.dark .date-nav button:hover { background: rgba(13,148,136,.4); }
+body.dark .date-nav input[type=date] { background: rgba(13,148,136,.15); border-color: rgba(13,148,136,.3); color: #ccfbf6; }
+body.dark .btn-outline { background: rgba(13,148,136,.15); border-color: rgba(13,148,136,.35); color: #5eead4; }
+
 body.dark .sheet-panel { background: #071a18; }
 body.dark .table-wrap { background: #071a18; }
 body.dark tbody tr { border-bottom-color: #113330; }
