@@ -127,6 +127,7 @@ const server = http.createServer(async (req, res) => {
 
   if (m === 'OPTIONS') { res.writeHead(204); res.end(); return; }
   if (p === '/' || p === '/index.html') return serveFile(res, path.join(__dirname, 'templates', 'index.html'));
+  if (p === '/accounting' || p === '/accounting.html') return serveFile(res, path.join(__dirname, 'templates', 'accounting.html'));
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 
   try {
