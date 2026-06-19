@@ -800,7 +800,7 @@ body.dark .drag-handle:hover { color: #64748b; }
 
 /* ── CALCULATOR POPUP ─────────────────────────────────────────────────────── */
 .calc-popup {
-  position: fixed;
+  position: absolute;
   z-index: 9999;
   background: #f0ede8;
   border-radius: 24px;

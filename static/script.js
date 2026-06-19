@@ -920,10 +920,13 @@ function toggleTheme() {
     if(inp&&inp.value&&inp.value!=='0'){ cur=String(inp.value); render(); }
     const p=popup(); if(!p) return;
     // position near the price input
-    const rect=inp.getBoundingClientRect();
-    const top=Math.min(rect.bottom+6, window.innerHeight-380);
-    const left=Math.max(rect.left, rect.right-252);
-    p.style.top=top+'px'; p.style.left=left+'px';
+    const drawer=document.getElementById('stopDrawer');
+    const dRect=drawer.getBoundingClientRect();
+    const iRect=inp.getBoundingClientRect();
+    // position relative to drawer (its positioned ancestor)
+    const top=iRect.bottom - dRect.top + 6;
+    const left=8;
+    p.style.top=top+'px'; p.style.left=left+'px'; p.style.right='';
     p.classList.add('open');
     setTimeout(()=>document.addEventListener('mousedown',outsideCalc),50);
   };
