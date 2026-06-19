@@ -923,9 +923,10 @@ function toggleTheme() {
     const drawer=document.getElementById('stopDrawer');
     const dRect=drawer.getBoundingClientRect();
     const iRect=inp.getBoundingClientRect();
-    // position relative to drawer (its positioned ancestor)
-    const top=iRect.bottom - dRect.top + 6;
-    const left=8;
+    // float just to the left of the drawer, vertically near price field
+    const calcW=260;
+    const left=Math.max(8, dRect.left - calcW - 12);
+    const top=Math.min(Math.max(60, iRect.top - 40), window.innerHeight - 420);
     p.style.top=top+'px'; p.style.left=left+'px'; p.style.right='';
     p.classList.add('open');
     setTimeout(()=>document.addEventListener('mousedown',outsideCalc),50);
