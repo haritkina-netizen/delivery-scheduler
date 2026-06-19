@@ -336,7 +336,7 @@ function showGlobe(){
   box.style.transform='scale(1)';
 }
 
-function hideGlobe(){
+window.hideGlobe=function(){
   if(!globeVisible) return;
   globeVisible=false;
   clearTimeout(idleTimer);

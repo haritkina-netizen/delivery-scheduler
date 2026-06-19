@@ -544,6 +544,7 @@ function renderTable() {
       dragSrcIdx = i;
       tr.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
+      window.hideGlobe?.();
     });
     tr.addEventListener('dragend', () => {
       tr.classList.remove('dragging');
