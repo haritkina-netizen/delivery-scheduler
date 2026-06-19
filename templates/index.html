@@ -205,9 +205,77 @@ async function initGlobe(){
 
 function isDark(){ return document.body.classList.contains('dark'); }
 
+const orbitRx=()=>R+16*DPR, orbitRy=()=>(R+16*DPR)*0.42;
+
+function drawOrbitBack(ctx){
+  // Back half of orbit (sin > 0 = bottom = behind in 3D top view, here we use sin < 0 = top = behind)
+  const dark=isDark();
+  const rx=orbitRx(), ry=orbitRy();
+  ctx.beginPath();
+  ctx.ellipse(cx,cy,rx,ry,0,Math.PI,Math.PI*2); // top arc = behind globe
+  ctx.setLineDash([3*DPR,5*DPR]);
+  ctx.strokeStyle=dark?'rgba(148,163,184,0.2)':'rgba(30,28,26,0.12)';
+  ctx.lineWidth=DPR;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Truck when behind (sin(truckRot) < 0)
+  const behind=Math.sin(truckRot)<0;
+  if(behind){
+    const depth=(1+Math.sin(truckRot))*0.5; // 0=deepest behind, 0.5=equator
+    const scale=0.55+depth*0.25;
+    const ex=cx+Math.cos(truckRot)*rx;
+    const ey=cy+Math.sin(truckRot)*ry;
+    ctx.save();
+    ctx.globalAlpha=0.25+depth*0.2;
+    ctx.translate(ex,ey);
+    ctx.rotate(truckRot+Math.PI/2);
+    ctx.scale(scale,scale);
+    ctx.font=`${Math.round(15*DPR)}px serif`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('🚚',0,0);
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+}
+
+function drawOrbitFront(ctx){
+  // Front half of orbit (sin > 0 = front)
+  const dark=isDark();
+  const rx=orbitRx(), ry=orbitRy();
+  ctx.beginPath();
+  ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI); // bottom arc = in front of globe
+  ctx.setLineDash([3*DPR,5*DPR]);
+  ctx.strokeStyle=dark?'rgba(148,163,184,0.45)':'rgba(30,28,26,0.25)';
+  ctx.lineWidth=DPR;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Truck when in front (sin(truckRot) >= 0)
+  const inFront=Math.sin(truckRot)>=0;
+  if(inFront){
+    const depth=Math.sin(truckRot); // 0=equator, 1=closest
+    const scale=0.85+depth*0.2;
+    const ex=cx+Math.cos(truckRot)*rx;
+    const ey=cy+Math.sin(truckRot)*ry;
+    ctx.save();
+    ctx.globalAlpha=0.75+depth*0.25;
+    ctx.translate(ex,ey);
+    ctx.rotate(truckRot+Math.PI/2);
+    ctx.scale(scale,scale);
+    ctx.font=`${Math.round(15*DPR)}px serif`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('🚚',0,0);
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+}
+
 function drawGlobe(){
   const dark=isDark();
   gx.clearRect(0,0,W,W);
+  // Back orbit arc + truck behind
+  drawOrbitBack(gx);
   gx.beginPath(); path(sphere);
   gx.fillStyle=dark?'#0f172a':'#f0efe9'; gx.fill();
   gx.beginPath(); path(graticule);
@@ -239,26 +307,8 @@ function drawWhirl(){
       wx.lineCap='round'; wx.stroke();
     }
   }
-  // Truck orbiting on 3D ellipse (always in front)
-  const dark2=isDark();
-  const orbitRx=R+16*DPR, orbitRy=(R+16*DPR)*0.38;
-  wx.beginPath();
-  wx.ellipse(cx,cy,orbitRx,orbitRy,0,0,Math.PI*2);
-  wx.setLineDash([3*DPR,5*DPR]);
-  wx.strokeStyle=dark2?'rgba(148,163,184,0.3)':'rgba(30,28,26,0.18)';
-  wx.lineWidth=DPR;
-  wx.stroke();
-  wx.setLineDash([]);
-  const ex=cx+Math.cos(truckRot)*orbitRx;
-  const ey=cy+Math.sin(truckRot)*orbitRy;
-  wx.save();
-  wx.translate(ex,ey);
-  wx.rotate(truckRot+Math.PI/2);
-  wx.font=`${Math.round(15*DPR)}px serif`;
-  wx.textAlign='center';
-  wx.textBaseline='middle';
-  wx.fillText('🚚',0,0);
-  wx.restore();
+  // Front orbit arc + truck in front (drawn on top of whirl)
+  drawOrbitFront(wx);
 }
 
 function tick(){
