@@ -300,18 +300,16 @@ tbody tr.drag-over { background: #e2e8f0; outline: 2px dashed #334155; }
   position: absolute;
   inset: 0;
   z-index: 400;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   pointer-events: none;
   background: rgba(240,239,233,0.55);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
-  opacity: 1;
-  transition: opacity 0.8s ease;
 }
-.globe-overlay.fade-out {
-  opacity: 0;
+.globe-overlay-box {
+  position: absolute;
+  top: calc(50% - 100px);
+  left: calc(50% - 100px);
+  transform-origin: top left;
 }
 .globe-overlay-box {
   display: flex;

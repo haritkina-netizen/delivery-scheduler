@@ -245,10 +245,31 @@ window.startGlobeLoader=async function(){
   if(!rafId) tick();
 };
 window.stopGlobeLoader=function(){
-  const el=document.getElementById('globeOverlay');
-  if(!el||el.classList.contains('fade-out')) return;
-  el.classList.add('fade-out');
-  setTimeout(()=>{ el.style.display='none'; },850);
+  const overlay=document.getElementById('globeOverlay');
+  const box=overlay.querySelector('.globe-overlay-box');
+  if(!overlay||overlay.dataset.settled) return;
+  overlay.dataset.settled='1';
+
+  // Snapshot current absolute position of box inside overlay
+  const br=box.getBoundingClientRect(), or=overlay.getBoundingClientRect();
+  const startTop=br.top-or.top, startLeft=br.left-or.left;
+  box.style.top=startTop+'px'; box.style.left=startLeft+'px';
+  box.offsetHeight; // reflow
+
+  // Fade out blur + bg
+  overlay.style.transition='background 0.7s ease, backdrop-filter 0.7s ease, -webkit-backdrop-filter 0.7s ease';
+  overlay.style.background='transparent';
+  overlay.style.backdropFilter='none';
+  overlay.style.webkitBackdropFilter='none';
+
+  // Animate to bottom-left corner, scale down
+  const scale=0.32, pad=14;
+  const targetTop=overlay.offsetHeight-200*scale-pad;
+  const targetLeft=pad;
+  box.style.transition='top 1s cubic-bezier(0.4,0,0.2,1), left 1s cubic-bezier(0.4,0,0.2,1), transform 1s cubic-bezier(0.4,0,0.2,1)';
+  box.style.top=targetTop+'px';
+  box.style.left=targetLeft+'px';
+  box.style.transform='scale('+scale+')';
 };
 
 initGlobe().then(()=>{
