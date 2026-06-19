@@ -851,5 +851,33 @@ function toggleTheme() {
   }
 })();
 
+// ── Panel resize ───────────────────────────────────────────────────────────
+(function initResize(){
+  const handle = document.getElementById('resizeHandle');
+  const mapPanel = document.getElementById('mapPanel');
+  if (!handle || !mapPanel) return;
+  let dragging = false, startX = 0, startW = 0;
+  handle.addEventListener('mousedown', e => {
+    dragging = true; startX = e.clientX; startW = mapPanel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const appW = mapPanel.parentElement.offsetWidth;
+    const newW = Math.max(200, Math.min(appW - 280, startW + e.clientX - startX));
+    mapPanel.style.width = newW + 'px';
+  });
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+})();
+
 // ── Start ──────────────────────────────────────────────────────────────────
 init();

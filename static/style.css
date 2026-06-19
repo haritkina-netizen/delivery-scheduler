@@ -275,11 +275,19 @@ tbody tr.drag-over { background: #e2e8f0; outline: 2px dashed #334155; }
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--gray-200);
   position: relative;
   z-index: 1;
   isolation: isolate;
 }
+.resize-handle {
+  width: 5px;
+  flex-shrink: 0;
+  background: var(--gray-200);
+  cursor: col-resize;
+  transition: background 0.15s;
+  z-index: 10;
+}
+.resize-handle:hover, .resize-handle.dragging { background: #94a3b8; }
 #map { flex: 1; }
 
 .map-search-bar {
