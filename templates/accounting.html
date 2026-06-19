@@ -572,21 +572,31 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
 .pal-dot{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,.35);transition:transform .12s,border-color .12s;padding:0}
 .pal-dot:hover{transform:scale(1.15)}
 .pal-dot.on{border-color:#fff}
-/* ── MOBILE BOTTOM NAV ── */
+/* ── MOBILE NAV (hamburger drawer) ── */
 .mnav{display:none}
+.m-burger{display:none}
+.m-nav-backdrop{display:none}
+.sb-drawer-head{display:none}
 @media(max-width:760px){
-  /* hide sidebar, use bottom nav */
-  .sidebar{display:none}
-  .content{padding-bottom:120px}
-  .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--navy-d);justify-content:space-around;padding:5px 2px max(5px,env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.18)}
-  .mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.55);font-size:10px;font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit;padding:4px 0;user-select:none}
-  .mnav-item .mi{font-size:18px;line-height:1}
-  .mnav-item.active{color:#fff}
-  .mnav-item.active .mi{transform:scale(1.12)}
+  .mnav{display:none}
+  .content{padding-bottom:24px}
+
+  /* sidebar → off-canvas slide drawer */
+  .sidebar{display:flex;position:fixed;top:0;left:0;bottom:0;width:230px;z-index:200;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:2px 0 18px rgba(0,0,0,.25)}
+  body.nav-open .sidebar{transform:translateX(0)}
+  .m-nav-backdrop{display:block;position:fixed;inset:0;z-index:190;background:rgba(15,20,25,.45);opacity:0;visibility:hidden;transition:opacity .26s,visibility .26s}
+  body.nav-open .m-nav-backdrop{opacity:1;visibility:visible}
+
+  /* hamburger button in header */
+  .m-burger{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:none;background:rgba(255,255,255,.15);border-radius:9px;color:#fff;font-size:19px;cursor:pointer;flex-shrink:0;font-family:inherit}
+
+  /* drawer header (close) */
+  .sb-drawer-head{display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:14px;font-weight:600;padding:6px 8px 12px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:6px}
+  .sb-drawer-head button{background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;padding:2px 6px}
 
   /* compact header */
   .wrap{margin:0;border-radius:0}
-  .hdr{padding:9px 14px;flex-wrap:wrap;gap:6px}
+  .hdr{padding:9px 12px;flex-wrap:wrap;gap:8px;align-items:center}
   .hdr h1{font-size:15px}
   .hdr p{display:none}
   .hdr-r{display:none}
@@ -631,10 +641,6 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
   #incTbody td:nth-of-type(11)::before{content:"สถานะ"}
   #incTbody td:nth-of-type(12){justify-content:flex-end}
 
-  /* FAB add button — only ledger & income-overview (not invoice/delivery-note create) */
-  #page-ledger>.add-btn,#incsub-overview>.add-btn{position:fixed;right:16px;bottom:70px;width:54px;height:54px;border-radius:50%;padding:0;margin:0;z-index:55;background:var(--accent);color:#fff;border:none;box-shadow:0 4px 14px rgba(0,0,0,.28);font-size:0;justify-content:center}
-  #page-ledger>.add-btn::after,#incsub-overview>.add-btn::after{content:"+";font-size:28px;line-height:1}
-
   /* summary cards stack 1-col on very small, else stay */
   .scards{flex-wrap:wrap}
   .sc{min-width:calc(50% - 5px)}
@@ -656,6 +662,7 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
   <option value="ตัน"></option>
 </datalist>
 <div class="hdr">
+  <button class="m-burger" onclick="toggleNavDrawer()" aria-label="เปิดเมนู">☰</button>
   <div>
     <h1>📋 บันทึกบัญชีรายจ่าย</h1>
     <p>แยกหมวดหมู่ — คำนวณ VAT 7% อัตโนมัติ</p>
@@ -673,9 +680,13 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
   <div class="hdr-r" id="hdrMeta"></div>
 </div>
 
+<!-- nav drawer backdrop (mobile) -->
+<div class="m-nav-backdrop" onclick="closeNavDrawer()"></div>
+
 <!-- SIDEBAR + CONTENT SHELL -->
 <div class="shell">
 <nav class="sidebar" id="sidebar">
+  <div class="sb-drawer-head"><span>เมนู</span><button onclick="closeNavDrawer()" aria-label="ปิดเมนู">✕</button></div>
   <div class="sb-item active" data-nav="ledger" onclick="navTo('ledger')"><span class="ic">📝</span><span class="lbl">บันทึกรายจ่าย</span></div>
   <div class="sb-item" data-nav="income:overview" onclick="navTo('income','overview')"><span class="ic">💰</span><span class="lbl">บันทึกรายรับ</span></div>
   <div class="sb-item" data-nav="annual" onclick="navTo('annual')"><span class="ic">📊</span><span class="lbl">สรุปรายปี</span></div>
@@ -1795,7 +1806,11 @@ function navTo(name,sub){
   const el=document.querySelector('.sb-item[data-nav="'+key+'"]');
   showPage(name,el);
   if(sub)incSwitchSub(sub);
+  closeNavDrawer();
 }
+
+function toggleNavDrawer(){ document.body.classList.toggle('nav-open'); }
+function closeNavDrawer(){ document.body.classList.remove('nav-open'); }
 
 /* ── SAVE / LOAD ── */
 function saveData(manual=false){
