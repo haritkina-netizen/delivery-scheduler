@@ -3001,7 +3001,7 @@ function renderAnnual(){
   const netBase=incBase-expBase;
   const netGrand=incGrand-expGrand;
   const isProfit=netGrand>=0;
-  const netColor=netGrand>0?'#16a34a':netGrand<0?'#dc2626':'#555';
+  const netColor=netGrand>0?'#5b7d76':netGrand<0?'#dc2626':'#555';
 
   // header badge
   document.getElementById('yearGrand').textContent=(netGrand>=0?'+':'')+fmt(Math.abs(netGrand));
@@ -3021,7 +3021,7 @@ function renderAnnual(){
   document.getElementById('kpiNetBase').style.color=netColor;
   const netPanel=document.getElementById('netPanel');
   netPanel.className=netGrand>0?'profit':netGrand<0?'loss':'';
-  netPanel.style.border=`2px solid ${netGrand>0?'#16a34a':netGrand<0?'#e57373':'#ddd'}`;
+  netPanel.style.border=`2px solid ${netGrand>0?'#5b7d76':netGrand<0?'#e57373':'#ddd'}`;
   netPanel.style.background=netGrand>0?'linear-gradient(160deg,#f0fdf7,#e6f9f0)':netGrand<0?'linear-gradient(160deg,#fff5f5,#ffe8e8)':'#fafaf8';
   document.getElementById('kpiNetSub').textContent=incGrand>0?(expGrand>0?`อัตรากำไร ${((netGrand/incGrand)*100).toFixed(1)}% ของรายรับ`:''):'ยังไม่มีรายรับ';
   document.getElementById('kpiNetSub').style.color=netColor;
@@ -3040,7 +3040,7 @@ function renderAnnual(){
     const netC=net>0?'#e8b04a':net<0?'#e57373':'transparent';
     return`<div class="bar-col" style="${inR?'':'opacity:.35'}">
       <div class="bar-wrap" style="display:flex;align-items:flex-end;gap:2px;height:130px">
-        <div title="รายรับ ${name}: ${fmt(inc)}" style="width:10px;height:${hInc}px;background:${inR?'#16a34a':'#9fd4c4'};border-radius:3px 3px 0 0;flex-shrink:0"></div>
+        <div title="รายรับ ${name}: ${fmt(inc)}" style="width:10px;height:${hInc}px;background:${inR?'#5b7d76':'#9fd4c4'};border-radius:3px 3px 0 0;flex-shrink:0"></div>
         <div title="รายจ่าย ${name}: ${fmt(exp)}" style="width:10px;height:${hExp}px;background:${inR?'#1a3a5c':'#a8bdd4'};border-radius:3px 3px 0 0;flex-shrink:0"></div>
         <div title="กำไร/ขาดทุน ${name}: ${net>=0?'+':''}${fmt(Math.abs(net))}" style="width:8px;height:${hNet}px;background:${netC};border-radius:3px 3px 0 0;flex-shrink:0;opacity:.8"></div>
       </div>
@@ -3062,17 +3062,17 @@ function renderAnnual(){
     const pct=inc>0?` (${((net/inc)*100).toFixed(1)}%)`:exp>0?' (−)':'';
     reconRows+=`<tr class="${cls}">
       <td style="font-weight:500">${name}</td>
-      <td class="r" style="color:#16a34a;font-variant-numeric:tabular-nums">${inc?fmt(inc):'-'}</td>
+      <td class="r" style="color:#5b7d76;font-variant-numeric:tabular-nums">${inc?fmt(inc):'-'}</td>
       <td class="r" style="color:#1a3a5c;font-variant-numeric:tabular-nums">${exp?fmt(exp):'-'}</td>
       <td class="r" style="font-weight:700;font-variant-numeric:tabular-nums">${net!==0?(net>0?'+':'')+fmt(Math.abs(net)):'-'}</td>
       <td><span style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;background:${net>0?'#d1fae5':net<0?'#fee2e2':'#f3f3f0'};color:${net>0?'#065f46':net<0?'#7f1d1d':'#888'};-webkit-print-color-adjust:exact">${net>0?'▲ กำไร'+pct:net<0?'▼ ขาดทุน'+pct:'เท่ากัน'}</span></td>
     </tr>`;
   });
   const totNet=totInc-totExp;
-  const totCls=totNet>0?'#16a34a':totNet<0?'#dc2626':'#555';
+  const totCls=totNet>0?'#5b7d76':totNet<0?'#dc2626':'#555';
   reconRows+=`<tr style="background:#f0f4f9;font-weight:700;border-top:2px solid #ccc">
     <td style="font-weight:800">รวม ${isFullYear?'ทั้งปี':MNAMES[mf]+'–'+MNAMES[mt]}</td>
-    <td class="r" style="color:#16a34a;font-variant-numeric:tabular-nums">${fmt(totInc)}</td>
+    <td class="r" style="color:#5b7d76;font-variant-numeric:tabular-nums">${fmt(totInc)}</td>
     <td class="r" style="color:#1a3a5c;font-variant-numeric:tabular-nums">${fmt(totExp)}</td>
     <td class="r" style="color:${totCls};font-size:14px;font-variant-numeric:tabular-nums">${totNet>=0?'+':''+(totNet<0?'':'')}${fmt(Math.abs(totNet))}</td>
     <td><span style="font-size:11px;padding:3px 10px;border-radius:10px;font-weight:700;background:${totNet>0?'#d1fae5':totNet<0?'#fee2e2':'#f3f3f0'};color:${totNet>0?'#065f46':totNet<0?'#7f1d1d':'#888'};-webkit-print-color-adjust:exact">${totNet>0?'▲ กำไรสุทธิ':totNet<0?'▼ ขาดทุนสุทธิ':'เท่ากัน'}</span></td>
@@ -3090,9 +3090,9 @@ function renderAnnual(){
       <td class="r">${v.count}</td>
       <td class="r">${fmt(v.base)}</td>
       <td class="r">${fmt(v.vat)}</td>
-      <td class="r" style="font-weight:600;color:#16a34a">${fmt(total)}</td>
+      <td class="r" style="font-weight:600;color:#5b7d76">${fmt(total)}</td>
       <td><div style="display:flex;align-items:center;gap:6px">
-        <div class="pct-bar-wrap"><div class="pct-bar" style="width:${pct}%;background:${c.fg||'#16a34a'}"></div></div>
+        <div class="pct-bar-wrap"><div class="pct-bar" style="width:${pct}%;background:${c.fg||'#5b7d76'}"></div></div>
         <span style="font-size:11px;color:#888">${pct}%</span>
       </div></td></tr>`;
   }).join(''):`<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:#aaa">ไม่มีข้อมูลรายรับในปีนี้</td></tr>`;
@@ -3159,7 +3159,7 @@ function printAnnual(){
     const inc=incM[i].base+incM[i].vat,exp=expM[i].base+expM[i].vat,net=inc-exp;
     const nc=net>0?'#065f46':net<0?'#7f1d1d':'#888';
     return`<tr><td style="padding:5px 8px">${name}</td>
-      <td style="text-align:right;padding:5px 8px;color:#16a34a;font-variant-numeric:tabular-nums">${inc?fmt(inc):'-'}</td>
+      <td style="text-align:right;padding:5px 8px;color:#5b7d76;font-variant-numeric:tabular-nums">${inc?fmt(inc):'-'}</td>
       <td style="text-align:right;padding:5px 8px;color:#1a3a5c;font-variant-numeric:tabular-nums">${exp?fmt(exp):'-'}</td>
       <td style="text-align:right;padding:5px 8px;font-weight:700;color:${nc};font-variant-numeric:tabular-nums">${net!==0?(net>0?'+':'')+fmt(Math.abs(net)):'-'}</td>
       <td style="padding:5px 8px"><span style="background:${net>0?'#d1fae5':net<0?'#fee2e2':'#f3f3f0'};color:${nc};font-size:9px;padding:1px 6px;border-radius:8px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact">${net>0?'▲ กำไร':net<0?'▼ ขาดทุน':'เท่ากัน'}</span></td></tr>`;
@@ -3172,7 +3172,7 @@ function printAnnual(){
       <td style="text-align:center;padding:5px 8px">${v.count}</td>
       <td style="text-align:right;padding:5px 8px">${fmt(v.base)}</td>
       <td style="text-align:right;padding:5px 8px">${fmt(v.vat)}</td>
-      <td style="text-align:right;padding:5px 8px;font-weight:600;color:#16a34a">${fmt(total)}</td>
+      <td style="text-align:right;padding:5px 8px;font-weight:600;color:#5b7d76">${fmt(total)}</td>
       <td style="padding:5px 8px">${pct}%</td></tr>`;
   }).join('');
 
@@ -3199,7 +3199,7 @@ h2{font-size:16px;font-weight:700;margin-bottom:3px}
 table{width:100%;border-collapse:collapse;margin-bottom:16px}
 th{padding:6px 8px;text-align:left;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 th.r{text-align:right}td{border-bottom:1px solid #eee;padding:5px 8px}
-.th-inc{background:#16a34a;color:#fff} .th-exp{background:#1a3a5c;color:#fff} .th-rec{background:#374151;color:#fff}
+.th-inc{background:#5b7d76;color:#fff} .th-exp{background:#1a3a5c;color:#fff} .th-rec{background:#374151;color:#fff}
 .kpi3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
 .kpi-panel{border-radius:8px;padding:10px 14px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .kpi-panel .kl{font-size:9px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
@@ -3214,11 +3214,11 @@ th.r{text-align:right}td{border-bottom:1px solid #eee;padding:5px 8px}
 <div class="sub">${biz?biz+' — ':''}พิมพ์เมื่อ ${printDate}</div>
 <div class="kpi3">
   <div class="kpi-panel" style="border:1px solid #b5e4d1;background:#f0fdf7">
-    <div class="kl" style="color:#16a34a">💰 รายรับ</div>
+    <div class="kl" style="color:#5b7d76">💰 รายรับ</div>
     <div class="kpi3-inner">
-      <div class="ki"><div class="l">รายการ</div><div class="v" style="color:#16a34a">${inRInc.reduce((a,m)=>a+m.count,0)}</div></div>
-      <div class="ki"><div class="l">ก่อน VAT</div><div class="v" style="color:#16a34a">${fmt(incBase)}</div></div>
-      <div class="ki"><div class="l">รวมสุทธิ</div><div class="v" style="color:#16a34a">${fmt(incGrand)}</div></div>
+      <div class="ki"><div class="l">รายการ</div><div class="v" style="color:#5b7d76">${inRInc.reduce((a,m)=>a+m.count,0)}</div></div>
+      <div class="ki"><div class="l">ก่อน VAT</div><div class="v" style="color:#5b7d76">${fmt(incBase)}</div></div>
+      <div class="ki"><div class="l">รวมสุทธิ</div><div class="v" style="color:#5b7d76">${fmt(incGrand)}</div></div>
     </div>
   </div>
   <div class="kpi-panel" style="border:1px solid #b8cee8;background:#e8f0f8">
@@ -3229,7 +3229,7 @@ th.r{text-align:right}td{border-bottom:1px solid #eee;padding:5px 8px}
       <div class="ki"><div class="l">รวมสุทธิ</div><div class="v" style="color:#1a3a5c">${fmt(expGrand)}</div></div>
     </div>
   </div>
-  <div class="net-card" style="border:2px solid ${netGrand>0?'#16a34a':netGrand<0?'#e57373':'#ddd'};background:${netBg}">
+  <div class="net-card" style="border:2px solid ${netGrand>0?'#5b7d76':netGrand<0?'#e57373':'#ddd'};background:${netBg}">
     <div style="font-size:9px;font-weight:700;color:${netColor};text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">⚖️ กำไร / ขาดทุนสุทธิ</div>
     <div style="font-size:22px;font-weight:800;color:${netColor}">${netGrand>=0?'+':''+(netGrand<0?'':'')}${fmt(Math.abs(netGrand))}</div>
     ${incGrand>0?`<div style="font-size:10px;color:${netColor};margin-top:3px">อัตรากำไร ${((netGrand/incGrand)*100).toFixed(1)}% ของรายรับ</div>`:''}
@@ -3240,12 +3240,12 @@ th.r{text-align:right}td{border-bottom:1px solid #eee;padding:5px 8px}
 <tbody>${reconRows}</tbody>
 <tfoot><tr style="background:#f0f4f9;font-weight:700;border-top:2px solid #ccc">
   <td>รวม ${isFullYear?'ทั้งปี':MNAMES[mf]+'–'+MNAMES[mt]}</td>
-  <td style="text-align:right;color:#16a34a;font-variant-numeric:tabular-nums">${fmt(incGrand)}</td>
+  <td style="text-align:right;color:#5b7d76;font-variant-numeric:tabular-nums">${fmt(incGrand)}</td>
   <td style="text-align:right;color:#1a3a5c;font-variant-numeric:tabular-nums">${fmt(expGrand)}</td>
   <td style="text-align:right;font-weight:800;color:${netColor};font-size:13px;font-variant-numeric:tabular-nums">${netGrand>=0?'+':''+(netGrand<0?'':'')}${fmt(Math.abs(netGrand))}</td>
   <td><span style="background:${netBg};color:${netColor};font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">${netGrand>0?'▲ กำไร':netGrand<0?'▼ ขาดทุน':'เท่ากัน'}</span></td>
 </tr></tfoot></table>
-${incCatRows?`<div class="sec" style="border-color:#16a34a;color:#16a34a">💰 รายรับแยกตามหมวดหมู่</div>
+${incCatRows?`<div class="sec" style="border-color:#5b7d76;color:#5b7d76">💰 รายรับแยกตามหมวดหมู่</div>
 <table><thead><tr class="th-inc"><th>หมวดหมู่</th><th style="text-align:center;width:55px">รายการ</th><th class="r" style="width:90px">ก่อน VAT</th><th class="r" style="width:75px">VAT</th><th class="r" style="width:90px">รวม</th><th style="width:50px">%</th></tr></thead>
 <tbody>${incCatRows}</tbody></table>`:''}
 ${expCatRows?`<div class="sec" style="border-color:#1a3a5c;color:#1a3a5c">📝 รายจ่ายแยกตามหมวดหมู่</div>
@@ -3348,7 +3348,7 @@ function doPrint(){
     const amt=rowAmt(r),vat=rowVat(r);const c=ci(r.cat);pn++;
     const bg=i%2===0?'#ffffff':'#f7f8fa';
     const vatBadge=r.hasVat
-      ?'<span style="background:#dcfce7;color:#16a34a;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">มี VAT</span>'
+      ?'<span style="background:#e4ecea;color:#5b7d76;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">มี VAT</span>'
       :'<span style="background:#f1f5f9;color:#999;font-size:9px;padding:2px 6px;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">ไม่มี</span>';
     const catBadge='<span style="background:'+c.bg+';color:'+c.fg+';font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+r.cat+'</span>';
     const subBadge=r.subs&&r.subs.length?'<span style="font-size:9px;background:#dbeafe;color:#1e40af;border-radius:6px;padding:1px 5px;margin-left:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+r.subs.length+' ย่อย</span>':'';
@@ -3745,9 +3745,9 @@ function incRenderTable(){
       <td>
         <div style="display:flex;align-items:center;gap:4px">
           <button class="expand-btn${r._expanded?' open':''}" onclick="incToggleExpand(${r.id})" title="ขยาย/ยุบรายการย่อย"
-            style="flex-shrink:0;position:relative">▶${hasSubs?`<span style="position:absolute;top:-4px;right:-5px;background:#16a34a;color:#fff;font-size:8px;font-weight:700;border-radius:8px;padding:0 3px;line-height:13px">${r.subs.length}</span>`:''}</button>
+            style="flex-shrink:0;position:relative">▶${hasSubs?`<span style="position:absolute;top:-4px;right:-5px;background:#5b7d76;color:#fff;font-size:8px;font-weight:700;border-radius:8px;padding:0 3px;line-height:13px">${r.subs.length}</span>`:''}</button>
           ${r.inv&&r.inv.invNo
-            ?`<span style="flex:1;min-width:0;font-weight:700;color:#16a34a;padding:5px 7px;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="เลขที่บิล (กำหนดที่หน้าออกใบกำกับภาษี/ใบส่งสินค้า)">${esc(r.inv.invNo)}</span>`
+            ?`<span style="flex:1;min-width:0;font-weight:700;color:#5b7d76;padding:5px 7px;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="เลขที่บิล (กำหนดที่หน้าออกใบกำกับภาษี/ใบส่งสินค้า)">${esc(r.inv.invNo)}</span>`
             :`<input type="text" placeholder="คำอธิบายรายการ" value="${esc(r.desc)}"
               oninput="acShow(${r.id},'desc',this,window.incRows)" onkeydown="acKeydown(event,${r.id},'desc',this)"
               onblur="setTimeout(acHide,150)" onchange="incFieldChange(${r.id},'desc',this.value)" style="flex:1;min-width:0"/>`
@@ -3781,7 +3781,7 @@ function incRenderTable(){
       </td>
       <td style="text-align:center;padding:3px 4px;white-space:nowrap">
         <button onclick="printDeliveryNote(${r.id})" title="ใบกำกับภาษี (3 ชุด)"
-          style="background:none;border:1px solid #b5e4d1;border-radius:4px;cursor:pointer;color:#16a34a;font-size:12px;padding:2px 5px;margin-right:2px">📋</button>
+          style="background:none;border:1px solid #b5e4d1;border-radius:4px;cursor:pointer;color:#5b7d76;font-size:12px;padding:2px 5px;margin-right:2px">📋</button>
         <button onclick="printSimpleDelivery(${r.id})" title="ใบส่งสินค้า (แบบเดิม)"
           style="background:none;border:1px solid #93c5fd;border-radius:4px;cursor:pointer;color:#1d4ed8;font-size:12px;padding:2px 5px;margin-right:2px">🚚</button>
         <button class="del-btn" onclick="incDelRow(${r.id})" title="ลบรายการ">×</button>
@@ -3831,7 +3831,7 @@ function incBuildSubInner(r){
   });
 
   const addBtn=`<div style="padding:5px 14px">
-    <button class="add-sub-btn" style="color:#16a34a;border-color:#16a34a" onclick="incAddSub(${rid})">＋ เพิ่มรายการย่อย</button>
+    <button class="add-sub-btn" style="color:#5b7d76;border-color:#5b7d76" onclick="incAddSub(${rid})">＋ เพิ่มรายการย่อย</button>
   </div>`;
 
   if(!r.subs||!r.subs.length){ el.innerHTML=addBtn; return; }
@@ -3863,13 +3863,13 @@ function incBuildSubInner(r){
           <input type="number" min="0" step="1" placeholder="0" value="${s.lang||''}"
             onchange="incSubLang(${rid},'${s.sid}',this.value)"
             style="width:38px;border:1px solid #b5e4d1;border-radius:4px;padding:4px 5px;font-size:12px;font-family:inherit;background:#f0fdf7;color:#065f46;text-align:right;font-weight:600"/>
-          <span style="font-size:9px;color:#16a34a;font-weight:600">ลัง</span>
+          <span style="font-size:9px;color:#5b7d76;font-weight:600">ลัง</span>
           <input type="number" min="0" step="1" placeholder="0" value="${s.bottle||''}"
             onchange="incSubBottle(${rid},'${s.sid}',this.value)"
             style="width:38px;border:1px solid #93c5fd;border-radius:4px;padding:4px 5px;font-size:12px;font-family:inherit;background:#eff6ff;color:#1d4ed8;text-align:right;font-weight:600;margin-left:3px"/>
           <span style="font-size:9px;color:#0369a1;font-weight:600">ขวด</span>
         </div>
-        <div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:1px">${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)?'รวม '+((s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0))+' ขวด':''}</div>`;
+        <div style="font-size:9px;color:#5b7d76;font-weight:700;margin-top:1px">${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)?'รวม '+((s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0))+' ขวด':''}</div>`;
 
     const priceCell=mode==='qty'
       ?`<div style="display:flex;align-items:center;gap:3px">
@@ -3887,7 +3887,7 @@ function incBuildSubInner(r){
 
     const modeToggle=`<div style="display:flex;gap:2px;margin-bottom:3px">
         <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','crate')" title="ลัง/ขวด (24 ขวด/ลัง อัตโนมัติ)"
-          style="font-size:9px;padding:1px 5px;border-radius:3px;cursor:pointer;border:1px solid ${mode==='crate'?'#16a34a':'#ddd'};background:${mode==='crate'?'#16a34a':'#fff'};color:${mode==='crate'?'#fff':'#999'}">ลัง/ขวด</button>
+          style="font-size:9px;padding:1px 5px;border-radius:3px;cursor:pointer;border:1px solid ${mode==='crate'?'#5b7d76':'#ddd'};background:${mode==='crate'?'#5b7d76':'#fff'};color:${mode==='crate'?'#fff':'#999'}">ลัง/ขวด</button>
         <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','qty')" title="จำนวน + หน่วยอื่น เช่น กก./ชิ้น/ถุง"
           style="font-size:9px;padding:1px 5px;border-radius:3px;cursor:pointer;border:1px solid ${mode==='qty'?'#b45309':'#ddd'};background:${mode==='qty'?'#b45309':'#fff'};color:${mode==='qty'?'#fff':'#999'}">หน่วยอื่น</button>
       </div>`;
@@ -3908,7 +3908,7 @@ function incBuildSubInner(r){
       </td>
       <td style="padding:4px 5px;width:172px">${modeToggle}${qtyCell}</td>
       <td style="padding:4px 5px;width:104px">${priceCell}</td>
-      <td style="width:96px;text-align:right;font-size:12px;font-weight:700;color:#16a34a;padding:4px 8px;font-variant-numeric:tabular-nums">${s.amount?fmt(parseFloat(s.amount)):'-'}</td>
+      <td style="width:96px;text-align:right;font-size:12px;font-weight:700;color:#5b7d76;padding:4px 8px;font-variant-numeric:tabular-nums">${s.amount?fmt(parseFloat(s.amount)):'-'}</td>
       <td style="width:26px;padding:3px 2px;text-align:center">
         <button onclick="incDelSub(${rid},'${s.sid}')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:15px;padding:2px 4px">×</button>
       </td>
@@ -3933,10 +3933,10 @@ function incBuildSubInner(r){
         ${qtySummaryText?`<div style="color:#b45309">${qtySummaryText}</div>`:''}
       </td>
       <td style="text-align:right;font-size:11px;padding:5px 6px">
-        <span style="color:#16a34a;font-weight:600;font-variant-numeric:tabular-nums">${fmt(subTotal)}</span>
+        <span style="color:#5b7d76;font-weight:600;font-variant-numeric:tabular-nums">${fmt(subTotal)}</span>
         ${r.hasVat?`<span style="color:#888;font-size:10px;margin-left:4px">+VAT ${fmt(vat)}</span>`:''}
       </td>
-      <td style="text-align:right;font-weight:800;font-size:13px;color:#16a34a;padding:5px 8px;font-variant-numeric:tabular-nums">${subTotal?fmt(subTotal+vat):'-'}</td>
+      <td style="text-align:right;font-weight:800;font-size:13px;color:#5b7d76;padding:5px 8px;font-variant-numeric:tabular-nums">${subTotal?fmt(subTotal+vat):'-'}</td>
       <td></td>
     </tr>
     <tr style="background:#eaf7f0"><td colspan="7" style="padding:0">${addBtn}</td></tr>`;
@@ -4360,12 +4360,12 @@ function docRenderItems(kind){
         +'<input type="number" min="0" step="any" placeholder="0" value="'+(s.qty||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'qty\',this.value)" style="width:50px;display:inline-block"/>'
         +'<input type="text" list="subUnitPresets" placeholder="หน่วย" value="'+esc(s.unit||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'unit\',this.value)" style="width:58px;display:inline-block;margin-left:3px"/>')
       :('<input type="number" min="0" step="1" placeholder="0" value="'+(s.lang||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'lang\',this.value)" style="width:40px;display:inline-block"/>'
-        +'<span style="font-size:9px;color:#16a34a;font-weight:600;margin:0 2px">ลัง</span>'
+        +'<span style="font-size:9px;color:#5b7d76;font-weight:600;margin:0 2px">ลัง</span>'
         +'<input type="number" min="0" step="1" placeholder="0" value="'+(s.bottle||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'bottle\',this.value)" style="width:40px;display:inline-block"/>'
         +'<span style="font-size:9px;color:#0369a1;font-weight:600;margin-left:2px">ขวด</span>');
     const modeToggle='<div style="display:flex;gap:2px;margin-bottom:3px">'
         +'<button type="button" onclick="docItemSetMode(\''+kind+'\',\''+s.sid+'\',\'crate\')" title="ลัง/ขวด (24 ขวด/ลัง อัตโนมัติ)"'
-        +' style="font-size:9px;padding:1px 5px;border-radius:3px;cursor:pointer;border:1px solid '+(mode==='crate'?'#16a34a':'#ddd')+';background:'+(mode==='crate'?'#16a34a':'#fff')+';color:'+(mode==='crate'?'#fff':'#999')+'">ลัง/ขวด</button>'
+        +' style="font-size:9px;padding:1px 5px;border-radius:3px;cursor:pointer;border:1px solid '+(mode==='crate'?'#5b7d76':'#ddd')+';background:'+(mode==='crate'?'#5b7d76':'#fff')+';color:'+(mode==='crate'?'#fff':'#999')+'">ลัง/ขวด</button>'
         +'<button type="button" onclick="docItemSetMode(\''+kind+'\',\''+s.sid+'\',\'qty\')" title="จำนวน + หน่วยอื่น เช่น กก./ชิ้น/ถุง"'
         +' style="font-size:9px;padding:1px 5px;border-radius:3px;cursor:pointer;border:1px solid '+(mode==='qty'?'#b45309':'#ddd')+';background:'+(mode==='qty'?'#b45309':'#fff')+';color:'+(mode==='qty'?'#fff':'#999')+'">หน่วยอื่น</button>'
         +'</div>';
@@ -4379,7 +4379,7 @@ function docRenderItems(kind){
       +'<input type="text" placeholder="ชื่อสินค้า / รายการ" value="'+esc(s.desc||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'desc\',this.value)" oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)"/>'
       +'<div>'+modeToggle+qtyCell+'</div>'
       +'<div>'+priceCell+'</div>'
-      +'<div style="text-align:right;font-weight:700;color:#16a34a;font-size:12.5px">'+(s.amount?fmt(parseFloat(s.amount)):'-')+'</div>'
+      +'<div style="text-align:right;font-weight:700;color:#5b7d76;font-size:12.5px">'+(s.amount?fmt(parseFloat(s.amount)):'-')+'</div>'
       +'<button class="rec-del-btn" onclick="docDelItem(\''+kind+'\',\''+s.sid+'\')" title="ลบ">×</button>'
       +'</div>';
   }).join('');
@@ -4666,7 +4666,7 @@ function incDoPrint(){
     const amt=rowAmt(r),vat=rowVat(r);const c=incCi(r.cat);pn++;
     const bg=i%2===0?'#ffffff':'#f6faf8';
     const vatBadge=r.hasVat
-      ?'<span style="background:#dcfce7;color:#16a34a;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">มี VAT</span>'
+      ?'<span style="background:#e4ecea;color:#5b7d76;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">มี VAT</span>'
       :'<span style="background:#f1f5f9;color:#999;font-size:9px;padding:2px 6px;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">ไม่มี</span>';
     const catBadge='<span style="background:'+c.bg+';color:'+c.fg+';font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+r.cat+'</span>';
     const subBadge=r.subs&&r.subs.length?'<span style="font-size:9px;background:#d1fae5;color:#065f46;border-radius:6px;padding:1px 5px;margin-left:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+r.subs.length+' ย่อย</span>':'';
@@ -4684,7 +4684,7 @@ function incDoPrint(){
       '<td style="text-align:center;padding:6px 7px;border-bottom:1px solid #eee">'+vatBadge+'</td>'+
       '<td style="text-align:right;padding:6px 8px;border-bottom:1px solid #eee;font-size:11px;font-variant-numeric:tabular-nums">'+(amt?fmt(amt):'-')+'</td>'+
       '<td style="text-align:right;padding:6px 8px;border-bottom:1px solid #eee;font-size:11px;color:#888;font-variant-numeric:tabular-nums">'+(r.hasVat&&amt?fmt(vat):'-')+'</td>'+
-      '<td style="text-align:right;padding:6px 8px;border-bottom:1px solid #eee;font-size:11px;font-weight:700;color:#16a34a;font-variant-numeric:tabular-nums">'+(amt?fmt(amt+vat):'-')+'</td>'+
+      '<td style="text-align:right;padding:6px 8px;border-bottom:1px solid #eee;font-size:11px;font-weight:700;color:#5b7d76;font-variant-numeric:tabular-nums">'+(amt?fmt(amt+vat):'-')+'</td>'+
       '</tr>';
     const subs=(r.subs&&r.subs.length)?r.subs.map((s,si)=>{
       const isP=s.type==='product';
@@ -4721,7 +4721,7 @@ function incDoPrint(){
         '<td style="text-align:center;padding:5px 8px;border-bottom:1px solid #eee;font-size:11px">'+v.count+'</td>'+
         '<td style="text-align:right;padding:5px 8px;border-bottom:1px solid #eee;font-size:11px;font-variant-numeric:tabular-nums">'+fmt(v.base)+'</td>'+
         '<td style="text-align:right;padding:5px 8px;border-bottom:1px solid #eee;font-size:11px;color:#888;font-variant-numeric:tabular-nums">'+fmt(v.vat)+'</td>'+
-        '<td style="text-align:right;padding:5px 8px;border-bottom:1px solid #eee;font-size:11px;font-weight:700;color:#16a34a;font-variant-numeric:tabular-nums">'+fmt(tot)+'</td>'+
+        '<td style="text-align:right;padding:5px 8px;border-bottom:1px solid #eee;font-size:11px;font-weight:700;color:#5b7d76;font-variant-numeric:tabular-nums">'+fmt(tot)+'</td>'+
         '<td style="text-align:right;padding:5px 8px;border-bottom:1px solid #eee;font-size:11px;color:#888">'+pct+'%</td>'+
         '</tr>';}).join('');
 
@@ -4733,26 +4733,26 @@ function incDoPrint(){
 '*{box-sizing:border-box;margin:0;padding:0}'+
 'body{font-family:Sarabun,Arial,sans-serif;font-size:11px;color:#1a1a1a;background:#fff}'+
 '.page{padding:.8cm 1cm}'+
-'.doc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:3px solid #16a34a;margin-bottom:14px}'+
-'.doc-title{font-size:18px;font-weight:700;color:#16a34a;margin-bottom:3px}'+
+'.doc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:3px solid #5b7d76;margin-bottom:14px}'+
+'.doc-title{font-size:18px;font-weight:700;color:#5b7d76;margin-bottom:3px}'+
 '.doc-sub{font-size:11px;color:#888;margin-bottom:6px}'+
 '.doc-meta{font-size:11px;color:#444;line-height:1.8}.doc-meta b{color:#1a1a1a}'+
 '.doc-right{text-align:right;font-size:11px;color:#444;line-height:1.8}'+
 '.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}'+
 '.kpi{border:1px solid #e8e6e0;border-radius:7px;padding:8px 12px;background:#fafaf8;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
-'.kpi.hl{border-color:#16a34a;background:#e8f7f0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+'.kpi.hl{border-color:#5b7d76;background:#e8f7f0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
 '.kpi .kl{font-size:9px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}'+
 '.kpi .kv{font-size:16px;font-weight:700;color:#1a1a1a;font-variant-numeric:tabular-nums}'+
-'.kpi.hl .kv{color:#16a34a}'+
+'.kpi.hl .kv{color:#5b7d76}'+
 'table{width:100%;border-collapse:collapse;margin-bottom:14px}'+
-'.main-table thead tr{background:#16a34a;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+'.main-table thead tr{background:#5b7d76;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
 '.main-table thead th{color:#fff;padding:7px 7px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}'+
 '.main-table thead th.r{text-align:right}'+
 '.cat-table thead tr{background:#374151;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
 '.cat-table thead th{color:#fff;padding:6px 8px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}'+
 '.cat-table thead th.r{text-align:right}'+
 '.section-title{font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;display:flex;align-items:center;gap:6px}'+
-'.section-title::before{content:"";display:inline-block;width:3px;height:14px;background:#16a34a;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+'.section-title::before{content:"";display:inline-block;width:3px;height:14px;background:#5b7d76;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
 '.sign-row{display:flex;justify-content:flex-end;gap:40px;margin-top:24px;padding-top:16px;border-top:1px solid #e8e6e0}'+
 '.sign-box{text-align:center;font-size:10px;color:#555}'+
 '.sign-line{border-top:1px solid #aaa;width:130px;margin:32px auto 5px}'+
@@ -5587,7 +5587,7 @@ function printDeliveryNote(id){
     +'.ie-tbl input[type=number]{-moz-appearance:textfield}'
     +'.ie-tbl input:focus{background:#f0f7ff;outline:1px solid #1a3a5c}'
     +'.ie-tbl input.r{text-align:right}'
-    +'.add-bonus-btn{margin-top:7px;font-family:inherit;font-size:12px;font-weight:600;color:#16a34a;background:none;border:1.5px dashed #16a34a;border-radius:6px;padding:5px 16px;cursor:pointer;width:100%}'
+    +'.add-bonus-btn{margin-top:7px;font-family:inherit;font-size:12px;font-weight:600;color:#5b7d76;background:none;border:1.5px dashed #5b7d76;border-radius:6px;padding:5px 16px;cursor:pointer;width:100%}'
     +'#doc-wrap{padding:20px}'
     +'.doc-page{background:#fff;width:210mm;min-height:270mm;margin:0 auto 16px;box-shadow:0 2px 20px rgba(0,0,0,.18);padding:.7cm .9cm;page-break-after:always}'
     +'.comp-hdr{border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}'
@@ -5683,13 +5683,13 @@ function printDeliveryNote(id){
     +'var bonusHtml="";'
     +'if(bonus.length){'
     +'bonusHtml="<div style=\\"border-top:1px dashed #b5e4d1;padding-top:6px;margin-top:6px\\">"'
-    +'+"<div style=\\"font-size:9px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px\\">🎁 รายการแถม</div>"'
+    +'+"<div style=\\"font-size:9px;font-weight:700;color:#5b7d76;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px\\">🎁 รายการแถม</div>"'
     +'+"<table style=\\"width:100%;border-collapse:collapse;font-size:10.5px\\"><thead><tr>"'
     +'+"<th style=\\"text-align:left;padding:2px 4px;color:#666;border-bottom:1px solid #e0e0e0\\">รายการ</th>"'
     +'+"<th style=\\"text-align:center;padding:2px 4px;color:#666;border-bottom:1px solid #e0e0e0;width:45px\\">ลัง</th>"'
     +'+"<th style=\\"text-align:center;padding:2px 4px;color:#666;border-bottom:1px solid #e0e0e0;width:45px\\">ขวด</th>"'
     +'+"</tr></thead><tbody>"'
-    +'+bonus.map(function(b){return"<tr><td style=\\"padding:3px 4px\\">"+e(b.desc||"—")+"</td><td style=\\"text-align:center;padding:3px 4px;font-weight:600;color:#16a34a\\">"+(b.lang||"-")+"</td><td style=\\"text-align:center;padding:3px 4px;font-weight:600;color:#16a34a\\">"+(b.bottle||"-")+"</td></tr>";}).join("")'
+    +'+bonus.map(function(b){return"<tr><td style=\\"padding:3px 4px\\">"+e(b.desc||"—")+"</td><td style=\\"text-align:center;padding:3px 4px;font-weight:600;color:#5b7d76\\">"+(b.lang||"-")+"</td><td style=\\"text-align:center;padding:3px 4px;font-weight:600;color:#5b7d76\\">"+(b.bottle||"-")+"</td></tr>";}).join("")'
     +'+"</tbody></table></div>";'
     +'}'
     +'var leftCell="<div style=\\"font-size:11px;font-style:italic\\">( "+thaiAmt(grand)+" )</div>"+bonusHtml;'
@@ -5819,7 +5819,7 @@ function printSimpleDelivery(id){
       +'<td style="text-align:center;border:1px solid #ccc;padding:5px 6px;font-size:11px;font-weight:600">'+(it.lang?it.lang+(it.pkgUnit?' '+it.pkgUnit:''):'-')+'</td>'
       +'<td style="text-align:center;border:1px solid #ccc;padding:5px 6px;font-size:11px;font-weight:600">'+(it.bottle?it.bottle+(it.unit?' '+it.unit:''):'-')+'</td>'
       +'<td style="text-align:right;border:1px solid #ccc;padding:5px 8px;font-size:11px">'+(it.price?it.price.toFixed(2):'-')+'</td>'
-      +'<td style="text-align:right;border:1px solid #ccc;padding:5px 8px;font-size:11px;font-weight:700;color:#16a34a">'+(it.amount?fmt2(it.amount):'-')+'</td>'
+      +'<td style="text-align:right;border:1px solid #ccc;padding:5px 8px;font-size:11px;font-weight:700;color:#5b7d76">'+(it.amount?fmt2(it.amount):'-')+'</td>'
       +'</tr>';
   }).join('');
 
@@ -5831,25 +5831,25 @@ function printSimpleDelivery(id){
     +'body{font-family:Sarabun,Arial,sans-serif;font-size:12px;color:#000}'
     +'.page{padding:.8cm 1cm}'
     +'.page:not(:last-child){page-break-after:always}'
-    +'.hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:10px;border-bottom:3px solid #16a34a;margin-bottom:12px}'
-    +'.biz{font-size:16px;font-weight:800;color:#16a34a}'
+    +'.hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:10px;border-bottom:3px solid #5b7d76;margin-bottom:12px}'
+    +'.biz{font-size:16px;font-weight:800;color:#5b7d76}'
     +'.biz-sub{font-size:10px;color:#555;margin-top:2px}'
-    +'.doc-title{text-align:right;font-size:18px;font-weight:800;color:#16a34a}'
+    +'.doc-title{text-align:right;font-size:18px;font-weight:800;color:#5b7d76}'
     +'.doc-tag{font-size:11px;font-weight:600;color:#666;margin-left:4px}'
     +'.doc-date{text-align:right;font-size:11px;color:#555;margin-top:3px}'
     +'.info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;background:#f0fdf7;border:1px solid #b5e4d1;border-radius:6px;padding:8px 12px}'
-    +'.ib .lbl{font-size:9px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}'
+    +'.ib .lbl{font-size:9px;font-weight:700;color:#5b7d76;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}'
     +'.ib .val{font-size:12px;font-weight:600}'
     +'table{width:100%;border-collapse:collapse;margin-bottom:10px}'
-    +'thead th{background:#16a34a;color:#fff;padding:6px 7px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'thead th{background:#5b7d76;color:#fff;padding:6px 7px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     +'thead th.r{text-align:right}'
     +'.sum-box{display:flex;justify-content:space-between;align-items:stretch;margin-bottom:12px;gap:10px}'
     +'.bottles-box{flex:1;border:1px solid #b5e4d1;border-radius:6px;padding:8px 12px;background:#f0fdf7;display:flex;gap:16px;align-items:center}'
-    +'.bc .lbl{font-size:9px;color:#16a34a;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}'
-    +'.bc .val{font-size:16px;font-weight:800;color:#16a34a}'
+    +'.bc .lbl{font-size:9px;color:#5b7d76;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}'
+    +'.bc .val{font-size:16px;font-weight:800;color:#5b7d76}'
     +'.totals{min-width:220px;border:1px solid #ccc;border-radius:6px;overflow:hidden}'
     +'.tot-row{display:flex;justify-content:space-between;padding:4px 10px;font-size:11px;border-bottom:1px solid #eee}'
-    +'.tot-row.grand{background:#16a34a;color:#fff;font-size:13px;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'.tot-row.grand{background:#5b7d76;color:#fff;font-size:13px;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     +'.sign-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid #ccc;border-radius:6px;overflow:hidden}'
     +'.sign-box{padding:6px 8px;border-right:1px solid #ccc;text-align:center}'
     +'.sign-box:last-child{border-right:none}'
@@ -6024,7 +6024,7 @@ async function renderPaymentSection(rid){
       <span class="pay-badge ${ps.status}">${ps.label}</span>
       <div class="pay-summary">
         <span>ยอดรวม: <b>${fmt(grand)}</b></span>
-        <span>ชำระแล้ว: <b style="color:#16a34a">${fmt(paid)}</b></span>
+        <span>ชำระแล้ว: <b style="color:#5b7d76">${fmt(paid)}</b></span>
         ${remaining>0?`<span>คงเหลือ: <b style="color:#dc2626">${fmt(remaining)}</b></span>`:''}
       </div>
     </div>
@@ -6067,12 +6067,12 @@ async function renderPaymentSection(rid){
           <div id="pf_slip_preview_${rid}" style="margin-top:3px"></div>
         </div>
         <div><button onclick="addPayment(${rid})"
-          style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;margin-top:18px">＋ บันทึก</button></div>
+          style="background:#5b7d76;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;margin-top:18px">＋ บันทึก</button></div>
       </div>
     </div>
     <div class="pay-actions" style="margin-top:6px">
       <button onclick="printReceipt(${rid})"
-        style="background:none;border:1px solid #16a34a;color:#16a34a;border-radius:6px;padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer">
+        style="background:none;border:1px solid #5b7d76;color:#5b7d76;border-radius:6px;padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer">
         📄 ออกใบสำคัญรับเงิน
       </button>
     </div>
@@ -6166,7 +6166,7 @@ async function printReceipt(id){
 
   const payRows=payments.map(p=>`<tr>
     <td style="border:1px solid #ddd;padding:5px 8px;font-size:11px">${p.date?fmtThaiDate(p.date):'-'}</td>
-    <td style="border:1px solid #ddd;padding:5px 8px;font-size:11px;font-weight:700;text-align:right;color:#16a34a;font-variant-numeric:tabular-nums">${fmt2(parseFloat(p.amount)||0)}</td>
+    <td style="border:1px solid #ddd;padding:5px 8px;font-size:11px;font-weight:700;text-align:right;color:#5b7d76;font-variant-numeric:tabular-nums">${fmt2(parseFloat(p.amount)||0)}</td>
     <td style="border:1px solid #ddd;padding:5px 8px;font-size:11px">${p.method||'-'}</td>
     <td style="border:1px solid #ddd;padding:5px 8px;font-size:11px;color:#888">${p.note||''}</td>
   </tr>`).join('');
@@ -6178,26 +6178,26 @@ async function printReceipt(id){
     +'*{box-sizing:border-box;margin:0;padding:0}'
     +'body{font-family:Sarabun,Arial,sans-serif;font-size:12px;color:#000}'
     +'.page{padding:.8cm 1cm}'
-    +'.hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:10px;border-bottom:3px solid #16a34a;margin-bottom:12px}'
-    +'.biz{font-size:15px;font-weight:800;color:#16a34a}'
+    +'.hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:10px;border-bottom:3px solid #5b7d76;margin-bottom:12px}'
+    +'.biz{font-size:15px;font-weight:800;color:#5b7d76}'
     +'.biz-sub{font-size:10px;color:#555;margin-top:2px}'
     +'.doc-r{text-align:right}'
-    +'.doc-title{font-size:18px;font-weight:800;color:#16a34a}'
+    +'.doc-title{font-size:18px;font-weight:800;color:#5b7d76}'
     +'.doc-sub{font-size:11px;color:#555;margin-top:3px}'
     +'.info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;background:#f0fdf7;border:1px solid #6ee7b7;border-radius:6px;padding:8px 12px}'
-    +'.ib .lbl{font-size:9px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}'
+    +'.ib .lbl{font-size:9px;font-weight:700;color:#5b7d76;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}'
     +'.ib .val{font-size:13px;font-weight:700}'
     +'table.items{width:100%;border-collapse:collapse;margin-bottom:10px}'
-    +'table.items th{background:#16a34a;color:#fff;padding:6px 8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'table.items th{background:#5b7d76;color:#fff;padding:6px 8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     +'.total-bar{display:flex;justify-content:flex-end;margin-bottom:12px}'
     +'.total-box{border:1px solid #6ee7b7;border-radius:6px;overflow:hidden;min-width:230px}'
     +'.trow{display:flex;justify-content:space-between;padding:5px 12px;font-size:11px;border-bottom:1px solid #d1fae5}'
-    +'.trow.grand{background:#16a34a;color:#fff;font-size:13px;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'.trow.grand{background:#5b7d76;color:#fff;font-size:13px;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     +'.trow .val{font-variant-numeric:tabular-nums}'
     +'.pay-section{margin-bottom:12px;border:1px solid #d1fae5;border-radius:6px;overflow:hidden}'
     +'.pay-head{background:#d1fae5;padding:6px 10px;font-size:10px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.04em;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     +'.status-badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
-    +'.status-paid{background:#dcfce7;color:#16a34a}'
+    +'.status-paid{background:#e4ecea;color:#5b7d76}'
     +'.status-partial{background:#fef9c3;color:#a16207}'
     +'.status-unpaid{background:#fee2e2;color:#dc2626}'
     +'.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #ccc;border-radius:6px;overflow:hidden;margin-top:10px}'
@@ -6240,7 +6240,7 @@ async function printReceipt(id){
     +'</tr></thead><tbody>'+payRows+'</tbody>'
     +'<tfoot><tr style="background:#f0fdf7">'
     +'<td colspan="3" style="padding:5px 8px;font-size:11px;font-weight:700;text-align:right">รวมชำระแล้ว</td>'
-    +'<td style="padding:5px 8px;font-size:13px;font-weight:800;color:#16a34a;font-variant-numeric:tabular-nums">'+fmt2(ps.paid)+'</td>'
+    +'<td style="padding:5px 8px;font-size:13px;font-weight:800;color:#5b7d76;font-variant-numeric:tabular-nums">'+fmt2(ps.paid)+'</td>'
     +'</tr></tfoot>'
     +'</table></div>':'')
     +'<div class="sign-grid">'
