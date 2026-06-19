@@ -205,70 +205,74 @@ async function initGlobe(){
 
 function isDark(){ return document.body.classList.contains('dark'); }
 
-const orbitRx=()=>R+16*DPR, orbitRy=()=>(R+16*DPR)*0.42;
+// orbit tilted 30° for natural 3D look
+const ORBIT_TILT=Math.PI*0.18;
+const ORX=()=>R+18*DPR, ORY=()=>(R+18*DPR)*0.55;
+
+function truckPos(){
+  const rx=ORX(),ry=ORY();
+  // position on tilted ellipse
+  const x0=Math.cos(truckRot)*rx;
+  const y0=Math.sin(truckRot)*ry;
+  const tx=cx + x0*Math.cos(ORBIT_TILT) - y0*Math.sin(ORBIT_TILT);
+  const ty=cy + x0*Math.sin(ORBIT_TILT) + y0*Math.cos(ORBIT_TILT);
+  // depth: -1 = far behind, +1 = closest front
+  const depth=Math.sin(truckRot)*Math.cos(ORBIT_TILT)+Math.cos(truckRot)*0;
+  return {tx,ty,depth};
+}
+
+function drawTruck(ctx,tx,ty,depth){
+  // scale: 0.45 (behind) → 1.5 (front)
+  const scale=0.45+((depth+1)/2)*1.05;
+  // opacity: 0.1 (behind) → 1.0 (front)
+  const alpha=Math.max(0.1,(depth+1)/2);
+  ctx.save();
+  ctx.globalAlpha=alpha;
+  ctx.translate(tx,ty);
+  ctx.rotate(truckRot+Math.PI/2+ORBIT_TILT);
+  ctx.scale(scale,scale);
+  ctx.font=`${Math.round(16*DPR)}px serif`;
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText('🚚',0,0);
+  ctx.globalAlpha=1;
+  ctx.restore();
+}
 
 function drawOrbitBack(ctx){
-  // Back half of orbit (sin > 0 = bottom = behind in 3D top view, here we use sin < 0 = top = behind)
   const dark=isDark();
-  const rx=orbitRx(), ry=orbitRy();
+  const rx=ORX(),ry=ORY();
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(ORBIT_TILT);
   ctx.beginPath();
-  ctx.ellipse(cx,cy,rx,ry,0,Math.PI,Math.PI*2); // top arc = behind globe
-  ctx.setLineDash([3*DPR,5*DPR]);
-  ctx.strokeStyle=dark?'rgba(148,163,184,0.2)':'rgba(30,28,26,0.12)';
+  ctx.ellipse(0,0,rx,ry,0,Math.PI,Math.PI*2);
+  ctx.restore();
+  ctx.setLineDash([3*DPR,6*DPR]);
+  ctx.strokeStyle=dark?'rgba(148,163,184,0.18)':'rgba(30,28,26,0.1)';
   ctx.lineWidth=DPR;
   ctx.stroke();
   ctx.setLineDash([]);
-  // Truck when behind (sin(truckRot) < 0)
-  const behind=Math.sin(truckRot)<0;
-  if(behind){
-    const depth=(1+Math.sin(truckRot))*0.5; // 0=deepest behind, 0.5=equator
-    const scale=0.55+depth*0.25;
-    const ex=cx+Math.cos(truckRot)*rx;
-    const ey=cy+Math.sin(truckRot)*ry;
-    ctx.save();
-    ctx.globalAlpha=0.25+depth*0.2;
-    ctx.translate(ex,ey);
-    ctx.rotate(truckRot+Math.PI/2);
-    ctx.scale(scale,scale);
-    ctx.font=`${Math.round(15*DPR)}px serif`;
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
-    ctx.fillText('🚚',0,0);
-    ctx.globalAlpha=1;
-    ctx.restore();
-  }
+  const {tx,ty,depth}=truckPos();
+  if(depth<0) drawTruck(ctx,tx,ty,depth);
 }
 
 function drawOrbitFront(ctx){
-  // Front half of orbit (sin > 0 = front)
   const dark=isDark();
-  const rx=orbitRx(), ry=orbitRy();
+  const rx=ORX(),ry=ORY();
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(ORBIT_TILT);
   ctx.beginPath();
-  ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI); // bottom arc = in front of globe
-  ctx.setLineDash([3*DPR,5*DPR]);
-  ctx.strokeStyle=dark?'rgba(148,163,184,0.45)':'rgba(30,28,26,0.25)';
-  ctx.lineWidth=DPR;
+  ctx.ellipse(0,0,rx,ry,0,0,Math.PI);
+  ctx.restore();
+  ctx.setLineDash([3*DPR,6*DPR]);
+  ctx.strokeStyle=dark?'rgba(148,163,184,0.5)':'rgba(30,28,26,0.3)';
+  ctx.lineWidth=1.2*DPR;
   ctx.stroke();
   ctx.setLineDash([]);
-  // Truck when in front (sin(truckRot) >= 0)
-  const inFront=Math.sin(truckRot)>=0;
-  if(inFront){
-    const depth=Math.sin(truckRot); // 0=equator, 1=closest
-    const scale=0.85+depth*0.2;
-    const ex=cx+Math.cos(truckRot)*rx;
-    const ey=cy+Math.sin(truckRot)*ry;
-    ctx.save();
-    ctx.globalAlpha=0.75+depth*0.25;
-    ctx.translate(ex,ey);
-    ctx.rotate(truckRot+Math.PI/2);
-    ctx.scale(scale,scale);
-    ctx.font=`${Math.round(15*DPR)}px serif`;
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
-    ctx.fillText('🚚',0,0);
-    ctx.globalAlpha=1;
-    ctx.restore();
-  }
+  const {tx,ty,depth}=truckPos();
+  if(depth>=0) drawTruck(ctx,tx,ty,depth);
 }
 
 function drawGlobe(){
