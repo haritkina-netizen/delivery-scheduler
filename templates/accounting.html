@@ -32,13 +32,30 @@ body{font-family:'Sarabun',Arial,sans-serif;font-size:14px;color:var(--text);
   box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(255,255,255,.6)}
 
 
-/* ── NAV TABS ── */
+/* ── NAV TABS (legacy, kept for print templates) ── */
 .tabs{display:flex;background:var(--navy-d);padding:0 2rem;gap:2px;transition:background .4s cubic-bezier(.4,0,.2,1)}
 body[data-theme="income"] .tabs{background:#0f2419}
 body[data-theme="annual"] .tabs{background:#1a1430}
 .tab{padding:.9rem 1.5rem;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;user-select:none;font-family:'Sarabun',sans-serif}
 .tab:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.04)}
 .tab.active{color:#fff;border-bottom-color:var(--accent)}
+
+/* ── SIDEBAR LAYOUT ── */
+.shell{display:flex;align-items:stretch}
+.sidebar{width:200px;flex-shrink:0;background:var(--navy-d);display:flex;flex-direction:column;padding:14px 10px;gap:3px;transition:background .4s cubic-bezier(.4,0,.2,1)}
+body[data-theme="income"] .sidebar{background:#0f2419}
+body[data-theme="annual"] .sidebar{background:#1a1430}
+.sb-item{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:var(--r-sm);color:rgba(255,255,255,.6);font-size:13.5px;font-weight:600;cursor:pointer;user-select:none;transition:all .15s;white-space:nowrap;font-family:'Sarabun',sans-serif}
+.sb-item:hover{color:#fff;background:rgba(255,255,255,.07)}
+.sb-item.active{color:#fff;background:var(--accent)}
+.sb-item .ic{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.sb-cap{font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.34);text-transform:uppercase;padding:12px 13px 5px}
+.content{flex:1;min-width:0;display:flex;flex-direction:column}
+@media(max-width:760px){
+  .sidebar{width:54px;padding:12px 6px}
+  .sb-item{justify-content:center;padding:11px 0;gap:0}
+  .sb-item .lbl,.sb-cap{display:none}
+}
 
 /* ── HEADER ── */
 .hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 100%);color:#fff;padding:1.3rem 2rem;display:flex;justify-content:space-between;align-items:center;position:relative}
@@ -567,12 +584,17 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
   <div class="hdr-r" id="hdrMeta"></div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <div class="tab active" onclick="showPage('ledger',this)">📝 บันทึกรายจ่าย</div>
-  <div class="tab" onclick="showPage('income',this)">💰 บันทึกรายรับ</div>
-  <div class="tab" onclick="showPage('annual',this)">📊 สรุปรายปี</div>
-</div>
+<!-- SIDEBAR + CONTENT SHELL -->
+<div class="shell">
+<nav class="sidebar" id="sidebar">
+  <div class="sb-item active" data-nav="ledger" onclick="navTo('ledger')"><span class="ic">📝</span><span class="lbl">บันทึกรายจ่าย</span></div>
+  <div class="sb-item" data-nav="income:overview" onclick="navTo('income','overview')"><span class="ic">💰</span><span class="lbl">บันทึกรายรับ</span></div>
+  <div class="sb-item" data-nav="annual" onclick="navTo('annual')"><span class="ic">📊</span><span class="lbl">สรุปรายปี</span></div>
+  <div class="sb-cap">เอกสาร</div>
+  <div class="sb-item" data-nav="income:iv" onclick="navTo('income','iv')"><span class="ic">🧾</span><span class="lbl">ออกใบกำกับภาษี</span></div>
+  <div class="sb-item" data-nav="income:do" onclick="navTo('income','do')"><span class="ic">📦</span><span class="lbl">ออกบิลใบส่งสินค้า</span></div>
+</nav>
+<div class="content">
 
 <!-- ════════════ PAGE: LEDGER ════════════ -->
 <div class="page active" id="page-ledger">
@@ -1068,6 +1090,9 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
 
 </div>
 </div><!-- /page-annual -->
+
+</div><!-- /content -->
+</div><!-- /shell -->
 
 </div><!-- /wrap -->
 
@@ -1659,10 +1684,19 @@ function showPage(name,tab){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const pg=document.getElementById('page-'+name);
   pg.classList.add('active');
-  tab.classList.add('active');
+  if(tab&&tab.classList)tab.classList.add('active');
   document.body.dataset.theme=name;
   if(name==='annual')renderAnnual();
   if(name==='income'){incRenderTable();incRecalc();}
+}
+
+// Sidebar navigation — routes to a page (+ optional income sub-tab)
+function navTo(name,sub){
+  const key=sub?name+':'+sub:name;
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.toggle('active',i.dataset.nav===key));
+  const el=document.querySelector('.sb-item[data-nav="'+key+'"]');
+  showPage(name,el);
+  if(sub)incSwitchSub(sub);
 }
 
 /* ── SAVE / LOAD ── */
