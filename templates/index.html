@@ -187,6 +187,7 @@ const wc=document.getElementById('globeWhirl'), wx=wc.getContext('2d');
 const sphere={type:'Sphere'};
 let rot=0, wrot=0, rafId=null, worldLoaded=false;
 let land, borders, graticule, proj, path;
+let isDragging=false, dragX=0, dragY=0, phi=-20, spinV=0.28;
 
 async function initGlobe(){
   if(worldLoaded) return;
@@ -233,10 +234,34 @@ function drawWhirl(){
 }
 
 function tick(){
-  rot+=0.28; wrot-=0.024;
-  proj.rotate([rot,-20,0]);
+  if(!isDragging){ rot+=spinV; }
+  wrot-=0.024;
+  proj.rotate([rot,phi,0]);
   drawGlobe(); drawWhirl();
   rafId=requestAnimationFrame(tick);
+}
+
+function setupDrag(){
+  const wrap=document.querySelector('.globe-overlay-box>div');
+  wrap.style.cursor='grab';
+  wrap.addEventListener('mouseenter',()=>{ spinV=0; });
+  wrap.addEventListener('mouseleave',()=>{ if(!isDragging) spinV=0.28; });
+  wrap.addEventListener('mousedown',e=>{
+    isDragging=true; dragX=e.clientX; dragY=e.clientY;
+    wrap.style.cursor='grabbing'; e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!isDragging) return;
+    rot+=(e.clientX-dragX)*0.5;
+    phi-=(e.clientY-dragY)*0.3;
+    phi=Math.max(-75,Math.min(75,phi));
+    dragX=e.clientX; dragY=e.clientY;
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!isDragging) return;
+    isDragging=false; spinV=0.28;
+    wrap.style.cursor='grab';
+  });
 }
 
 window.startGlobeLoader=async function(){
@@ -276,6 +301,7 @@ window.stopGlobeLoader=function(){
 initGlobe().then(()=>{
   document.getElementById('globeOverlay').style.display='flex';
   tick();
+  setupDrag();
 });
 </script>
 </body>

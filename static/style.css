@@ -313,6 +313,7 @@ tbody tr.drag-over { background: #e2e8f0; outline: 2px dashed #334155; }
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto;
 }
 .globe-overlay-box.globe-corner-widget::before {
   content: '';
