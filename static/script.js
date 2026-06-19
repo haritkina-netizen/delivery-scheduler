@@ -921,8 +921,9 @@ function toggleTheme() {
     const p=popup(); if(!p) return;
     // position near the price input
     const rect=inp.getBoundingClientRect();
-    const top=Math.min(rect.bottom+6, window.innerHeight-310);
-    const left=Math.min(rect.left, window.innerWidth-256);
+    const calcW=260;
+    const top=Math.min(Math.max(8, rect.top), window.innerHeight-380);
+    const left=Math.max(8, rect.left - calcW - 10);
     p.style.top=top+'px'; p.style.left=left+'px';
     p.classList.add('open');
     setTimeout(()=>document.addEventListener('mousedown',outsideCalc),50);
