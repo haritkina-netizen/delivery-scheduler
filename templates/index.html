@@ -313,10 +313,60 @@ window.stopGlobeLoader=function(){
   setTimeout(()=>box.classList.add('globe-corner-widget'),800);
 };
 
+// Globe show/hide with map-click fade + 3-min idle return
+let globeVisible=true, idleTimer=null;
+const IDLE_MS=3*60*1000;
+
+function showGlobe(){
+  if(globeVisible) return;
+  globeVisible=true;
+  const overlay=document.getElementById('globeOverlay');
+  const box=overlay.querySelector('.globe-overlay-box');
+  // Reset corner widget state
+  box.classList.remove('globe-corner-widget');
+  box.style.transition='opacity 1s ease';
+  overlay.style.transition='opacity 1s ease';
+  overlay.style.opacity='1';
+  box.style.opacity='1';
+  // Restore centered position
+  box.style.transform='';
+  box.style.top='calc(50% - 76px)';
+  box.style.left='calc(50% - 100px)';
+  overlay.style.background='';
+  overlay.style.backdropFilter='';
+  overlay.style.webkitBackdropFilter='';
+  delete overlay.dataset.settled;
+}
+
+function hideGlobe(){
+  if(!globeVisible) return;
+  globeVisible=false;
+  clearTimeout(idleTimer);
+  const overlay=document.getElementById('globeOverlay');
+  overlay.style.transition='opacity 0.6s ease';
+  overlay.style.opacity='0';
+  idleTimer=setTimeout(()=>showGlobe(), IDLE_MS);
+}
+
+function resetIdleTimer(){
+  if(!globeVisible) {
+    clearTimeout(idleTimer);
+    idleTimer=setTimeout(()=>showGlobe(), IDLE_MS);
+  }
+}
+
 initGlobe().then(()=>{
-  document.getElementById('globeOverlay').style.display='flex';
+  const overlay=document.getElementById('globeOverlay');
+  overlay.style.display='flex';
   tick();
   setupDrag();
+
+  // Click on map → hide globe; start idle timer to bring back
+  document.getElementById('map').addEventListener('click', ()=>{
+    hideGlobe();
+  });
+  document.getElementById('map').addEventListener('mousemove', resetIdleTimer);
+  document.getElementById('map').addEventListener('touchstart', ()=>hideGlobe(), {passive:true});
 });
 </script>
 </body>
