@@ -725,9 +725,11 @@ body.dark tbody tr.drag-over { background: #334155; outline-color: #64748b; }
 body.dark .drag-handle:hover { color: #64748b; }
 
 /* ── PRINT ────────────────────────────────────────────────────────────────── */
+@page { margin: 12mm 10mm; size: A4 landscape; }
+
 @media print {
   .no-print, .topbar, .map-panel, .modal-overlay, .mobile-tabs { display: none !important; }
-  body { background: white !important; overflow: visible !important; height: auto !important; display: block !important; font-size: 9pt; }
+  body { background: white !important; overflow: visible !important; height: auto !important; display: block !important; font-size: 8pt; }
   .app-body { display: block !important; overflow: visible !important; height: auto !important; }
   .sheet-panel { display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; }
   .table-wrap { overflow: visible !important; height: auto !important; }
