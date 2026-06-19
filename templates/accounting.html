@@ -631,9 +631,9 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
   #incTbody td:nth-of-type(11)::before{content:"สถานะ"}
   #incTbody td:nth-of-type(12){justify-content:flex-end}
 
-  /* FAB add button */
-  .add-btn{position:fixed;right:16px;bottom:70px;width:54px;height:54px;border-radius:50%;padding:0;margin:0;z-index:55;background:var(--accent);color:#fff;border:none;box-shadow:0 4px 14px rgba(0,0,0,.28);font-size:0;justify-content:center}
-  .add-btn::after{content:"+";font-size:28px;line-height:1}
+  /* FAB add button — only ledger & income-overview (not invoice/delivery-note create) */
+  #page-ledger>.add-btn,#incsub-overview>.add-btn{position:fixed;right:16px;bottom:70px;width:54px;height:54px;border-radius:50%;padding:0;margin:0;z-index:55;background:var(--accent);color:#fff;border:none;box-shadow:0 4px 14px rgba(0,0,0,.28);font-size:0;justify-content:center}
+  #page-ledger>.add-btn::after,#incsub-overview>.add-btn::after{content:"+";font-size:28px;line-height:1}
 
   /* summary cards stack 1-col on very small, else stay */
   .scards{flex-wrap:wrap}
