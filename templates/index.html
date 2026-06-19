@@ -44,23 +44,23 @@
     <div class="map-search-bar no-print">
       <div class="search-input-wrap">
         <span class="search-icon" id="searchIcon">📍</span>
-        <svg id="globeLoader" class="globe-loader" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
-          <circle cx="16" cy="16" r="13" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
-          <line x1="16" y1="3" x2="16" y2="29" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
-          <line x1="3" y1="16" x2="29" y2="16" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
-          <ellipse cx="16" cy="16" rx="13" ry="4.5" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
-          <ellipse cx="16" cy="11" rx="10" ry="3.5" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
-          <ellipse cx="16" cy="21" rx="10" ry="3.5" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
-          <ellipse class="globe-spin-lat" cx="16" cy="16" rx="13" ry="5.5" stroke="#a5b4fc" stroke-width="1.8" stroke-dasharray="40 82"/>
-          <ellipse class="globe-spin-lon" cx="16" cy="16" rx="5.5" ry="13" stroke="#a5b4fc" stroke-width="1.8" stroke-dasharray="26 82"/>
-          <circle cx="16" cy="16" r="2" fill="#a5b4fc" opacity=".9"/>
-        </svg>
         <input id="addressSearch" type="text" placeholder="พิมพ์ที่อยู่ หรือวาง Link Google Maps..." autocomplete="off" onkeydown="onSearchKey(event)" onpaste="handlePaste(event)">
         <button class="btn btn-sm btn-primary" onclick="searchAndAdd()">+ เพิ่ม</button>
       </div>
       <div id="searchSuggestions" class="search-suggestions"></div>
     </div>
     <div id="map"></div>
+
+    <!-- Globe loader overlay -->
+    <div id="globeOverlay" class="globe-overlay" style="display:none">
+      <div class="globe-overlay-box">
+        <div style="position:relative;width:200px;height:200px;">
+          <canvas id="globeWhirl" width="200" height="200" style="position:absolute;top:0;left:0;"></canvas>
+          <canvas id="globeCanvas" width="200" height="200" style="position:absolute;top:0;left:0;"></canvas>
+        </div>
+      </div>
+    </div>
+
     <div class="map-bottom-bar no-print">
       <span id="mapStatus" class="map-status">📍 พิมพ์ที่อยู่ด้านบนเพื่อเพิ่มจุดส่ง</span>
       <div style="display:flex;gap:6px">
@@ -177,5 +177,79 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/static/script.js"></script>
+<script type="module">
+import * as d3 from 'https://esm.sh/d3-geo@3';
+import * as topojson from 'https://esm.sh/topojson-client@3';
+
+const W=200, R=88, cx=100, cy=100;
+const gc=document.getElementById('globeCanvas'), gx=gc.getContext('2d');
+const wc=document.getElementById('globeWhirl'), wx=wc.getContext('2d');
+const sphere={type:'Sphere'};
+let rot=0, wrot=0, rafId=null, worldLoaded=false;
+let land, borders, graticule, proj, path;
+
+async function initGlobe(){
+  if(worldLoaded) return;
+  const world=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>r.json());
+  land=topojson.feature(world,world.objects.land);
+  borders=topojson.mesh(world,world.objects.countries,(a,b)=>a!==b);
+  graticule=d3.geoGraticule()();
+  proj=d3.geoOrthographic().scale(R).translate([cx,cy]).clipAngle(90);
+  path=d3.geoPath(proj,gx);
+  worldLoaded=true;
+}
+
+function drawGlobe(){
+  gx.clearRect(0,0,W,W);
+  gx.beginPath(); path(sphere);
+  gx.fillStyle='#f0efe9'; gx.fill();
+  gx.beginPath(); path(graticule);
+  gx.strokeStyle='rgba(0,0,0,0.07)'; gx.lineWidth=0.4; gx.stroke();
+  gx.beginPath(); path(land);
+  gx.fillStyle='rgba(0,0,0,0)'; gx.fill();
+  gx.strokeStyle='rgba(30,28,26,0.8)'; gx.lineWidth=0.75; gx.stroke();
+  gx.beginPath(); path(borders);
+  gx.strokeStyle='rgba(30,28,26,0.2)'; gx.lineWidth=0.3; gx.stroke();
+  gx.beginPath(); path(sphere);
+  gx.strokeStyle='rgba(0,0,0,0.18)'; gx.lineWidth=1; gx.stroke();
+}
+
+function drawWhirl(){
+  wx.clearRect(0,0,W,W);
+  const outerR=R+9, segs=50, sweep=Math.PI*0.7;
+  for(let a=0;a<3;a++){
+    const base=wrot+(a/3)*Math.PI*2;
+    for(let i=0;i<segs;i++){
+      const t=i/segs;
+      const angle=base+t*sweep;
+      const ox=cx+Math.cos(angle)*outerR, oy=cy+Math.sin(angle)*outerR;
+      const nx=cx+Math.cos(angle+sweep/segs)*outerR, ny=cy+Math.sin(angle+sweep/segs)*outerR;
+      wx.beginPath(); wx.moveTo(ox,oy); wx.lineTo(nx,ny);
+      wx.strokeStyle=`rgba(30,28,26,${Math.sin(t*Math.PI)*0.3})`;
+      wx.lineWidth=0.8+Math.sin(t*Math.PI)*1.6;
+      wx.lineCap='round'; wx.stroke();
+    }
+  }
+}
+
+function tick(){
+  rot+=0.28; wrot-=0.024;
+  proj.rotate([rot,-20,0]);
+  drawGlobe(); drawWhirl();
+  rafId=requestAnimationFrame(tick);
+}
+
+window.startGlobeLoader=async function(){
+  await initGlobe();
+  document.getElementById('globeOverlay').style.display='flex';
+  document.getElementById('searchIcon').style.display='none';
+  if(!rafId) tick();
+};
+window.stopGlobeLoader=function(){
+  document.getElementById('globeOverlay').style.display='none';
+  document.getElementById('searchIcon').style.display='';
+  if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+};
+</script>
 </body>
 </html>

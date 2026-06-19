@@ -231,11 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setGlobeLoading(on) {
-  const icon = document.getElementById('searchIcon');
-  const globe = document.getElementById('globeLoader');
-  if (!icon || !globe) return;
-  icon.style.display = on ? 'none' : '';
-  globe.style.display = on ? 'block' : 'none';
+  if (on) {
+    window.startGlobeLoader?.();
+  } else {
+    window.stopGlobeLoader?.();
+  }
 }
 
 async function fetchSuggestions(q) {
