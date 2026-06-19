@@ -228,6 +228,40 @@ document.addEventListener('DOMContentLoaded', () => {
     searchTimer = setTimeout(() => fetchSuggestions(q), 350);
   });
   input.addEventListener('blur', () => setTimeout(hideSuggestions, 200));
+
+  // Google Maps link paste in address drawer textarea
+  const addrArea = document.getElementById('stopAddress');
+  if (addrArea) {
+    addrArea.addEventListener('paste', async (e) => {
+      const text = (e.clipboardData || window.clipboardData).getData('text').trim();
+      if (!text.includes('google.com/maps') && !text.includes('maps.app.goo.gl') && !text.includes('goo.gl/maps')) return;
+      e.preventDefault();
+      addrArea.value = '⏳ กำลังอ่านพิกัด...';
+      addrArea.disabled = true;
+
+      let coords = extractCoordsFromGmapsUrl(text);
+      if (!coords) {
+        try {
+          const res = await fetch('/api/resolve-gmaps?url=' + encodeURIComponent(text));
+          const d = await res.json();
+          if (d.lat) coords = { lat: d.lat, lng: d.lng };
+        } catch(e) {}
+      }
+
+      addrArea.disabled = false;
+      if (!coords) {
+        addrArea.value = '';
+        addrArea.placeholder = '❌ อ่านพิกัดไม่ได้ ลองวางลิ้งอื่น';
+        return;
+      }
+
+      // Store coords for saving, fill address field
+      addrArea.value = text;
+      addrArea.dataset.lat = coords.lat;
+      addrArea.dataset.lng = coords.lng;
+      map.setView([coords.lat, coords.lng], 15);
+    });
+  }
 });
 
 function setGlobeLoading(on) {
@@ -552,7 +586,9 @@ function openStopModal(stopData = null) {
   document.getElementById('stopDrawerTitle').textContent = stopData ? 'แก้ไขจุดส่ง' : 'เพิ่มจุดส่ง';
   document.getElementById('stopId').value = stopData?.id || '';
   document.getElementById('stopCustomer').value = stopData?.customer_name || '';
-  document.getElementById('stopAddress').value = stopData?.address || '';
+  const addrEl = document.getElementById('stopAddress');
+  addrEl.value = stopData?.address || '';
+  delete addrEl.dataset.lat; delete addrEl.dataset.lng;
   document.getElementById('stopNote').value = stopData?.note || '';
   document.getElementById('stopPrice').value = stopData?.price || '';
   document.getElementById('stopStatus').value = stopData?.status || 'รอส่ง';
@@ -593,11 +629,16 @@ async function saveStop(e) {
   const id = document.getElementById('stopId').value;
   const address = document.getElementById('stopAddress').value;
 
-  // Find existing lat/lng or geocode
+  // Find existing lat/lng or use pasted coords or geocode
   let lat = null, lng = null;
+  const addrArea = document.getElementById('stopAddress');
   const existing = stops.find(s => s.id == id);
   if (existing?.lat) { lat = existing.lat; lng = existing.lng; }
-  else if (address) {
+  else if (addrArea.dataset.lat) {
+    lat = parseFloat(addrArea.dataset.lat);
+    lng = parseFloat(addrArea.dataset.lng);
+    delete addrArea.dataset.lat; delete addrArea.dataset.lng;
+  } else if (address) {
     const coords = await geocodeAddress(address);
     if (coords) { lat = coords.lat; lng = coords.lng; }
   }
