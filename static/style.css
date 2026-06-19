@@ -729,9 +729,9 @@ body.dark .drag-handle:hover { color: #64748b; }
 
 @media print {
   .no-print, .topbar, .map-panel, .modal-overlay, .mobile-tabs { display: none !important; }
-  body { background: white !important; overflow: visible !important; height: auto !important; display: block !important; font-size: 8pt; }
+  body { background: white !important; overflow: visible !important; height: auto !important; display: block !important; font-size: 8pt; zoom: 0.65; }
   .app-body { display: block !important; overflow: visible !important; height: auto !important; }
-  .sheet-panel { display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; zoom: 0.82; }
+  .sheet-panel { display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; }
   .table-wrap { overflow: visible !important; height: auto !important; width: 100% !important; }
 
   /* Route header — ไม่มีกรอบ ไม่มีสีพื้นหลัง */
