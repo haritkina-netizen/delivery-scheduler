@@ -200,22 +200,27 @@ async function initGlobe(){
   worldLoaded=true;
 }
 
+function isDark(){ return document.body.classList.contains('dark'); }
+
 function drawGlobe(){
+  const dark=isDark();
   gx.clearRect(0,0,W,W);
   gx.beginPath(); path(sphere);
-  gx.fillStyle='#f0efe9'; gx.fill();
+  gx.fillStyle=dark?'#0f172a':'#f0efe9'; gx.fill();
   gx.beginPath(); path(graticule);
-  gx.strokeStyle='rgba(0,0,0,0.07)'; gx.lineWidth=0.4; gx.stroke();
+  gx.strokeStyle=dark?'rgba(148,163,184,0.12)':'rgba(0,0,0,0.07)'; gx.lineWidth=0.4; gx.stroke();
   gx.beginPath(); path(land);
   gx.fillStyle='rgba(0,0,0,0)'; gx.fill();
-  gx.strokeStyle='rgba(30,28,26,0.8)'; gx.lineWidth=0.75; gx.stroke();
+  gx.strokeStyle=dark?'rgba(148,163,184,0.85)':'rgba(30,28,26,0.8)'; gx.lineWidth=0.75; gx.stroke();
   gx.beginPath(); path(borders);
-  gx.strokeStyle='rgba(30,28,26,0.2)'; gx.lineWidth=0.3; gx.stroke();
+  gx.strokeStyle=dark?'rgba(148,163,184,0.2)':'rgba(30,28,26,0.2)'; gx.lineWidth=0.3; gx.stroke();
   gx.beginPath(); path(sphere);
-  gx.strokeStyle='rgba(0,0,0,0.18)'; gx.lineWidth=1; gx.stroke();
+  gx.strokeStyle=dark?'rgba(100,116,139,0.4)':'rgba(0,0,0,0.18)'; gx.lineWidth=1; gx.stroke();
 }
 
 function drawWhirl(){
+  const dark=isDark();
+  const base_rgb=dark?'148,163,184':'30,28,26';
   wx.clearRect(0,0,W,W);
   const outerR=R+9, segs=50, sweep=Math.PI*0.7;
   for(let a=0;a<3;a++){
@@ -226,7 +231,7 @@ function drawWhirl(){
       const ox=cx+Math.cos(angle)*outerR, oy=cy+Math.sin(angle)*outerR;
       const nx=cx+Math.cos(angle+sweep/segs)*outerR, ny=cy+Math.sin(angle+sweep/segs)*outerR;
       wx.beginPath(); wx.moveTo(ox,oy); wx.lineTo(nx,ny);
-      wx.strokeStyle=`rgba(30,28,26,${Math.sin(t*Math.PI)*0.3})`;
+      wx.strokeStyle=`rgba(${base_rgb},${Math.sin(t*Math.PI)*0.3})`;
       wx.lineWidth=0.8+Math.sin(t*Math.PI)*1.6;
       wx.lineCap='round'; wx.stroke();
     }
