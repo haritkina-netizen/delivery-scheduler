@@ -524,7 +524,8 @@ function renderTable() {
   stops.forEach((s, i) => {
     const qtyCells = [1,2,3,4,5,6].map(n => {
       const v = s[`qty${n}`];
-      return `<td class="qty-cell ${v ? '' : 'qty-zero'}">${v || ''}</td>`;
+      const pname = (products[n-1] || {}).name || `สินค้า ${n}`;
+      return `<td class="qty-cell ${v ? '' : 'qty-zero'}" data-label="${pname}">${v || ''}</td>`;
     }).join('');
 
     const tr = document.createElement('tr');
@@ -545,7 +546,7 @@ function renderTable() {
         ${s.status !== 'รอส่ง' ? `<span class="status-badge status-${s.status}" onclick="cycleStatus(${s.id},'${s.status}')">${s.status}</span>` : ''}
       </td>
       ${qtyCells}
-      <td class="col-price">${s.price ? s.price.toLocaleString() : ''}</td>
+      <td class="col-price" data-label="ราคา">${s.price ? s.price.toLocaleString() : ''}</td>
       <td class="col-action no-print">
         <div class="action-btns">
           <button class="btn btn-edit" onclick="editStop(${s.id})">แก้ไข</button>
@@ -740,6 +741,7 @@ function switchTab(tab) {
   document.getElementById('tabList').classList.toggle('active', tab === 'list');
   document.getElementById('mapPanel').classList.toggle('tab-active', tab === 'map');
   document.getElementById('sheetPanel').classList.toggle('tab-active', tab === 'list');
+  document.body.classList.toggle('show-fab', tab === 'list');
   if (tab === 'map') setTimeout(() => map.invalidateSize(), 50);
 }
 

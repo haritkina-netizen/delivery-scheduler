@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจัดตารางส่งสินค้า</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="/static/style.css?v=20260619r">
+<link rel="stylesheet" href="/static/style.css?v=20260619s">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -36,11 +36,16 @@
   </div>
 </header>
 
-<!-- MOBILE TAB BAR -->
+<!-- MOBILE BOTTOM NAV -->
 <div class="mobile-tabs no-print">
-  <button class="mobile-tab active" id="tabMap" onclick="switchTab('map')">🗺 แผนที่</button>
-  <button class="mobile-tab" id="tabList" onclick="switchTab('list')">📋 รายการส่ง</button>
+  <button class="mobile-tab active" id="tabMap" onclick="switchTab('map')"><span class="mt-ic">🗺</span>แผนที่</button>
+  <button class="mobile-tab" id="tabList" onclick="switchTab('list')"><span class="mt-ic">📋</span>รายการส่ง</button>
+  <button class="mobile-tab" onclick="window.print()"><span class="mt-ic">🖨</span>พิมพ์</button>
+  <a class="mobile-tab" href="/accounting"><span class="mt-ic">📒</span>บัญชี</a>
 </div>
+
+<!-- MOBILE FAB: add stop -->
+<button class="m-fab no-print" onclick="openStopModal()" aria-label="เพิ่มจุดส่ง" title="เพิ่มจุดส่ง"></button>
 
 <!-- MAIN LAYOUT -->
 <div class="app-body">

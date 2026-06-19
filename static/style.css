@@ -525,6 +525,8 @@ tbody tr.drag-over { background: var(--gray-200); outline: 2px dashed var(--gray
 .mobile-tabs { display: none; }
 
 /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+.m-fab { display: none; }
+
 @media (max-width: 768px) {
   body { overflow: hidden; }
 
@@ -538,36 +540,56 @@ tbody tr.drag-over { background: var(--gray-200); outline: 2px dashed var(--gray
   .date-nav input[type=date] { font-size: 0.8rem; padding: 4px 6px; max-width: 118px; }
   .date-nav button { width: 26px; height: 26px; font-size: 0.85rem; }
 
-  /* Mobile tabs */
+  /* Mobile bottom nav */
   .mobile-tabs {
     display: flex;
-    flex-shrink: 0;
-    background: white;
-    border-bottom: 1px solid var(--gray-200);
-    z-index: 10;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 60;
+    background: var(--gray-900);
+    box-shadow: 0 -2px 12px rgba(0,0,0,.18);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   .mobile-tab {
     flex: 1;
-    padding: 11px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px 7px;
     border: none;
-    background: white;
-    font-size: 0.88rem;
+    background: none;
+    font-size: 0.62rem;
     font-family: inherit;
     font-weight: 600;
-    color: var(--gray-400);
+    color: rgba(255,255,255,.55);
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: all .15s;
+    text-decoration: none;
+    transition: color .15s;
   }
-  .mobile-tab.active { color: var(--gray-800); border-bottom-color: var(--gray-700); background: var(--gray-100); }
+  .mobile-tab .mt-ic { font-size: 1.15rem; line-height: 1; }
+  .mobile-tab.active { color: #fff; }
+
+  /* FAB add stop — only on list view */
+  body.show-fab .m-fab {
+    display: flex; align-items: center; justify-content: center;
+    position: fixed; right: 16px; bottom: 66px; z-index: 55;
+    width: 54px; height: 54px; border-radius: 50%;
+    background: var(--primary); border: none; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  }
+  body.show-fab .m-fab::after { content: "+"; color: #fff; font-size: 30px; line-height: 1; }
 
   .app-body { flex-direction: column; }
 
   .map-panel { width: 100%; height: 100%; border-right: none; display: none; }
   .map-panel.tab-active { display: flex; }
 
-  .sheet-panel { width: 100%; height: 100%; display: none; overflow: hidden; }
+  .sheet-panel { width: 100%; height: 100%; display: none; overflow: hidden; padding-bottom: 56px; }
   .sheet-panel.tab-active { display: flex; }
+  .map-panel.tab-active { padding-bottom: 56px; }
+  /* hide redundant add button on mobile (FAB covers it); show map's add via search */
+  .topbar-right .btn-primary { display: none; }
 
   /* Route header — 2 rows: name full width / phone+truck half */
   .route-header { padding: 8px 12px; gap: 6px; flex-direction: column; align-items: stretch; }
@@ -588,18 +610,36 @@ tbody tr.drag-over { background: var(--gray-200); outline: 2px dashed var(--gray
   .map-status { font-size: 0.75rem; }
   .btn-gmaps { font-size: 0.77rem; padding: 5px 10px; }
 
-  /* Table — horizontal scroll */
-  .table-wrap { overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  table { font-size: 0.76rem; min-width: 500px; }
-  thead tr:first-child th, thead tr:last-child th { padding: 6px 5px; font-size: 0.72rem; }
-  td { padding: 6px 5px; }
-  .col-addr { min-width: 130px; }
-  .addr-name { font-size: 0.8rem; }
-  .addr-sub { font-size: 0.7rem; }
+  /* Table → CARD ROWS */
+  .table-wrap { overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 10px; }
+  table { min-width: 0; width: 100%; }
+  thead { display: none; }
+  #stopTableBody tr { display: block; background: var(--gray-50); border: 0.5px solid var(--gray-200); border-radius: 12px; margin-bottom: 10px; padding: 10px 12px; position: relative; }
+  #stopTableBody td { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 3px 0; border: none; text-align: right; min-height: 26px; }
+  #stopTableBody td[data-label]::before { content: attr(data-label); font-size: 0.72rem; color: var(--gray-500); font-weight: 600; text-align: left; flex: 0 0 auto; }
+  /* seq number → badge top-right */
+  #stopTableBody .col-seq { position: absolute; top: 8px; right: 10px; padding: 0; min-height: 0; }
+  #stopTableBody .col-seq .seq-num { background: var(--primary); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; }
+  #stopTableBody .col-seq .drag-handle { display: none; }
+  /* address block full width, prominent */
+  #stopTableBody .col-addr { display: block; text-align: left; padding-right: 30px; margin-bottom: 4px; border-bottom: 0.5px solid var(--gray-200); padding-bottom: 6px; }
+  #stopTableBody .addr-name { font-size: 0.92rem; font-weight: 700; }
+  #stopTableBody .addr-sub, #stopTableBody .addr-note { font-size: 0.74rem; color: var(--gray-500); }
+  /* hide zero-qty products on card */
+  #stopTableBody .qty-cell.qty-zero { display: none; }
+  #stopTableBody .qty-cell { font-weight: 600; }
+  #stopTableBody .col-price { font-weight: 700; color: var(--primary-dark); border-top: 0.5px solid var(--gray-200); margin-top: 3px; padding-top: 6px; }
+  #stopTableBody .col-action { justify-content: flex-end; padding-top: 6px; }
+
+  /* totals footer → summary card */
+  #stopTableFoot { display: block; padding: 0 10px 8px; }
+  #stopTableFoot tr { display: flex; justify-content: space-between; background: var(--primary-light); border-radius: 8px; padding: 8px 12px; margin-top: 4px; }
+  #stopTableFoot td { border: none; padding: 0; }
+  #stopTableFoot td[colspan] { font-weight: 700; }
 
   /* Action buttons — side by side */
-  .action-btns { flex-direction: row; gap: 3px; }
-  .btn-edit, .btn-delete { padding: 4px 7px; font-size: 0.73rem; }
+  .action-btns { flex-direction: row; gap: 6px; }
+  .btn-edit, .btn-delete { padding: 6px 14px; font-size: 0.8rem; }
 
   /* Drag handle — bigger touch target */
   .drag-handle { font-size: 1.2rem; padding: 4px 6px; }
