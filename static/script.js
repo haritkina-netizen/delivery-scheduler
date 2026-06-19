@@ -482,9 +482,11 @@ function saveRouteHeader() {
 
 function changeDate(delta) {
   const input = document.getElementById('mainDate');
-  const d = new Date(input.value + 'T00:00:00');
-  d.setDate(d.getDate() + delta);
-  input.value = d.toISOString().split('T')[0];
+  const [y, m, d] = input.value.split('-').map(Number);
+  const date = new Date(y, m - 1, d + delta);
+  input.value = date.getFullYear() + '-' +
+    String(date.getMonth() + 1).padStart(2, '0') + '-' +
+    String(date.getDate()).padStart(2, '0');
   loadRoute();
 }
 
