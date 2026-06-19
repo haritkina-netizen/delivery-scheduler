@@ -261,6 +261,13 @@ function setupDrag(){
     if(!isDragging) return;
     isDragging=false; spinV=0.28;
     wrap.style.cursor='grab';
+    // Spring phi back to -20
+    const springPhi=()=>{
+      phi+= (-20-phi)*0.08;
+      if(Math.abs(phi-(-20))>0.1) requestAnimationFrame(springPhi);
+      else phi=-20;
+    };
+    requestAnimationFrame(springPhi);
   });
 }
 
