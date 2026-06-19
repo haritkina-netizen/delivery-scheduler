@@ -1,3 +1,16 @@
+// ── Retro palette switcher (shared with /accounting via localStorage) ───────
+function setPalette(p) {
+  document.body.dataset.pal = p;
+  try { localStorage.setItem('retroPal', p); } catch (e) {}
+  document.querySelectorAll('.pal-dot').forEach(d => d.classList.toggle('on', d.dataset.pal === p));
+}
+(function applyPalette() {
+  let p = 'denim';
+  try { p = localStorage.getItem('retroPal') || 'denim'; } catch (e) {}
+  document.body.dataset.pal = p;
+  document.addEventListener('DOMContentLoaded', () => setPalette(p));
+})();
+
 // ── State ──────────────────────────────────────────────────────────────────
 let currentRouteId = null;
 let products = [];

@@ -459,14 +459,14 @@ tbody td input[type=number]{text-align:right}
 
 /* ── ANNUAL PAGE ADDITIONS ── */
 #page-annual .cat-annual-table thead th{background:#1a3a5c;color:#fff}
-#page-annual #catIncTable thead th{background:#16a34a;color:#fff}
+#page-annual #catIncTable thead th{background:var(--ok);color:#fff}
 #page-annual #reconTable thead th{background:#374151;color:#fff}
-.recon-profit td{color:#16a34a}
+.recon-profit td{color:var(--ok)}
 .recon-loss   td{color:#dc2626}
 .recon-zero   td{color:#888}
-#netPanel.profit{border-color:#16a34a;background:linear-gradient(160deg,#f0fdf7,#e6f9f0)}
+#netPanel.profit{border-color:var(--ok);background:linear-gradient(160deg,#f0fdf7,#e6f9f0)}
 #netPanel.loss  {border-color:#e57373;background:linear-gradient(160deg,#fff5f5,#ffe8e8)}
-#netBadge.profit .yv{color:#16a34a}
+#netBadge.profit .yv{color:var(--ok)}
 #netBadge.loss  .yv{color:#dc2626}
 
 /* ── INCOME PAGE ACCENT (green = positive) ── */
@@ -500,7 +500,7 @@ tbody td input[type=number]{text-align:right}
 .pay-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
 .pay-badge.unpaid{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
 .pay-badge.partial{background:#fffbeb;color:#d97706;border:1px solid #fcd34d}
-.pay-badge.paid{background:#f0fdf4;color:#16a34a;border:1px solid #86efac}
+.pay-badge.paid{background:#f0fdf4;color:var(--ok);border:1px solid #86efac}
 .pay-summary{margin-left:auto;font-size:11px;color:#555;display:flex;gap:12px}
 .pay-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}
 .pay-table th{background:#d1fae5;color:#065f46;padding:5px 8px;font-size:9px;font-weight:700;text-align:left;text-transform:uppercase;letter-spacing:.04em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -556,8 +556,27 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
 .sheets-url-input:focus{border-color:#1a3a5c;box-shadow:0 0 0 3px rgba(26,58,92,.1)}
 .code-block{background:#f4f2ed;border:1px solid #e0ddd6;border-radius:8px;padding:10px 12px;font-family:monospace;font-size:11px;color:#333;white-space:pre;overflow-x:auto;max-height:180px;line-height:1.5}
 .sync-status{font-size:11px;color:#888;margin-top:4px}
-.sync-status.ok{color:#16a34a}
+.sync-status.ok{color:var(--ok)}
 .sync-status.err{color:#dc2626}
+
+/* ── RETRO MINIMAL PALETTES ── */
+body[data-pal="clay"]{--navy:#3b3531;--navy-d:#322d29;--navy-l:#4a423c;--accent:#c2683f;--accent-l:#d4825b;--bg:#f3ece0;--bg2:#faf5ec;--line:#e6ddcd;--line2:#f0e9da;--text:#2f2a26;--text2:#6e655c;--text3:#9c9389;--ok:#7a8b4f;--ok-bg:#eef0df;--danger:#b24a36;--danger-bg:#f7e9e4}
+body[data-pal="teal"]{--navy:#2c423c;--navy-d:#243630;--navy-l:#395249;--accent:#d2a23e;--accent-l:#e0b65c;--bg:#eaece4;--bg2:#f6f7f1;--line:#dde0d6;--line2:#eef0e8;--text:#28302c;--text2:#5f675f;--text3:#959b92;--ok:#5c8268;--ok-bg:#e6efe7;--danger:#b0553c;--danger-bg:#f6e7e1}
+body[data-pal="denim"]{--navy:#34414e;--navy-d:#2b3640;--navy-l:#42525f;--accent:#c66a3c;--accent-l:#d6845a;--bg:#eceae4;--bg2:#f6f4ef;--line:#e1ddd4;--line2:#efece4;--text:#2a2f35;--text2:#626a6f;--text3:#969ca0;--ok:#5b7d76;--ok-bg:#e4ecea;--danger:#a8463a;--danger-bg:#f6e8e4}
+body[data-pal]{--t1:var(--navy);--t2:var(--navy-l);--t3:var(--bg2);--t4:var(--line)}
+body[data-pal] .hdr{background:linear-gradient(135deg,var(--navy),var(--navy-l))!important}
+body[data-pal] .sidebar,body[data-pal] .tabs{background:var(--navy-d)!important}
+body[data-pal] .tab.active{background:var(--navy)!important;border-bottom-color:var(--accent)!important}
+body[data-pal] thead th{background:var(--bg2)!important;color:var(--text2)!important;border-bottom-color:var(--line)!important}
+body[data-pal] .btn.bp{background:linear-gradient(135deg,var(--navy),var(--navy-d))!important;border-color:var(--navy)!important}
+body[data-pal] .add-btn{color:var(--navy)!important;border-color:var(--line)!important}
+body[data-pal] .sc.grand{border-color:var(--accent)!important;background:var(--ok-bg)!important}
+body[data-pal] .sc.grand .sv{color:var(--ok)!important}
+body[data-pal="teal"] .sb-item.active{color:#3a2c08}
+.pal-switch{display:inline-flex;gap:6px;align-items:center;margin-left:8px;vertical-align:middle}
+.pal-dot{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,.35);transition:transform .12s,border-color .12s;padding:0}
+.pal-dot:hover{transform:scale(1.15)}
+.pal-dot.on{border-color:#fff}
 </style>
 <div class="wrap">
 
@@ -580,6 +599,11 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
       style="display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;padding:5px 12px;cursor:pointer;font-family:inherit;text-decoration:none;margin-right:6px">🚚 ระบบส่งสินค้า</a>
     <button onclick="openSettings()" title="ตั้งค่า / Export รายปี / Google Sheets"
       style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:15px;padding:5px 10px;cursor:pointer;font-family:inherit">⚙</button>
+    <span class="pal-switch" title="สลับโทนสี">
+      <button class="pal-dot" data-pal="clay"  onclick="setPalette('clay')"  style="background:#c2683f" title="Warm Clay" aria-label="โทน Warm Clay"></button>
+      <button class="pal-dot" data-pal="teal"  onclick="setPalette('teal')"  style="background:#d2a23e" title="Dusty Teal" aria-label="โทน Dusty Teal"></button>
+      <button class="pal-dot" data-pal="denim" onclick="setPalette('denim')" style="background:#34414e" title="Faded Denim" aria-label="โทน Faded Denim"></button>
+    </span>
   </div>
   <div class="hdr-r" id="hdrMeta"></div>
 </div>
@@ -770,13 +794,13 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
     <thead><tr>
       <th style="width:28px">#</th>
       <th style="width:95px;cursor:pointer;user-select:none" onclick="incCycleSortMode()" title="คลิกเพื่อเปลี่ยนการเรียงลำดับ">
-        วันที่ <span id="incSortIcon" style="font-size:10px;color:#16a34a">↕</span></th>
+        วันที่ <span id="incSortIcon" style="font-size:10px;color:var(--ok)">↕</span></th>
       <th style="width:120px">หมวดหมู่
-        <span onclick="openIncCatModal()" title="จัดการหมวดหมู่รายรับ" style="cursor:pointer;margin-left:3px;color:#16a34a;font-size:12px">⚙</span></th>
+        <span onclick="openIncCatModal()" title="จัดการหมวดหมู่รายรับ" style="cursor:pointer;margin-left:3px;color:var(--ok);font-size:12px">⚙</span></th>
       <th>รายการ / คำอธิบาย</th>
       <th style="width:145px">ลูกค้า / ผู้จ่าย</th>
       <th style="width:88px">ผู้ลงบันทึก
-        <span onclick="openRecModal()" title="จัดการผู้ลงบันทึก" style="cursor:pointer;margin-left:3px;color:#16a34a;font-size:12px">⚙</span></th>
+        <span onclick="openRecModal()" title="จัดการผู้ลงบันทึก" style="cursor:pointer;margin-left:3px;color:var(--ok);font-size:12px">⚙</span></th>
       <th style="width:62px;text-align:center">VAT</th>
       <th style="width:95px" class="r">จำนวนเงิน</th>
       <th style="width:80px" class="r">VAT 7%</th>
@@ -851,7 +875,7 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
         <div class="doc-frow c3">
           <div class="doc-field"><label>วันที่</label><input type="date" id="doc-iv-date" onchange="docFieldChange('iv','date',this.value)"/></div>
           <div class="doc-field"><label>หมวดหมู่</label><select id="doc-iv-cat" onchange="docFieldChange('iv','cat',this.value)"></select></div>
-          <div class="doc-field"><label>ผู้ลงบันทึก <span onclick="openRecModal()" title="จัดการผู้ลงบันทึก" style="cursor:pointer;color:#16a34a">⚙</span></label><select id="doc-iv-recorder" onchange="docFieldChange('iv','recorder',this.value)"></select></div>
+          <div class="doc-field"><label>ผู้ลงบันทึก <span onclick="openRecModal()" title="จัดการผู้ลงบันทึก" style="cursor:pointer;color:var(--ok)">⚙</span></label><select id="doc-iv-recorder" onchange="docFieldChange('iv','recorder',this.value)"></select></div>
         </div>
         <div class="doc-frow c2">
           <div class="doc-field"><label>ลูกค้า / ผู้จ่าย</label><input type="text" id="doc-iv-supplier"
@@ -863,7 +887,7 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
       <div class="doc-card">
         <div class="doc-card-title">📄 ข้อมูลใบกำกับภาษี</div>
         <div class="doc-frow c3">
-          <div class="doc-field"><label>เลขที่ใบกำกับ <span onclick="docGenerateDocNo('iv')" title="ออกเลขที่ใหม่อัตโนมัติ" style="cursor:pointer;color:#16a34a">🔢</span></label><input type="text" id="doc-iv-invno" placeholder="IV69-xxx" onchange="docInvField('iv','invNo',this.value)"/></div>
+          <div class="doc-field"><label>เลขที่ใบกำกับ <span onclick="docGenerateDocNo('iv')" title="ออกเลขที่ใหม่อัตโนมัติ" style="cursor:pointer;color:var(--ok)">🔢</span></label><input type="text" id="doc-iv-invno" placeholder="IV69-xxx" onchange="docInvField('iv','invNo',this.value)"/></div>
           <div class="doc-field"><label>เลขที่ P/O</label><input type="text" id="doc-iv-po" onchange="docInvField('iv','po',this.value)"/></div>
           <div class="doc-field"><label>เลขที่นัด</label><input type="text" id="doc-iv-appt" onchange="docInvField('iv','appt',this.value)"/></div>
         </div>
@@ -925,7 +949,7 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
         <div class="doc-frow c3">
           <div class="doc-field"><label>วันที่</label><input type="date" id="doc-do-date" onchange="docFieldChange('do','date',this.value)"/></div>
           <div class="doc-field"><label>หมวดหมู่</label><select id="doc-do-cat" onchange="docFieldChange('do','cat',this.value)"></select></div>
-          <div class="doc-field"><label>ผู้ลงบันทึก <span onclick="openRecModal()" title="จัดการผู้ลงบันทึก" style="cursor:pointer;color:#16a34a">⚙</span></label><select id="doc-do-recorder" onchange="docFieldChange('do','recorder',this.value)"></select></div>
+          <div class="doc-field"><label>ผู้ลงบันทึก <span onclick="openRecModal()" title="จัดการผู้ลงบันทึก" style="cursor:pointer;color:var(--ok)">⚙</span></label><select id="doc-do-recorder" onchange="docFieldChange('do','recorder',this.value)"></select></div>
         </div>
         <div class="doc-frow c2">
           <div class="doc-field"><label>ลูกค้า / ผู้รับสินค้า</label><input type="text" id="doc-do-supplier"
@@ -937,7 +961,7 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
       <div class="doc-card">
         <div class="doc-card-title">📦 ข้อมูลใบส่งสินค้า</div>
         <div class="doc-frow c2">
-          <div class="doc-field"><label>เลขที่บิล <span onclick="docGenerateDocNo('do')" title="ออกเลขที่ใหม่อัตโนมัติ" style="cursor:pointer;color:#16a34a">🔢</span></label><input type="text" id="doc-do-invno" placeholder="DO69-xxx" onchange="docInvField('do','invNo',this.value)"/></div>
+          <div class="doc-field"><label>เลขที่บิล <span onclick="docGenerateDocNo('do')" title="ออกเลขที่ใหม่อัตโนมัติ" style="cursor:pointer;color:var(--ok)">🔢</span></label><input type="text" id="doc-do-invno" placeholder="DO69-xxx" onchange="docInvField('do','invNo',this.value)"/></div>
           <div class="doc-field"><label>เลขที่ P/O</label><input type="text" id="doc-do-po" onchange="docInvField('do','po',this.value)"/></div>
         </div>
         <div class="doc-frow">
@@ -997,11 +1021,11 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
     <!-- income panel -->
     <div style="border:1px solid #b5e4d1;border-radius:10px;padding:14px 16px;background:linear-gradient(160deg,#f0fdf7,#e6f9f0)">
-      <div style="font-size:10px;font-weight:700;color:#16a34a;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">💰 รายรับ</div>
+      <div style="font-size:10px;font-weight:700;color:var(--ok);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">💰 รายรับ</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div><div style="font-size:9px;color:#888;margin-bottom:2px">รายการ</div><div style="font-size:18px;font-weight:700;color:#16a34a" id="incKpiCount">0</div></div>
-        <div><div style="font-size:9px;color:#888;margin-bottom:2px">รวมก่อน VAT</div><div style="font-size:13px;font-weight:700;color:#16a34a" id="incKpiBase">฿0.00</div></div>
-        <div><div style="font-size:9px;color:#888;margin-bottom:2px">รวมสุทธิ</div><div style="font-size:13px;font-weight:700;color:#16a34a" id="incKpiGrand">฿0.00</div></div>
+        <div><div style="font-size:9px;color:#888;margin-bottom:2px">รายการ</div><div style="font-size:18px;font-weight:700;color:var(--ok)" id="incKpiCount">0</div></div>
+        <div><div style="font-size:9px;color:#888;margin-bottom:2px">รวมก่อน VAT</div><div style="font-size:13px;font-weight:700;color:var(--ok)" id="incKpiBase">฿0.00</div></div>
+        <div><div style="font-size:9px;color:#888;margin-bottom:2px">รวมสุทธิ</div><div style="font-size:13px;font-weight:700;color:var(--ok)" id="incKpiGrand">฿0.00</div></div>
       </div>
     </div>
     <!-- expense panel -->
@@ -1029,7 +1053,7 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
     <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
       <span>📊 รายรับ vs รายจ่าย รายเดือน (รวม VAT)</span>
       <span style="display:flex;gap:12px;font-size:11px;color:#666">
-        <span><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;margin-right:4px;vertical-align:middle"></span>รายรับ</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--ok);border-radius:2px;margin-right:4px;vertical-align:middle"></span>รายรับ</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:#1a3a5c;border-radius:2px;margin-right:4px;vertical-align:middle"></span>รายจ่าย</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:#e8b04a;border-radius:2px;margin-right:4px;vertical-align:middle"></span>กำไร/ขาดทุน</span>
       </span>
@@ -1051,7 +1075,7 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
   </table>
 
   <!-- income category -->
-  <div class="section-title" style="color:#16a34a">💰 รายรับแยกตามหมวดหมู่</div>
+  <div class="section-title" style="color:var(--ok)">💰 รายรับแยกตามหมวดหมู่</div>
   <table class="cat-annual-table" id="catIncTable">
     <thead><tr>
       <th>หมวดหมู่</th>
@@ -1208,7 +1232,7 @@ body[data-theme="annual"] .sc.grand .sv{color:#2d2545!important}
           <div style="flex:1">
             <div style="font-size:12px;font-weight:600;margin-bottom:4px">Copy โค้ดนี้ไปวางในโปรเจกต์ (แทนที่โค้ดเดิมทั้งหมด)</div>
             <button onclick="copyScriptCode()" style="font-size:11px;padding:4px 10px;border:1px solid #1a3a5c;border-radius:6px;cursor:pointer;background:#eaf1f8;color:#1a3a5c;font-weight:600;margin-bottom:6px">📋 Copy โค้ด</button>
-            <div id="copyDone" style="display:none;font-size:11px;color:#16a34a;font-weight:600">✅ Copy แล้ว!</div>
+            <div id="copyDone" style="display:none;font-size:11px;color:var(--ok);font-weight:600">✅ Copy แล้ว!</div>
           </div>
         </div>
 
@@ -6487,7 +6511,15 @@ function ok(data) {
 }`;
 }
 
+/* ── RETRO PALETTE SWITCHER ── */
+function setPalette(p){
+  document.body.dataset.pal=p;
+  try{localStorage.setItem('retroPal',p);}catch(e){}
+  document.querySelectorAll('.pal-dot').forEach(d=>d.classList.toggle('on',d.dataset.pal===p));
+}
+
 /* ── INIT ── */
+setPalette(localStorage.getItem('retroPal')||'denim');
 loadCats();
 loadRecorders();
 populateMonthSelects();

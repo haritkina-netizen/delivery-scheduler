@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจัดตารางส่งสินค้า</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="/static/style.css?v=20260619q">
+<link rel="stylesheet" href="/static/style.css?v=20260619r">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,6 +26,11 @@
     <a class="btn btn-outline" href="/accounting" title="ระบบบัญชี" style="text-decoration:none">📒 ระบบบัญชี</a>
     <button class="btn btn-outline" onclick="openProductModal()">⚙ ตั้งค่าสินค้า</button>
     <button class="btn btn-outline" onclick="window.print()">🖨 พิมพ์</button>
+    <span class="pal-switch" title="สลับโทนสี">
+      <button class="pal-dot" data-pal="clay"  onclick="setPalette('clay')"  style="background:#c2683f" title="Warm Clay" aria-label="โทน Warm Clay"></button>
+      <button class="pal-dot" data-pal="teal"  onclick="setPalette('teal')"  style="background:#d2a23e" title="Dusty Teal" aria-label="โทน Dusty Teal"></button>
+      <button class="pal-dot" data-pal="denim" onclick="setPalette('denim')" style="background:#34414e" title="Faded Denim" aria-label="โทน Faded Denim"></button>
+    </span>
     <button class="btn btn-outline theme-toggle" id="themeToggle" onclick="toggleTheme()" title="มืด/สว่าง">🌙</button>
     <button class="btn btn-primary" onclick="openStopModal()">+ เพิ่มจุดส่ง</button>
   </div>
