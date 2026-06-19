@@ -611,7 +611,7 @@ tbody tr.drag-over { background: var(--gray-200); outline: 2px dashed var(--gray
   .btn-gmaps { font-size: 0.77rem; padding: 5px 10px; }
 
   /* Table → CARD ROWS */
-  .table-wrap { overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 10px; }
+  .table-wrap { overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 10px 96px; }
   table { min-width: 0; width: 100%; }
   thead { display: none; }
   #stopTableBody tr { display: block; background: var(--gray-50); border: 0.5px solid var(--gray-200); border-radius: 12px; margin-bottom: 10px; padding: 10px 12px; position: relative; }
