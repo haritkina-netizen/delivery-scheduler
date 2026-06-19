@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจัดตารางส่งสินค้า</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="/static/style.css?v=20260619i">
+<link rel="stylesheet" href="/static/style.css?v=20260619j">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -192,40 +192,6 @@ let rot=0, wrot=0, rafId=null, worldLoaded=false;
 let land, borders, graticule, proj, path;
 let isDragging=false, dragX=0, dragY=0, phi=-20, spinV=0.28;
 
-// ── Plane orbit (arc-length parameterized) ──────────────────
-const TILT=0.55;                                  // ~31° tilt for clear 3D
-function planeOrbitRx(){ return R*1.13; }         // stays inside canvas
-function planeOrbitRy(){ return R*1.13*0.52; }    // ratio → heading changes clearly
-
-function planeEllipseState(t){
-  const rx=planeOrbitRx(),ry=planeOrbitRy();
-  const ct=Math.cos(TILT),st=Math.sin(TILT);
-  const x=cx+Math.cos(t)*rx*ct-Math.sin(t)*ry*st;
-  const y=cy+Math.cos(t)*rx*st+Math.sin(t)*ry*ct;
-  const dx=-Math.sin(t)*rx*ct-Math.cos(t)*ry*st;
-  const dy=-Math.sin(t)*rx*st+Math.cos(t)*ry*ct;
-  const depth=Math.sin(t)*ct-Math.cos(t)*st*0.2;
-  return{x,y,heading:Math.atan2(dx,-dy),depth,speed:Math.sqrt(dx*dx+dy*dy)};
-}
-
-let planeArcTable=null;
-function buildPlaneArcTable(){
-  const N=600;const T=[0];let tot=0;
-  for(let i=1;i<=N;i++){
-    const s0=planeEllipseState((i-1)/N*Math.PI*2),s1=planeEllipseState(i/N*Math.PI*2);
-    tot+=Math.hypot(s1.x-s0.x,s1.y-s0.y);T.push(tot);
-  }
-  planeArcTable={T,tot,N};
-}
-function planeArcToT(d){
-  const{T,tot,N}=planeArcTable;
-  d=((d%tot)+tot)%tot;let lo=0,hi=N;
-  while(lo<hi-1){const m=(lo+hi)>>1;if(T[m]<=d)lo=m;else hi=m;}
-  return((lo+(d-T[lo])/(T[lo+1]-T[lo]))/N)*Math.PI*2;
-}
-let planeDist=0;
-const PLANE_SPEED=1.8*DPR;
-
 async function initGlobe(){
   if(worldLoaded) return;
   const world=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>r.json());
@@ -239,83 +205,10 @@ async function initGlobe(){
 
 function isDark(){ return document.body.classList.contains('dark'); }
 
-// Draw airplane icon at unit scale — caller does translate+rotate+scale
-function drawPlaneIcon(ctx){
-  ctx.lineCap='round';ctx.lineJoin='round';
-  // tail fins — wide rounded rect
-  ctx.beginPath();ctx.roundRect(-14,22,28,11,5.5);ctx.fill();
-  // main wings
-  ctx.beginPath();
-  ctx.moveTo(-6,-2);ctx.lineTo(-36,15);ctx.quadraticCurveTo(-39,19,-35,21);
-  ctx.lineTo(-6,12);ctx.lineTo(6,12);ctx.lineTo(35,21);
-  ctx.quadraticCurveTo(39,19,36,15);ctx.lineTo(6,-2);ctx.closePath();ctx.fill();
-  // fuselage
-  ctx.beginPath();ctx.roundRect(-6.5,-28,13,54,6.5);ctx.fill();
-}
-
-function renderPlane(ctx, es, sc, al){
-  const dark=isDark();
-  ctx.save();
-  ctx.translate(es.x,es.y);
-  ctx.rotate(es.heading);
-  ctx.scale(sc*DPR, sc*DPR);
-  ctx.globalAlpha=al;
-  ctx.fillStyle=dark?'rgba(203,213,225,0.95)':'rgba(30,28,26,0.92)';
-  drawPlaneIcon(ctx);
-  ctx.globalAlpha=1;
-  ctx.restore();
-}
-
-function drawOrbitBack(ctx){
-  const dark=isDark();
-  const rx=planeOrbitRx(),ry=planeOrbitRy();
-  ctx.save();ctx.translate(cx,cy);ctx.rotate(TILT);
-  ctx.beginPath();ctx.ellipse(0,0,rx,ry,0,Math.PI,Math.PI*2);
-  ctx.restore();
-  ctx.setLineDash([3*DPR,6*DPR]);
-  ctx.strokeStyle=dark?'rgba(148,163,184,0.18)':'rgba(30,28,26,0.1)';
-  ctx.lineWidth=DPR;ctx.stroke();ctx.setLineDash([]);
-  const es=planeEllipseState(planeArcToT(planeDist));
-  if(es.depth<0){
-    const dt=(es.depth+1)*0.5;              // 0 (far behind) → 0.5 (equator back)
-    renderPlane(ctx, es, 0.14+dt*0.12, 0.08+dt*0.14);
-  }
-}
-
-function drawOrbitFront(ctx){
-  const dark=isDark();
-  const rx=planeOrbitRx(),ry=planeOrbitRy();
-  // contrail
-  let d=planeDist,px=null,py=null;
-  for(let i=0;i<38;i++){
-    const es2=planeEllipseState(planeArcToT(d));
-    if(es2.depth>=0&&px!==null){
-      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(es2.x,es2.y);
-      ctx.strokeStyle=dark?`rgba(148,163,184,${(1-i/38)*0.65})`:`rgba(180,210,240,${(1-i/38)*0.75})`;
-      ctx.lineWidth=(1-i/38)*6*DPR;ctx.stroke();
-    }
-    px=es2.depth>=0?es2.x:null;py=es2.depth>=0?es2.y:null;
-    d-=PLANE_SPEED;if(d<0)d+=planeArcTable.tot;
-  }
-  // front orbit arc
-  ctx.save();ctx.translate(cx,cy);ctx.rotate(TILT);
-  ctx.beginPath();ctx.ellipse(0,0,rx,ry,0,0,Math.PI);
-  ctx.restore();
-  ctx.setLineDash([3*DPR,6*DPR]);
-  ctx.strokeStyle=dark?'rgba(148,163,184,0.5)':'rgba(30,28,26,0.28)';
-  ctx.lineWidth=1.2*DPR;ctx.stroke();ctx.setLineDash([]);
-  const es=planeEllipseState(planeArcToT(planeDist));
-  if(es.depth>=0){
-    // depth 0→1: sc 0.26→0.70 (big size difference = strong 3D)
-    renderPlane(ctx, es, 0.26+es.depth*0.44, 0.55+es.depth*0.43);
-  }
-}
 
 function drawGlobe(){
   const dark=isDark();
   gx.clearRect(0,0,W,W);
-  // Back orbit arc + truck behind
-  drawOrbitBack(gx);
   gx.beginPath(); path(sphere);
   gx.fillStyle=dark?'#0f172a':'#f0efe9'; gx.fill();
   gx.beginPath(); path(graticule);
@@ -347,14 +240,11 @@ function drawWhirl(){
       wx.lineCap='round'; wx.stroke();
     }
   }
-  // Front orbit arc + truck in front (drawn on top of whirl)
-  drawOrbitFront(wx);
 }
 
 function tick(){
   if(!isDragging){ rot+=spinV; }
   wrot-=0.024;
-  planeDist=(planeDist+PLANE_SPEED)%planeArcTable.tot;
   proj.rotate([rot,phi,0]);
   drawGlobe(); drawWhirl();
   rafId=requestAnimationFrame(tick);
@@ -463,7 +353,6 @@ function resetIdleTimer(){
 }
 
 initGlobe().then(()=>{
-  buildPlaneArcTable();
   const overlay=document.getElementById('globeOverlay');
   overlay.style.display='flex';
   tick();
