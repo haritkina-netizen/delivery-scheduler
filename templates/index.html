@@ -188,7 +188,7 @@ const wc=document.getElementById('globeWhirl');
 [gc,wc].forEach(c=>{ c.width=W; c.height=W; c.style.width=SIZE+'px'; c.style.height=SIZE+'px'; });
 const gx=gc.getContext('2d'), wx=wc.getContext('2d');
 const sphere={type:'Sphere'};
-let rot=0, wrot=0, rafId=null, worldLoaded=false;
+let rot=0, wrot=0, truckRot=0, rafId=null, worldLoaded=false;
 let land, borders, graticule, proj, path;
 let isDragging=false, dragX=0, dragY=0, phi=-20, spinV=0.28;
 
@@ -239,11 +239,24 @@ function drawWhirl(){
       wx.lineCap='round'; wx.stroke();
     }
   }
+  // Truck orbiting the globe
+  const truckR=R+18*DPR;
+  const tx=cx+Math.cos(truckRot)*truckR;
+  const ty=cy+Math.sin(truckRot)*truckR;
+  wx.save();
+  wx.translate(tx,ty);
+  wx.rotate(truckRot+Math.PI/2);
+  wx.font=`${Math.round(14*DPR)}px serif`;
+  wx.textAlign='center';
+  wx.textBaseline='middle';
+  wx.fillText('🚚',0,0);
+  wx.restore();
 }
 
 function tick(){
   if(!isDragging){ rot+=spinV; }
   wrot-=0.024;
+  truckRot+=0.018;
   proj.rotate([rot,phi,0]);
   drawGlobe(); drawWhirl();
   rafId=requestAnimationFrame(tick);
