@@ -29,7 +29,7 @@ let myLocWatchId = null;
 let followMe = false;
 
 function initMap() {
-  map = L.map('map').setView([13.75, 100.5], 6);
+  map = L.map('map', { attributionControl: false }).setView([13.75, 100.5], 6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors', maxZoom: 19
   }).addTo(map);
