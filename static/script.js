@@ -574,11 +574,16 @@ function renderTable() {
 
   // Footer totals
   const totals = [1,2,3,4,5,6].map(n => active.reduce((a,s) => a + (s[`qty${n}`]||0), 0));
+  const grandTotal = totals.reduce((a,b) => a + b, 0);
   const totalPrice = active.reduce((a,s) => a + (s.price||0), 0);
   tfoot.innerHTML = `<tr>
     <td colspan="2" style="text-align:right;font-weight:700">รวม</td>
     ${totals.map(t => `<td class="qty-cell">${t || ''}</td>`).join('')}
     <td class="col-price">${totalPrice ? totalPrice.toLocaleString() : ''}</td>
+  </tr><tr>
+    <td colspan="2" style="text-align:right;font-weight:700;color:var(--gray-500);font-size:0.82rem">รวมทั้งหมด</td>
+    <td colspan="6" style="text-align:center;font-weight:700;font-size:1rem">${grandTotal || ''} ลัง</td>
+    <td></td>
     <td class="no-print"></td>
   </tr>`;
 }
