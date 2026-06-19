@@ -195,8 +195,8 @@ tbody tr { border-bottom: 1px solid var(--gray-200); transition: background .1s;
 tbody tr:hover { background: #f8fafc; }
 tfoot tr {
   background: linear-gradient(to right, #f8fafc, #f1f5f9);
-  font-weight: 700;
-  border-top: 2px solid #334155;
+  font-weight: 600;
+  border-top: 1px solid var(--gray-200);
 }
 
 td, tfoot td {
@@ -642,7 +642,7 @@ body.dark .sheet-panel { background: #0a0f1a; }
 body.dark .table-wrap { background: #0a0f1a; }
 body.dark tbody tr { border-bottom-color: #1e293b; }
 body.dark tbody tr:hover { background: #0f172a; }
-body.dark tfoot tr { background: linear-gradient(to right,#0f172a,#1e293b) !important; border-top-color: #334155 !important; }
+body.dark tfoot tr { background: linear-gradient(to right,#0f172a,#1e293b) !important; border-top-color: #1e293b !important; }
 
 body.dark .route-header { background: linear-gradient(to right,#0a0f1a,#0f172a); border-bottom-color: #1e293b; }
 body.dark .rh-left input { background: #0f172a; border-color: #334155; color: #cbd5e1; }
@@ -779,7 +779,7 @@ body.dark .drag-handle:hover { color: #64748b; }
   thead tr:first-child th { font-weight: 700; border-bottom: 1px solid #94a3b8 !important; }
   .col-addr { max-width: 160px !important; word-break: break-word; }
   tbody tr, tbody tr td { background: white !important; background-image: none !important; }
-  tfoot tr, tfoot tr td { font-weight: 700; border-top: 2px solid #334155 !important; background: white !important; }
+  tfoot tr, tfoot tr td { font-weight: 600; border-top: 1px solid #94a3b8 !important; background: white !important; }
 
   .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .qty-zero { color: #94a3b8 !important; }
