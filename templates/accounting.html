@@ -641,6 +641,10 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
   #incTbody td:nth-of-type(11)::before{content:"สถานะ"}
   #incTbody td:nth-of-type(12){justify-content:flex-end}
 
+  /* sub-item / slip panel (expanded row) must show as full-width block, not a hidden card cell */
+  #tbody tr[id^="sg_"] td,#incTbody tr[id^="incsg_"] td{display:block!important;text-align:left;padding:0!important;min-height:0!important;border:none!important}
+  #tbody tr[id^="sg_"] td::before,#incTbody tr[id^="incsg_"] td::before{content:none!important;display:none}
+
   /* summary cards stack 1-col on very small, else stay */
   .scards{flex-wrap:wrap}
   .sc{min-width:calc(50% - 5px)}
