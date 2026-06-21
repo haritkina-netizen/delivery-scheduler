@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ฝึกภาษาอังกฤษ</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4F46E5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ฝึกภาษา">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8FAFC;color:#1E293B;overflow-x:hidden;padding-bottom:70px}
@@ -114,24 +119,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
   <div class="streak-bar">
     <div class="snum">🔥</div>
-    <div>
-      <div style="font-size:15px;font-weight:700;color:#FFF">เริ่มฝึกวันนี้!</div>
-      <div class="stext">ฝึกทุกวันเพื่อพัฒนาภาษาอังกฤษ</div>
-    </div>
+    <div><div style="font-size:15px;font-weight:700;color:#FFF">เริ่มฝึกวันนี้!</div><div class="stext">ฝึกทุกวันเพื่อพัฒนาภาษาอังกฤษ</div></div>
   </div>
   <div class="feature-grid">
-    <button class="feature-card" onclick="goTo('vocabulary')">
-      <div class="ficon">📚</div><div class="ftitle">คำศัพท์</div><div class="fsub">20 คำ · Flashcard</div>
-    </button>
-    <button class="feature-card" onclick="goTo('pronunciation')">
-      <div class="ficon">🎤</div><div class="ftitle">ออกเสียง</div><div class="fsub">ฝึกพูด · อัดเสียง</div>
-    </button>
-    <button class="feature-card" onclick="goTo('listening')">
-      <div class="ficon">🎧</div><div class="ftitle">การฟัง</div><div class="fsub">ฟัง · พิมพ์ · คะแนน</div>
-    </button>
-    <button class="feature-card" onclick="goTo('chatbot')">
-      <div class="ficon">💬</div><div class="ftitle">สนทนา</div><div class="fsub">4 บทสนทนา · AI</div>
-    </button>
+    <button class="feature-card" onclick="goTo('vocabulary')"><div class="ficon">📚</div><div class="ftitle">คำศัพท์</div><div class="fsub">20 คำ · Flashcard</div></button>
+    <button class="feature-card" onclick="goTo('pronunciation')"><div class="ficon">🎤</div><div class="ftitle">ออกเสียง</div><div class="fsub">ฝึกพูด · อัดเสียง</div></button>
+    <button class="feature-card" onclick="goTo('listening')"><div class="ficon">🎧</div><div class="ftitle">การฟัง</div><div class="fsub">ฟัง · พิมพ์ · คะแนน</div></button>
+    <button class="feature-card" onclick="goTo('chatbot')"><div class="ficon">💬</div><div class="ftitle">สนทนา</div><div class="fsub">4 บทสนทนา · AI</div></button>
   </div>
   <div style="margin:0 16px 16px">
     <div style="font-size:14px;font-weight:700;color:#1E293B;margin-bottom:10px">ทักษะที่ฝึกได้</div>
@@ -163,7 +157,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
     </div>
     <div class="vocab-actions">
-      <button class="speak-btn" onclick="speakWord()" title="ฟังเสียง">🔊</button>
+      <button class="speak-btn" onclick="speakWord()">🔊</button>
       <button class="btn btn-outline" style="flex:1" onclick="prevWord()">← ก่อนหน้า</button>
       <button class="btn btn-primary" style="flex:1" onclick="nextWord()">ถัดไป →</button>
     </div>
@@ -191,22 +185,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="card" style="text-align:center">
       <div id="rec-status" style="font-size:13px;color:#94A3B8;margin-bottom:12px">กดค้างปุ่มเพื่อพูด</div>
       <button id="rec-btn" class="btn btn-red btn-full" ontouchstart="startRecord(event)" ontouchend="stopRecord(event)" onmousedown="startRecord(event)" onmouseup="stopRecord(event)">🎙️ กดค้างเพื่อพูด</button>
-      <div id="rec-indicator" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:12px">
-        <div class="recording-indicator"></div>
-        <span style="font-size:13px;color:#EF4444;font-weight:600">กำลังบันทึก...</span>
-      </div>
-      <div id="play-rec-wrap" style="display:none;margin-top:12px">
-        <button class="btn btn-outline btn-full" onclick="playRecording()">▶️ ฟังเสียงของคุณ</button>
-      </div>
+      <div id="rec-indicator" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:12px"><div class="recording-indicator"></div><span style="font-size:13px;color:#EF4444;font-weight:600">กำลังบันทึก...</span></div>
+      <div id="play-rec-wrap" style="display:none;margin-top:12px"><button class="btn btn-outline btn-full" onclick="playRecording()">▶️ ฟังเสียงของคุณ</button></div>
       <div id="rate-wrap" style="display:none;margin-top:16px">
         <div style="font-size:14px;font-weight:600;color:#1E293B;margin-bottom:8px">คุณออกเสียงได้ดีแค่ไหน?</div>
-        <div class="star-rating" id="star-row">
-          <span class="star" onclick="ratePron(1)">⭐</span>
-          <span class="star" onclick="ratePron(2)">⭐</span>
-          <span class="star" onclick="ratePron(3)">⭐</span>
-          <span class="star" onclick="ratePron(4)">⭐</span>
-          <span class="star" onclick="ratePron(5)">⭐</span>
-        </div>
+        <div class="star-rating" id="star-row"><span class="star" onclick="ratePron(1)">⭐</span><span class="star" onclick="ratePron(2)">⭐</span><span class="star" onclick="ratePron(3)">⭐</span><span class="star" onclick="ratePron(4)">⭐</span><span class="star" onclick="ratePron(5)">⭐</span></div>
         <div id="rate-msg" style="font-size:14px;color:#64748B"></div>
       </div>
     </div>
@@ -215,29 +198,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div id="screen-listening" class="screen">
   <div class="header"><h1>🎧 การฟัง</h1><p>ฟังแล้วพิมพ์ประโยคที่ได้ยิน</p></div>
   <div>
-    <div style="display:flex;justify-content:space-between;padding:12px 16px 0">
-      <span id="listen-counter" style="font-size:13px;color:#94A3B8;font-weight:500">ข้อ 1/6</span>
-      <span id="listen-avg" style="font-size:13px;color:#94A3B8;font-weight:500"></span>
-    </div>
-    <div class="listen-sentence-card">
-      <h3>ฟังแล้วพิมพ์ประโยคที่ได้ยิน</h3>
-      <p id="listen-thai">ความหมาย: ...</p>
-      <div class="play-btn-row">
-        <button class="play-big" onclick="playListen(false)">🔊 ฟัง</button>
-        <button class="play-big" onclick="playListen(true)">🐢 ช้าๆ</button>
-      </div>
-      <div id="play-count-text" style="font-size:12px;opacity:.7;margin-top:8px"></div>
-    </div>
+    <div style="display:flex;justify-content:space-between;padding:12px 16px 0"><span id="listen-counter" style="font-size:13px;color:#94A3B8;font-weight:500">ข้อ 1/6</span><span id="listen-avg" style="font-size:13px;color:#94A3B8;font-weight:500"></span></div>
+    <div class="listen-sentence-card"><h3>ฟังแล้วพิมพ์ประโยคที่ได้ยิน</h3><p id="listen-thai">ความหมาย: ...</p><div class="play-btn-row"><button class="play-big" onclick="playListen(false)">🔊 ฟัง</button><button class="play-big" onclick="playListen(true)">🐢 ช้าๆ</button></div><div id="play-count-text" style="font-size:12px;opacity:.7;margin-top:8px"></div></div>
     <div class="answer-area">
       <div style="font-size:14px;font-weight:600;color:#475569;margin-bottom:8px">พิมพ์ที่ได้ยิน:</div>
       <textarea id="listen-answer" class="answer-input" placeholder="พิมพ์ประโยคที่ได้ยินที่นี่..." rows="3"></textarea>
-      <div style="display:flex;gap:10px;margin-top:10px">
-        <button class="btn btn-outline btn-sm" onclick="toggleHint()">💡 คำใบ้</button>
-        <button class="btn btn-amber btn-full" onclick="submitListen()">ตรวจคำตอบ</button>
-      </div>
-      <div id="listen-hint" style="display:none;background:#FFFBEB;border-radius:12px;padding:12px;margin-top:10px">
-        <div id="listen-hint-text" style="font-size:13px;color:#92400E"></div>
-      </div>
+      <div style="display:flex;gap:10px;margin-top:10px"><button class="btn btn-outline btn-sm" onclick="toggleHint()">💡 คำใบ้</button><button class="btn btn-amber btn-full" onclick="submitListen()">ตรวจคำตอบ</button></div>
+      <div id="listen-hint" style="display:none;background:#FFFBEB;border-radius:12px;padding:12px;margin-top:10px"><div id="listen-hint-text" style="font-size:13px;color:#92400E"></div></div>
     </div>
     <div id="listen-result" style="display:none;padding:0 16px 16px">
       <div class="card" style="text-align:center">
@@ -260,29 +227,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div style="padding:8px 0"><div id="dialogue-list"></div></div>
   </div>
   <div id="chat-active-view" style="display:none;flex-direction:column;height:calc(100vh - 70px)">
-    <div class="chat-header">
-      <button class="chat-back" onclick="backToSelect()">← กลับ</button>
-      <div class="chat-title-wrap">
-        <h3 id="chat-title">💬 Chat</h3>
-        <p id="chat-sub"></p>
-      </div>
-    </div>
+    <div class="chat-header"><button class="chat-back" onclick="backToSelect()">← กลับ</button><div class="chat-title-wrap"><h3 id="chat-title">💬 Chat</h3><p id="chat-sub"></p></div></div>
     <div id="chat-messages" class="chat-messages" style="overflow-y:auto;flex:1"></div>
-    <div id="finished-card" style="display:none" class="finished-card">
-      <div style="font-size:56px;margin-bottom:12px">🎊</div>
-      <div style="font-size:22px;font-weight:800;color:#1E293B;margin-bottom:8px">บทสนทนาเสร็จแล้ว!</div>
-      <div style="font-size:14px;color:#64748B;margin-bottom:20px">คุณทำได้ดีมาก ลองฝึกบทใหม่กัน</div>
-      <button class="btn btn-red" onclick="backToSelect()">เลือกบทใหม่</button>
-    </div>
-    <div id="chat-prompt-bar" style="display:none" class="prompt-bar">
-      <div class="plabel" id="prompt-label">💭 ...</div>
-      <button class="ptoggle" onclick="toggleExample()">ดูตัวอย่าง</button>
-      <div class="pexample" id="example-text" style="display:none"></div>
-    </div>
-    <div id="chat-input-wrap" class="chat-input-bar">
-      <input id="chat-input" class="chat-input" placeholder="พิมพ์ภาษาอังกฤษที่นี่..." disabled>
-      <button id="chat-send-btn" class="chat-send" onclick="sendChat()" disabled>➤</button>
-    </div>
+    <div id="finished-card" style="display:none" class="finished-card"><div style="font-size:56px;margin-bottom:12px">🎊</div><div style="font-size:22px;font-weight:800;color:#1E293B;margin-bottom:8px">บทสนทนาเสร็จแล้ว!</div><div style="font-size:14px;color:#64748B;margin-bottom:20px">คุณทำได้ดีมาก</div><button class="btn btn-red" onclick="backToSelect()">เลือกบทใหม่</button></div>
+    <div id="chat-prompt-bar" style="display:none" class="prompt-bar"><div class="plabel" id="prompt-label">💭 ...</div><button class="ptoggle" onclick="toggleExample()">ดูตัวอย่าง</button><div class="pexample" id="example-text" style="display:none"></div></div>
+    <div id="chat-input-wrap" class="chat-input-bar"><input id="chat-input" class="chat-input" placeholder="พิมพ์ภาษาอังกฤษที่นี่..." disabled><button id="chat-send-btn" class="chat-send" onclick="sendChat()" disabled>➤</button></div>
   </div>
 </div>
 <nav class="bottom-nav">
@@ -294,7 +243,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </nav>
 <script>
 const VOCAB=[{word:"Hello",phonetic:"/həˈloʊ/",type:"interjection",meaning:"สวัสดี",example:"Hello! How are you today?",level:"A1"},{word:"Thank you",phonetic:"/θæŋk juː/",type:"phrase",meaning:"ขอบคุณ",example:"Thank you for your help!",level:"A1"},{word:"Sorry",phonetic:"/ˈsɒri/",type:"interjection",meaning:"ขอโทษ",example:"I'm sorry I was late.",level:"A1"},{word:"Please",phonetic:"/pliːz/",type:"adverb",meaning:"กรุณา",example:"Please help me with this.",level:"A1"},{word:"Excuse me",phonetic:"/ɪkˈskjuːz miː/",type:"phrase",meaning:"ขอโทษนะครับ/ค่ะ",example:"Excuse me, where is the bathroom?",level:"A1"},{word:"Beautiful",phonetic:"/ˈbjuːtɪfl/",type:"adjective",meaning:"สวยงาม",example:"What a beautiful sunset!",level:"A2"},{word:"Delicious",phonetic:"/dɪˈlɪʃəs/",type:"adjective",meaning:"อร่อยมาก",example:"This food is absolutely delicious.",level:"A2"},{word:"Understand",phonetic:"/ˌʌndəˈstænd/",type:"verb",meaning:"เข้าใจ",example:"Do you understand the instructions?",level:"A2"},{word:"Remember",phonetic:"/rɪˈmembər/",type:"verb",meaning:"จำได้",example:"I can't remember his name.",level:"A2"},{word:"Important",phonetic:"/ɪmˈpɔːrtənt/",type:"adjective",meaning:"สำคัญ",example:"This is a very important meeting.",level:"A2"},{word:"Opportunity",phonetic:"/ˌɒpəˈtjuːnɪti/",type:"noun",meaning:"โอกาส",example:"This is a great opportunity to learn.",level:"B1"},{word:"Challenge",phonetic:"/ˈtʃælɪndʒ/",type:"noun",meaning:"ความท้าทาย",example:"Learning English is a fun challenge.",level:"B1"},{word:"Experience",phonetic:"/ɪkˈspɪəriəns/",type:"noun",meaning:"ประสบการณ์",example:"She has five years of experience.",level:"B1"},{word:"Recommend",phonetic:"/ˌrekəˈmend/",type:"verb",meaning:"แนะนำ",example:"I recommend trying the local food.",level:"B1"},{word:"Apologize",phonetic:"/əˈpɒlədʒaɪz/",type:"verb",meaning:"ขอโทษ (อย่างเป็นทางการ)",example:"I apologize for the mistake.",level:"B1"},{word:"Consequently",phonetic:"/ˈkɒnsɪkwəntli/",type:"adverb",meaning:"ดังนั้น",example:"He was late; consequently, he missed the meeting.",level:"B2"},{word:"Sophisticated",phonetic:"/səˈfɪstɪkeɪtɪd/",type:"adjective",meaning:"ซับซ้อน, มีความรู้",example:"The system is very sophisticated.",level:"B2"},{word:"Accomplishment",phonetic:"/əˈkʌmplɪʃmənt/",type:"noun",meaning:"ความสำเร็จ",example:"Getting this job is a great accomplishment.",level:"B2"},{word:"Negotiate",phonetic:"/nɪˈɡəʊʃieɪt/",type:"verb",meaning:"เจรจา",example:"We need to negotiate the price.",level:"B2"},{word:"Perseverance",phonetic:"/ˌpɜːrsɪˈvɪərəns/",type:"noun",meaning:"ความอดทน, ความพยายาม",example:"Success requires perseverance.",level:"B2"}];
-const SENTENCES=[{text:"Good morning, how are you?",phonetic:"/ɡʊd ˈmɔːrnɪŋ haʊ ɑːr juː/",thai:"อรุณสวัสดิ์ คุณเป็นอย่างไรบ้าง?"},{text:"I would like a cup of coffee, please.",phonetic:"",thai:"ฉันขอกาแฟหนึ่งแก้วครับ"},{text:"Could you speak more slowly?",phonetic:"",thai:"คุณช่วยพูดช้าลงหน่อยได้ไหม?"},{text:"Where is the nearest hospital?",phonetic:"",thai:"โรงพยาบาลที่ใกล้ที่สุดอยู่ที่ไหน?"},{text:"I am very happy to meet you.",phonetic:"",thai:"ฉันดีใจมากที่ได้รู้จักคุณ"},{text:"The weather today is quite nice.",phonetic:"",thai:"อากาศวันนี้ดีมาก"},{text:"Thank you for your help, I appreciate it.",phonetic:"",thai:"ขอบคุณสำหรับความช่วยเหลือ ฉันซาบซึ้งมาก"},{text:"Excuse me, can you help me find this address?",phonetic:"",thai:"ขอโทษนะครับ คุณช่วยหาที่อยู่นี้ให้ได้ไหม?"}];
+const SENTENCES=[{text:"Good morning, how are you?",phonetic:"/ɡʊd ˈmɔːrnɪŋ haʊ ɑːr juː/",thai:"อรุณสวัสดิ์ คุณเป็นอย่างไรบ้าง?"},{text:"I would like a cup of coffee, please.",phonetic:"",thai:"ฉันขอกาแฟหนึ่งแก้วครับ"},{text:"Could you speak more slowly?",phonetic:"",thai:"คุณช่วยพูดช้าลงหน่อยได้ไหม?"},{text:"Where is the nearest hospital?",phonetic:"",thai:"โรงพยาบาลที่ใกล้ที่สุดอยู่ที่ไหน?"},{text:"I am very happy to meet you.",phonetic:"",thai:"ฉันดีใจมากที่ได้รู้จักคุณ"},{text:"The weather today is quite nice.",phonetic:"",thai:"อากาศวันนี้ดีมาก"},{text:"Thank you for your help, I appreciate it.",phonetic:"",thai:"ขอบคุณสำหรับความช่วยเหลือ"},{text:"Excuse me, can you help me find this address?",phonetic:"",thai:"ขอโทษนะครับ คุณช่วยหาที่อยู่ได้ไหม?"}];
 const LISTENING=[{text:"I need to find my passport.",thai:"ฉันต้องหาพาสปอร์ตของฉัน"},{text:"The train leaves at seven thirty.",thai:"รถไฟออกเวลาเจ็ดโมงครึ่ง"},{text:"Please turn left at the traffic light.",thai:"กรุณาเลี้ยวซ้ายที่ไฟแดง"},{text:"Can I have the menu, please?",thai:"ขอเมนูหน่อยได้ไหมครับ?"},{text:"I would like to book a table for two.",thai:"ฉันอยากจองโต๊ะสำหรับสองคน"},{text:"How much does this cost?",thai:"อันนี้ราคาเท่าไหร่?"}];
 const DIALOGUES=[{id:1,icon:"✈️",title:"At the Airport",titleThai:"ที่สนามบิน",level:"A1",conversation:[{role:"bot",text:"Hello! Welcome to Bangkok Airport. May I see your passport, please?"},{role:"user",prompt:"แสดงพาสปอร์ต",example:"Here is my passport.",keywords:["passport","here","my"]},{role:"bot",text:"Thank you. What is the purpose of your visit?"},{role:"user",prompt:"บอกว่ามาท่องเที่ยว",example:"I'm here for tourism.",keywords:["tourism","holiday","vacation","tourist","travel"]},{role:"bot",text:"How long will you be staying in Thailand?"},{role:"user",prompt:"บอกระยะเวลาที่จะอยู่",example:"I will stay for two weeks.",keywords:["week","day","month","stay"]},{role:"bot",text:"Enjoy your stay in Thailand! Have a wonderful trip!"}]},{id:2,icon:"🍽️",title:"At the Restaurant",titleThai:"ที่ร้านอาหาร",level:"A2",conversation:[{role:"bot",text:"Good evening! Do you have a reservation?"},{role:"user",prompt:"บอกว่าจองไว้แล้ว",example:"Yes, I have a reservation for two.",keywords:["yes","reservation","booked","table"]},{role:"bot",text:"Perfect! Please follow me. Here is your table and menu."},{role:"user",prompt:"ขอแนะนำเมนู",example:"What do you recommend?",keywords:["recommend","suggestion","popular","special","best"]},{role:"bot",text:"Our pad thai and green curry are very popular! Would you like to order now?"},{role:"user",prompt:"สั่งอาหาร",example:"I'll have the pad thai, please.",keywords:["pad","curry","order","like","have","please"]},{role:"bot",text:"Excellent choice! Your food will be ready in about 15 minutes."}]},{id:3,icon:"🏨",title:"At the Hotel",titleThai:"ที่โรงแรม",level:"B1",conversation:[{role:"bot",text:"Good afternoon! Welcome to the Grand Hotel. How can I help you?"},{role:"user",prompt:"เช็คอิน",example:"I'd like to check in, please.",keywords:["check","reservation","booking","room"]},{role:"bot",text:"Of course! May I have your name and booking confirmation?"},{role:"user",prompt:"บอกชื่อและเลขการจอง",example:"My name is John Smith, confirmation number 12345.",keywords:["name","number","confirmation","booking"]},{role:"bot",text:"Thank you, Mr. Smith. You have a deluxe room on the 8th floor."},{role:"user",prompt:"ถามสิ่งอำนวยความสะดวก",example:"What facilities does the hotel have?",keywords:["facility","pool","gym","breakfast","wifi","restaurant","spa"]},{role:"bot",text:"We have a rooftop pool, fitness center, and complimentary breakfast from 7 to 10 AM. Enjoy your stay!"}]},{id:4,icon:"💼",title:"Job Interview",titleThai:"สัมภาษณ์งาน",level:"B2",conversation:[{role:"bot",text:"Good morning! Please have a seat. Thank you for coming in today."},{role:"user",prompt:"ทักทายและแนะนำตัว",example:"Good morning! I'm very excited about this opportunity.",keywords:["morning","thank","excited","opportunity","pleased","meet"]},{role:"bot",text:"Tell me about yourself and your experience."},{role:"user",prompt:"เล่าประสบการณ์",example:"I have three years of experience in marketing.",keywords:["experience","year","work","skill","major","graduate","study"]},{role:"bot",text:"What are your greatest strengths?"},{role:"user",prompt:"บอกจุดแข็งของตัวเอง",example:"I'm a quick learner and I work well under pressure.",keywords:["strength","skill","good","learn","team","work","pressure","leader"]},{role:"bot",text:"Excellent! We'll be in touch within the next few days. Thank you for your time!"}]}];
 let currentScreen='home',vocabIndex=0,cardFlipped=false,pronIndex=0,mediaRecorder=null,recordedChunks=[],recordedBlob=null,listenIndex=0,listenResults=[],listenPlayCount=0,showHint=false,listenSubmitted=false,chatDialogue=null,chatStep=0,chatWaiting=false,chatFinished=false,showExample=false;
@@ -315,30 +264,30 @@ function speakPron(){speak(SENTENCES[pronIndex].text,0.75);}
 function nextPron(){pronIndex=(pronIndex+1)%SENTENCES.length;renderPron();}
 async function startRecord(e){e.preventDefault();if(!navigator.mediaDevices){alert('ไม่สามารถเข้าถึงไมค์ได้');return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});recordedChunks=[];mediaRecorder=new MediaRecorder(stream);mediaRecorder.ondataavailable=ev=>recordedChunks.push(ev.data);mediaRecorder.onstop=()=>{recordedBlob=new Blob(recordedChunks,{type:'audio/webm'});document.getElementById('play-rec-wrap').style.display='block';document.getElementById('rate-wrap').style.display='block';document.getElementById('rec-indicator').style.display='none';stream.getTracks().forEach(t=>t.stop());};mediaRecorder.start();document.getElementById('rec-indicator').style.display='flex';document.getElementById('rec-status').textContent='กำลังบันทึก...';}catch(err){alert('ไม่สามารถเข้าถึงไมค์ได้: '+err.message);}}
 function stopRecord(e){e.preventDefault();if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();document.getElementById('rec-status').textContent='บันทึกเสร็จแล้ว!';}}
-function playRecording(){if(!recordedBlob)return;const url=URL.createObjectURL(recordedBlob);new Audio(url).play();}
-const rateMessages=['ต้องฝึกเพิ่มครับ 💪','พอใช้ได้ ฝึกต่อไปนะ 📖','ดีมาก! 👍','ดีมากเลย! 🌟','ยอดเยี่ยม! เก่งมาก! 🎉'];
-function ratePron(stars){const els=document.querySelectorAll('#star-row .star');els.forEach((s,i)=>{s.textContent=i<stars?'⭐':'☆';});document.getElementById('rate-msg').textContent=rateMessages[stars-1];document.getElementById('rate-msg').style.color=stars>=4?'#10B981':'#64748B';}
+function playRecording(){if(!recordedBlob)return;new Audio(URL.createObjectURL(recordedBlob)).play();}
+const rateMessages=['ต้องฝึกเพิ่มครับ 💪','พอใช้ได้ 📖','ดีมาก! 👍','ดีมากเลย! 🌟','ยอดเยี่ยม! 🎉'];
+function ratePron(stars){document.querySelectorAll('#star-row .star').forEach((s,i)=>{s.textContent=i<stars?'⭐':'☆';});document.getElementById('rate-msg').textContent=rateMessages[stars-1];document.getElementById('rate-msg').style.color=stars>=4?'#10B981':'#64748B';}
 function initListen(){renderListen();}
 function renderListen(){const s=LISTENING[listenIndex];document.getElementById('listen-counter').textContent='ข้อ '+(listenIndex+1)+'/'+LISTENING.length;document.getElementById('listen-thai').textContent='ความหมาย: '+s.thai;document.getElementById('listen-answer').value='';document.getElementById('listen-answer').disabled=false;document.getElementById('listen-result').style.display='none';document.getElementById('listen-hint').style.display='none';listenPlayCount=0;showHint=false;listenSubmitted=false;document.getElementById('play-count-text').textContent='';updateListenAvg();}
-function updateListenAvg(){if(listenResults.length>0){const avg=Math.round(listenResults.reduce((a,b)=>a+b,0)/listenResults.length);document.getElementById('listen-avg').textContent='เฉลี่ย: '+avg+'%';}else{document.getElementById('listen-avg').textContent='';}}
-function playListen(slow){const s=LISTENING[listenIndex];listenPlayCount++;document.getElementById('play-count-text').textContent='ฟังแล้ว '+listenPlayCount+' ครั้ง';speak(s.text,slow?0.5:0.75);}
-function toggleHint(){showHint=!showHint;const h=document.getElementById('listen-hint');h.style.display=showHint?'block':'none';if(showHint){const s=LISTENING[listenIndex];const words=s.text.split(' ');document.getElementById('listen-hint-text').innerHTML='ประโยคมี '+words.length+' คำ<br>เริ่มต้นด้วย: "'+words[0]+'"';}}
+function updateListenAvg(){if(listenResults.length>0){const avg=Math.round(listenResults.reduce((a,b)=>a+b,0)/listenResults.length);document.getElementById('listen-avg').textContent='เฉลี่ย: '+avg+'%';}else document.getElementById('listen-avg').textContent='';}
+function playListen(slow){listenPlayCount++;document.getElementById('play-count-text').textContent='ฟังแล้ว '+listenPlayCount+' ครั้ง';speak(LISTENING[listenIndex].text,slow?0.5:0.75);}
+function toggleHint(){showHint=!showHint;document.getElementById('listen-hint').style.display=showHint?'block':'none';if(showHint){const w=LISTENING[listenIndex].text.split(' ');document.getElementById('listen-hint-text').innerHTML='ประโยคมี '+w.length+' คำ<br>เริ่มต้นด้วย: "'+w[0]+'"';}}
 function normalizeText(t){return t.toLowerCase().replace(/[^a-z\s]/g,'').trim();}
-function scoreAnswer(orig,ans){const ow=normalizeText(orig).split(/\s+/);const uw=normalizeText(ans).split(/\s+/);let correct=0;ow.forEach(w=>{if(uw.includes(w))correct++;});return Math.round(correct/ow.length*100);}
-function submitListen(){const ans=document.getElementById('listen-answer').value.trim();if(!ans)return;document.getElementById('listen-answer').disabled=true;listenSubmitted=true;const s=LISTENING[listenIndex];const sc=scoreAnswer(s.text,ans);listenResults.push(sc);updateListenAvg();const emoji=sc>=90?'🎉':sc>=70?'👍':sc>=50?'💪':'📖';const msg=sc>=90?'ยอดเยี่ยมมาก!':sc>=70?'ดีมาก! เกือบถูกทั้งหมด':sc>=50?'ไม่เลว ฝึกต่อไปนะ!':'ฟังอีกครั้งแล้วลองใหม่';const color=sc>=70?'#10B981':sc>=50?'#F59E0B':'#EF4444';document.getElementById('result-emoji').textContent=emoji;document.getElementById('result-msg').textContent=msg;document.getElementById('score-bar-fill').style.width=sc+'%';document.getElementById('score-bar-fill').style.background=color;document.getElementById('score-text').textContent=sc+'% ถูกต้อง';const origWords=s.text.split(' ');const userWords=normalizeText(ans).split(/\s+/);let diffHtml='';origWords.forEach(w=>{const clean=normalizeText(w);const ok=userWords.includes(clean);diffHtml+='<span class="diff-word '+(ok?'correct-w':'wrong-w')+'">'+w+' </span>';});document.getElementById('diff-row').innerHTML=diffHtml;document.getElementById('your-answer').textContent=ans;document.getElementById('listen-result').style.display='block';}
+function scoreAnswer(orig,ans){const ow=normalizeText(orig).split(/\s+/),uw=normalizeText(ans).split(/\s+/);let c=0;ow.forEach(w=>{if(uw.includes(w))c++;});return Math.round(c/ow.length*100);}
+function submitListen(){const ans=document.getElementById('listen-answer').value.trim();if(!ans)return;document.getElementById('listen-answer').disabled=true;const s=LISTENING[listenIndex],sc=scoreAnswer(s.text,ans);listenResults.push(sc);updateListenAvg();const emoji=sc>=90?'🎉':sc>=70?'👍':sc>=50?'💪':'📖';const msg=sc>=90?'ยอดเยี่ยมมาก!':sc>=70?'ดีมาก!':sc>=50?'ไม่เลว!':'ลองใหม่นะ';const color=sc>=70?'#10B981':sc>=50?'#F59E0B':'#EF4444';document.getElementById('result-emoji').textContent=emoji;document.getElementById('result-msg').textContent=msg;document.getElementById('score-bar-fill').style.width=sc+'%';document.getElementById('score-bar-fill').style.background=color;document.getElementById('score-text').textContent=sc+'% ถูกต้อง';const ow=s.text.split(' '),uw=normalizeText(ans).split(/\s+/);let h='';ow.forEach(w=>{h+='<span class="diff-word '+(uw.includes(normalizeText(w))?'correct-w':'wrong-w')+'">'+w+' </span>';});document.getElementById('diff-row').innerHTML=h;document.getElementById('your-answer').textContent=ans;document.getElementById('listen-result').style.display='block';}
 function nextListen(){listenIndex=(listenIndex+1)%LISTENING.length;renderListen();}
-function initChatbot(){document.getElementById('chat-select-view').style.display='block';document.getElementById('chat-active-view').style.display='none';const list=document.getElementById('dialogue-list');list.innerHTML='';DIALOGUES.forEach(d=>{const userSteps=d.conversation.filter(c=>c.role==='user').length;const btn=document.createElement('button');btn.className='dialogue-card';btn.innerHTML='<div class="dicon">'+d.icon+'</div><div style="flex:1"><div class="dtitle">'+d.title+'</div><div class="dsub">'+d.titleThai+'</div><div class="dlevel">Level: '+d.level+' · '+userSteps+' ตา</div></div><span style="font-size:18px;color:#CBD5E1">→</span>';btn.onclick=()=>startDialogue(d);list.appendChild(btn);});}
-function startDialogue(d){chatDialogue=d;chatStep=0;chatWaiting=false;chatFinished=false;showExample=false;document.getElementById('chat-select-view').style.display='none';document.getElementById('chat-active-view').style.display='flex';document.getElementById('chat-title').textContent=d.icon+' '+d.title;document.getElementById('chat-sub').textContent=d.titleThai;document.getElementById('chat-messages').innerHTML='';document.getElementById('finished-card').style.display='none';document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('example-text').style.display='none';document.getElementById('chat-input').disabled=true;document.getElementById('chat-input').value='';document.getElementById('chat-send-btn').disabled=true;const first=d.conversation[0];if(first.role==='bot'){setTimeout(()=>{addBotMsg(first.text);chatStep=1;chatWaiting=true;setChatWaiting(true);},300);}}
+function initChatbot(){document.getElementById('chat-select-view').style.display='block';document.getElementById('chat-active-view').style.display='none';const list=document.getElementById('dialogue-list');list.innerHTML='';DIALOGUES.forEach(d=>{const n=d.conversation.filter(c=>c.role==='user').length;const btn=document.createElement('button');btn.className='dialogue-card';btn.innerHTML='<div class="dicon">'+d.icon+'</div><div style="flex:1"><div class="dtitle">'+d.title+'</div><div class="dsub">'+d.titleThai+'</div><div class="dlevel">Level: '+d.level+' · '+n+' ตา</div></div><span style="font-size:18px;color:#CBD5E1">→</span>';btn.onclick=()=>startDialogue(d);list.appendChild(btn);});}
+function startDialogue(d){chatDialogue=d;chatStep=0;chatWaiting=false;chatFinished=false;showExample=false;document.getElementById('chat-select-view').style.display='none';document.getElementById('chat-active-view').style.display='flex';document.getElementById('chat-title').textContent=d.icon+' '+d.title;document.getElementById('chat-sub').textContent=d.titleThai;document.getElementById('chat-messages').innerHTML='';document.getElementById('finished-card').style.display='none';document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('example-text').style.display='none';document.getElementById('chat-input').disabled=true;document.getElementById('chat-input').value='';document.getElementById('chat-send-btn').disabled=true;const first=d.conversation[0];if(first.role==='bot'){setTimeout(()=>{addBotMsg(first.text);chatStep=1;setChatWaiting(true);},300);}}
 function backToSelect(){initChatbot();}
-function addBotMsg(text){const el=document.createElement('div');el.className='bubble bubble-bot';const safeText=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');el.innerHTML='<button onclick="speak(this.dataset.t,0.8)" data-t="'+text.replace(/"/g,'&quot;')+'" style="background:none;border:none;cursor:pointer;font-size:13px;margin-bottom:4px;display:block">🔊</button>'+safeText;document.getElementById('chat-messages').appendChild(el);scrollChat();speak(text,0.8);}
+function addBotMsg(text){const el=document.createElement('div');el.className='bubble bubble-bot';const safe=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');el.innerHTML='<button onclick="speak(this.dataset.t,0.8)" data-t="'+text.replace(/"/g,'&quot;')+'" style="background:none;border:none;cursor:pointer;font-size:13px;margin-bottom:4px;display:block">🔊</button>'+safe;document.getElementById('chat-messages').appendChild(el);scrollChat();speak(text,0.8);}
 function addUserMsg(text){const el=document.createElement('div');el.className='bubble bubble-user';el.textContent=text;document.getElementById('chat-messages').appendChild(el);scrollChat();}
 function addFeedbackMsg(text){const el=document.createElement('div');el.className='bubble bubble-feedback';el.textContent=text;document.getElementById('chat-messages').appendChild(el);scrollChat();}
-function scrollChat(){const msgs=document.getElementById('chat-messages');setTimeout(()=>{msgs.scrollTop=msgs.scrollHeight;},50);}
-function setChatWaiting(w){chatWaiting=w;document.getElementById('chat-input').disabled=!w;document.getElementById('chat-send-btn').disabled=!w;document.getElementById('chat-input').placeholder=w?'พิมพ์ภาษาอังกฤษที่นี่...':'รอ AI ตอบ...';if(w&&chatDialogue){const step=chatDialogue.conversation[chatStep];if(step&&step.role==='user'){document.getElementById('chat-prompt-bar').style.display='block';document.getElementById('prompt-label').textContent='💭 '+step.prompt;document.getElementById('example-text').textContent='💡 "'+step.example+'"';document.getElementById('example-text').style.display='none';showExample=false;}}else{document.getElementById('chat-prompt-bar').style.display='none';}}
+function scrollChat(){setTimeout(()=>{const m=document.getElementById('chat-messages');m.scrollTop=m.scrollHeight;},50);}
+function setChatWaiting(w){chatWaiting=w;document.getElementById('chat-input').disabled=!w;document.getElementById('chat-send-btn').disabled=!w;document.getElementById('chat-input').placeholder=w?'พิมพ์ภาษาอังกฤษที่นี่...':'รอ AI ตอบ...';if(w&&chatDialogue){const step=chatDialogue.conversation[chatStep];if(step&&step.role==='user'){document.getElementById('chat-prompt-bar').style.display='block';document.getElementById('prompt-label').textContent='💭 '+step.prompt;document.getElementById('example-text').textContent='💡 "'+step.example+'"';document.getElementById('example-text').style.display='none';showExample=false;}}else document.getElementById('chat-prompt-bar').style.display='none';}
 function toggleExample(){showExample=!showExample;document.getElementById('example-text').style.display=showExample?'block':'none';document.querySelector('.ptoggle').textContent=showExample?'ซ่อนตัวอย่าง':'ดูตัวอย่าง';}
-function checkKeywords(text,keywords){const lower=text.toLowerCase();return keywords.some(k=>lower.includes(k));}
-function sendChat(){const input=document.getElementById('chat-input');const text=input.value.trim();if(!text||!chatWaiting||!chatDialogue)return;input.value='';setChatWaiting(false);addUserMsg(text);const step=chatDialogue.conversation[chatStep];const good=step.keywords?checkKeywords(text,step.keywords):true;const feedback=good?null:'Good try! You could also say: "'+step.example+'"';setTimeout(()=>{if(feedback){addFeedbackMsg(feedback);speak(feedback,0.8);}const nextIdx=chatStep+1;if(nextIdx<chatDialogue.conversation.length){setTimeout(()=>{addBotMsg(chatDialogue.conversation[nextIdx].text);if(nextIdx+1<chatDialogue.conversation.length){chatStep=nextIdx+1;setChatWaiting(true);}else{chatFinished=true;document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('chat-input-wrap').style.display='none';document.getElementById('finished-card').style.display='block';}},feedback?2500:500);}else{chatFinished=true;document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('chat-input-wrap').style.display='none';document.getElementById('finished-card').style.display='block';}},300);}
-document.addEventListener('DOMContentLoaded',()=>{document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});});
+function checkKeywords(text,kw){return kw.some(k=>text.toLowerCase().includes(k));}
+function sendChat(){const input=document.getElementById('chat-input');const text=input.value.trim();if(!text||!chatWaiting||!chatDialogue)return;input.value='';setChatWaiting(false);addUserMsg(text);const step=chatDialogue.conversation[chatStep];const good=step.keywords?checkKeywords(text,step.keywords):true;const fb=good?null:'Good try! You could also say: "'+step.example+'"';setTimeout(()=>{if(fb){addFeedbackMsg(fb);speak(fb,0.8);}const ni=chatStep+1;if(ni<chatDialogue.conversation.length){setTimeout(()=>{addBotMsg(chatDialogue.conversation[ni].text);if(ni+1<chatDialogue.conversation.length){chatStep=ni+1;setChatWaiting(true);}else{chatFinished=true;document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('chat-input-wrap').style.display='none';document.getElementById('finished-card').style.display='block';}},fb?2500:500);}else{chatFinished=true;document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('chat-input-wrap').style.display='none';document.getElementById('finished-card').style.display='block';}},300);}
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}});
 </script>
 </body>
 </html>
