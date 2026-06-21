@@ -1,0 +1,19 @@
+{
+  "name": "ฝึกภาษาอังกฤษ",
+  "short_name": "English",
+  "description": "แอพฝึกภาษาอังกฤษ",
+  "start_url": "/delivery-scheduler/",
+  "scope": "/delivery-scheduler/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234F46E5'/><text y='.9em' font-size='80' x='10'>📚</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
