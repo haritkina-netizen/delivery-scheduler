@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจัดตารางส่งสินค้า</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="/static/style.css?v=20260619t">
+<link rel="stylesheet" href="/static/style.css?v=20260619u">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,6 +15,7 @@
 <!-- TOP BAR -->
 <header class="topbar">
   <div class="topbar-left">
+    <button class="m-burger no-print" onclick="toggleNavDrawer()" aria-label="เปิดเมนู">☰</button>
     <span class="logo">🚚 <span class="logo-text">ระบบจัดตารางส่งสินค้า</span></span>
     <nav class="date-nav">
       <button onclick="changeDate(-1)">&#8592;</button>
@@ -36,16 +37,25 @@
   </div>
 </header>
 
-<!-- MOBILE BOTTOM NAV -->
-<div class="mobile-tabs no-print">
-  <button class="mobile-tab active" id="tabMap" onclick="switchTab('map')"><span class="mt-ic">🗺</span>แผนที่</button>
-  <button class="mobile-tab" id="tabList" onclick="switchTab('list')"><span class="mt-ic">📋</span>รายการส่ง</button>
-  <button class="mobile-tab" onclick="window.print()"><span class="mt-ic">🖨</span>พิมพ์</button>
-  <a class="mobile-tab" href="/accounting"><span class="mt-ic">📒</span>บัญชี</a>
+<!-- legacy map/list toggle (hidden; logic kept for switchTab) -->
+<div class="mobile-tabs no-print" id="mobileTabs" hidden>
+  <button class="mobile-tab active" id="tabMap" onclick="switchTab('map')">🗺 แผนที่</button>
+  <button class="mobile-tab" id="tabList" onclick="switchTab('list')">📋 รายการส่ง</button>
 </div>
 
-<!-- MOBILE FAB: add stop -->
-<button class="m-fab no-print" onclick="openStopModal()" aria-label="เพิ่มจุดส่ง" title="เพิ่มจุดส่ง"></button>
+<!-- MOBILE NAV DRAWER (hamburger) -->
+<nav class="m-drawer no-print" id="mDrawer">
+  <div class="m-drawer-head"><span>🚚 เมนู</span><button onclick="closeNavDrawer()" aria-label="ปิดเมนู">✕</button></div>
+  <button class="m-drawer-item" id="mdList" onclick="mNav('list')"><span class="mdi">📋</span>รายการส่ง</button>
+  <button class="m-drawer-item" id="mdMap" onclick="mNav('map')"><span class="mdi">🗺</span>แผนที่</button>
+  <div class="m-drawer-sep"></div>
+  <button class="m-drawer-item accent" onclick="closeNavDrawer();openStopModal()"><span class="mdi">➕</span>เพิ่มจุดส่ง</button>
+  <button class="m-drawer-item" onclick="closeNavDrawer();openProductModal()"><span class="mdi">⚙</span>ตั้งค่าสินค้า</button>
+  <button class="m-drawer-item" onclick="closeNavDrawer();window.print()"><span class="mdi">🖨</span>พิมพ์</button>
+  <div class="m-drawer-sep"></div>
+  <a class="m-drawer-item" href="/accounting"><span class="mdi">📒</span>ระบบบัญชี</a>
+</nav>
+<div class="m-drawer-backdrop no-print" onclick="closeNavDrawer()"></div>
 
 <!-- MAIN LAYOUT -->
 <div class="app-body">

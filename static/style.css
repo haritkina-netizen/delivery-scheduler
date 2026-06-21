@@ -526,6 +526,9 @@ tbody tr.drag-over { background: var(--gray-200); outline: 2px dashed var(--gray
 
 /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
 .m-fab { display: none; }
+.m-burger { display: none; }
+.m-drawer { display: none; }
+.m-drawer-backdrop { display: none; }
 
 @media (max-width: 768px) {
   body { overflow: hidden; }
@@ -535,61 +538,63 @@ tbody tr.drag-over { background: var(--gray-200); outline: 2px dashed var(--gray
   .logo { font-size: 1rem; }
   .logo-text { display: none; }
   .topbar-right .btn-outline:not(.theme-toggle) { display: none; }
-  .topbar-right .btn-primary { padding: 6px 12px; font-size: 0.82rem; }
+  .topbar-right .btn-primary { display: none; }
   .topbar-right .theme-toggle { padding: 5px 9px; font-size: 0.95rem; }
   .date-nav input[type=date] { font-size: 0.8rem; padding: 4px 6px; max-width: 118px; }
   .date-nav button { width: 26px; height: 26px; font-size: 0.85rem; }
 
-  /* Mobile bottom nav */
-  .mobile-tabs {
-    display: flex;
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    z-index: 60;
-    background: var(--gray-900);
-    box-shadow: 0 -2px 12px rgba(0,0,0,.18);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .mobile-tab {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 6px 4px 7px;
-    border: none;
-    background: none;
-    font-size: 0.62rem;
-    font-family: inherit;
-    font-weight: 600;
-    color: rgba(255,255,255,.55);
-    cursor: pointer;
-    text-decoration: none;
-    transition: color .15s;
-  }
-  .mobile-tab .mt-ic { font-size: 1.15rem; line-height: 1; }
-  .mobile-tab.active { color: #fff; }
+  /* hide bottom nav + FAB (using hamburger drawer instead) */
+  .mobile-tabs { display: none !important; }
+  .m-fab { display: none !important; }
 
-  /* FAB add stop — only on list view */
-  body.show-fab .m-fab {
-    display: flex; align-items: center; justify-content: center;
-    position: fixed; right: 16px; bottom: 66px; z-index: 55;
-    width: 54px; height: 54px; border-radius: 50%;
-    background: var(--primary); border: none; cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  /* hamburger button */
+  .m-burger {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border: none; flex-shrink: 0;
+    background: rgba(255,255,255,.14); border-radius: 9px;
+    color: #fff; font-size: 18px; cursor: pointer; font-family: inherit;
   }
-  body.show-fab .m-fab::after { content: "+"; color: #fff; font-size: 30px; line-height: 1; }
+
+  /* slide-out nav drawer */
+  .m-drawer {
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0; width: 244px; z-index: 200;
+    background: var(--gray-900); padding: 14px 10px; gap: 3px; overflow-y: auto;
+    transform: translateX(-100%); transition: transform .26s cubic-bezier(.4,0,.2,1);
+    box-shadow: 2px 0 18px rgba(0,0,0,.25);
+  }
+  body.nav-open .m-drawer { transform: translateX(0); }
+  .m-drawer-backdrop {
+    display: block; position: fixed; inset: 0; z-index: 190;
+    background: rgba(15,23,42,.5); opacity: 0; visibility: hidden;
+    transition: opacity .26s, visibility .26s;
+  }
+  body.nav-open .m-drawer-backdrop { opacity: 1; visibility: visible; }
+  .m-drawer-head {
+    display: flex; align-items: center; justify-content: space-between;
+    color: #fff; font-weight: 600; font-size: 14px; padding: 4px 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.1); margin-bottom: 6px;
+  }
+  .m-drawer-head button { background: none; border: none; color: rgba(255,255,255,.7); font-size: 18px; cursor: pointer; }
+  .m-drawer-item {
+    display: flex; align-items: center; gap: 11px; width: 100%; text-align: left;
+    padding: 11px 13px; border: none; background: none; border-radius: 8px;
+    color: rgba(255,255,255,.75); font-size: 14px; font-weight: 600;
+    font-family: inherit; cursor: pointer; text-decoration: none;
+  }
+  .m-drawer-item:hover, .m-drawer-item:active { background: rgba(255,255,255,.08); color: #fff; }
+  .m-drawer-item.active { color: #fff; background: rgba(255,255,255,.1); }
+  .m-drawer-item.accent { color: #fff; background: var(--primary); }
+  .m-drawer-item .mdi { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
+  .m-drawer-sep { height: 1px; background: rgba(255,255,255,.1); margin: 8px 6px; }
 
   .app-body { flex-direction: column; }
 
   .map-panel { width: 100%; height: 100%; border-right: none; display: none; }
   .map-panel.tab-active { display: flex; }
 
-  .sheet-panel { width: 100%; height: 100%; display: none; overflow: hidden; padding-bottom: 56px; }
+  .sheet-panel { width: 100%; height: 100%; display: none; overflow: hidden; }
   .sheet-panel.tab-active { display: flex; }
-  .map-panel.tab-active { padding-bottom: 56px; }
-  /* hide redundant add button on mobile (FAB covers it); show map's add via search */
-  .topbar-right .btn-primary { display: none; }
 
   /* Route header — 2 rows: name full width / phone+truck half */
   .route-header { padding: 8px 12px; gap: 6px; flex-direction: column; align-items: stretch; }
@@ -611,7 +616,7 @@ tbody tr.drag-over { background: var(--gray-200); outline: 2px dashed var(--gray
   .btn-gmaps { font-size: 0.77rem; padding: 5px 10px; }
 
   /* Table → CARD ROWS */
-  .table-wrap { overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 10px 96px; }
+  .table-wrap { overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 10px 24px; }
   table { min-width: 0; width: 100%; }
   thead { display: none; }
   #stopTableBody tr { display: block; background: var(--gray-50); border: 0.5px solid var(--gray-200); border-radius: 12px; margin-bottom: 10px; padding: 10px 12px; position: relative; }

@@ -741,9 +741,16 @@ function switchTab(tab) {
   document.getElementById('tabList').classList.toggle('active', tab === 'list');
   document.getElementById('mapPanel').classList.toggle('tab-active', tab === 'map');
   document.getElementById('sheetPanel').classList.toggle('tab-active', tab === 'list');
-  document.body.classList.toggle('show-fab', tab === 'list');
+  const mdMap = document.getElementById('mdMap'), mdList = document.getElementById('mdList');
+  if (mdMap) mdMap.classList.toggle('active', tab === 'map');
+  if (mdList) mdList.classList.toggle('active', tab === 'list');
   if (tab === 'map') setTimeout(() => map.invalidateSize(), 50);
 }
+
+// ── Mobile hamburger drawer ──────────────────────────────────────────────────
+function toggleNavDrawer() { document.body.classList.toggle('nav-open'); }
+function closeNavDrawer() { document.body.classList.remove('nav-open'); }
+function mNav(tab) { switchTab(tab); closeNavDrawer(); }
 
 function initMobileTabs() {
   if (window.innerWidth <= 768) {
