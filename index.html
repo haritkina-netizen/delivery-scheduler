@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ฝึกภาษาอังกฤษ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8FAFC;color:#1E293B;overflow-x:hidden;padding-bottom:70px}
+.screen{display:none;min-height:calc(100vh - 70px)}
+.screen.active{display:block}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:70px;background:#FFF;border-top:1px solid #F1F5F9;display:flex;z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:none;cursor:pointer;color:#94A3B8;font-size:10px;font-weight:600;padding:6px 0}
+.nav-btn.active{color:#4F46E5}
+.nav-btn .icon{font-size:22px}
+.header{background:#FFF;padding:16px 20px 12px;border-bottom:1px solid #F1F5F9;position:sticky;top:0;z-index:10}
+.header h1{font-size:22px;font-weight:800;color:#1E293B}
+.header p{font-size:13px;color:#64748B;margin-top:2px}
+.card{background:#FFF;border-radius:20px;padding:20px;margin:12px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700}
+.badge-A1{background:#D1FAE5;color:#065F46}
+.badge-A2{background:#DBEAFE;color:#1E40AF}
+.badge-B1{background:#FEF3C7;color:#92400E}
+.badge-B2{background:#FCE7F3;color:#9D174D}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:16px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.btn:active{opacity:.8}
+.btn-primary{background:#4F46E5;color:#FFF}
+.btn-red{background:#DC2626;color:#FFF}
+.btn-amber{background:#D97706;color:#FFF}
+.btn-green{background:#10B981;color:#FFF}
+.btn-outline{background:transparent;border:1.5px solid #E2E8F0;color:#475569}
+.btn-full{width:100%}
+.btn-sm{padding:10px 18px;font-size:13px;border-radius:12px}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 16px}
+.feature-card{background:#FFF;border-radius:20px;padding:20px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer;border:none;text-align:left;transition:transform .15s}
+.feature-card:active{transform:scale(.97)}
+.feature-card .ficon{font-size:36px}
+.feature-card .ftitle{font-size:15px;font-weight:700;color:#1E293B}
+.feature-card .fsub{font-size:12px;color:#94A3B8}
+.streak-bar{background:#4F46E5;margin:0 16px 16px;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:16px}
+.streak-bar .snum{font-size:32px;font-weight:800;color:#FFF}
+.streak-bar .stext{color:#C7D2FE;font-size:13px;line-height:1.5}
+.vocab-area{padding:16px;display:flex;flex-direction:column;align-items:center}
+.vocab-counter{font-size:13px;color:#94A3B8;font-weight:500;margin-bottom:12px}
+.flashcard-wrap{width:100%;max-width:380px;perspective:1000px;margin-bottom:20px}
+.flashcard{width:100%;min-height:260px;position:relative;cursor:pointer;transition:transform .5s;transform-style:preserve-3d}
+.flashcard.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;width:100%;min-height:260px;backface-visibility:hidden;border-radius:24px;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;background:#FFF;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.card-back{transform:rotateY(180deg);background:linear-gradient(135deg,#4F46E5,#7C3AED)}
+.card-word{font-size:36px;font-weight:800;color:#1E293B;text-align:center}
+.card-phonetic{font-size:16px;color:#94A3B8;text-align:center}
+.card-hint{font-size:13px;color:#94A3B8;margin-top:8px}
+.card-meaning{font-size:28px;font-weight:700;color:#FFF;text-align:center}
+.card-type{font-size:13px;color:#C7D2FE;text-align:center}
+.card-example{font-size:14px;color:#E0E7FF;text-align:center;font-style:italic;line-height:1.5;margin-top:4px}
+.vocab-actions{display:flex;gap:10px;width:100%;max-width:380px}
+.speak-btn{background:#F1F5F9;border-radius:50%;width:46px;height:46px;border:none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pron-step{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid #F1F5F9}
+.step-num{width:28px;height:28px;border-radius:50%;background:#4F46E5;color:#FFF;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pron-target{font-size:28px;font-weight:800;text-align:center;color:#1E293B;padding:20px 0 4px}
+.pron-phonetic{font-size:15px;color:#94A3B8;text-align:center;margin-bottom:8px}
+.pron-thai{font-size:13px;color:#64748B;text-align:center;margin-bottom:20px}
+.recording-indicator{width:12px;height:12px;border-radius:50%;background:#EF4444;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.star-rating{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.star{font-size:36px;cursor:pointer;transition:transform .1s}
+.star:active{transform:scale(1.2)}
+.listen-sentence-card{background:linear-gradient(135deg,#D97706,#F59E0B);border-radius:20px;margin:16px;padding:24px;text-align:center;color:#FFF}
+.listen-sentence-card h3{font-size:18px;font-weight:700;margin-bottom:4px}
+.listen-sentence-card p{font-size:13px;opacity:.85}
+.play-btn-row{display:flex;gap:10px;margin-top:16px;justify-content:center}
+.play-big{background:rgba(255,255,255,.25);border:none;border-radius:14px;padding:12px 20px;color:#FFF;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
+.answer-area{padding:0 16px 16px}
+.answer-input{width:100%;border:2px solid #E2E8F0;border-radius:16px;padding:16px;font-size:16px;color:#1E293B;background:#F8FAFC;min-height:80px;resize:none;font-family:inherit}
+.answer-input:focus{outline:none;border-color:#4F46E5}
+.score-bar-wrap{height:10px;background:#E2E8F0;border-radius:5px;overflow:hidden;margin:10px 0}
+.score-bar-fill{height:100%;border-radius:5px;transition:width .5s}
+.diff-word{font-size:15px;font-weight:600;display:inline}
+.correct-w{color:#10B981}
+.wrong-w{color:#EF4444}
+.chat-header{background:#FFF;padding:14px 16px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;gap:12px}
+.chat-back{background:none;border:none;color:#DC2626;font-size:14px;font-weight:600;cursor:pointer;padding:4px}
+.chat-title-wrap h3{font-size:15px;font-weight:700;color:#1E293B}
+.chat-title-wrap p{font-size:12px;color:#94A3B8}
+.chat-messages{padding:16px;display:flex;flex-direction:column;gap:10px;min-height:300px}
+.bubble{max-width:80%;border-radius:20px;padding:14px;font-size:15px;line-height:1.5}
+.bubble-bot{align-self:flex-start;background:#FFF;border:1px solid #E2E8F0;color:#1E293B}
+.bubble-user{align-self:flex-end;background:#DC2626;color:#FFF}
+.bubble-feedback{align-self:flex-start;background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;font-style:italic}
+.chat-input-bar{position:sticky;bottom:70px;background:#FFF;border-top:1px solid #F1F5F9;padding:12px;display:flex;gap:10px}
+.chat-input{flex:1;border:1.5px solid #E2E8F0;border-radius:24px;padding:12px 18px;font-size:15px;color:#1E293B;background:#F8FAFC;font-family:inherit}
+.chat-input:focus{outline:none;border-color:#DC2626}
+.chat-send{width:48px;height:48px;border-radius:50%;background:#DC2626;border:none;color:#FFF;font-size:18px;cursor:pointer;flex-shrink:0}
+.chat-send:disabled{opacity:.4}
+.prompt-bar{background:#FEF2F2;padding:12px 16px;border-top:1px solid #FECACA}
+.prompt-bar .plabel{font-size:13px;font-weight:600;color:#991B1B;margin-bottom:4px}
+.prompt-bar .ptoggle{font-size:12px;color:#DC2626;font-weight:500;cursor:pointer;border:none;background:none;padding:0}
+.prompt-bar .pexample{font-size:13px;color:#7F1D1D;font-style:italic;margin-top:4px}
+.dialogue-card{background:#FFF;border-radius:20px;padding:20px;margin:10px 16px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer;border:none;width:calc(100% - 32px);text-align:left;transition:transform .15s}
+.dialogue-card:active{transform:scale(.98)}
+.dialogue-card .dicon{font-size:36px}
+.dialogue-card .dtitle{font-size:16px;font-weight:700;color:#1E293B}
+.dialogue-card .dsub{font-size:13px;color:#64748B;margin-top:2px}
+.dialogue-card .dlevel{font-size:11px;color:#94A3B8;margin-top:3px}
+.finished-card{background:#FFF;border-radius:24px;padding:32px;margin:16px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+</style>
+</head>
+<body>
+<div id="screen-home" class="screen active">
+  <div style="padding:28px 20px 20px">
+    <div style="font-size:13px;color:#4F46E5;font-weight:600;margin-bottom:6px">สวัสดี! 👋</div>
+    <h2 style="font-size:28px;font-weight:800;color:#1E293B;line-height:1.3">ฝึกภาษาอังกฤษ<br>กับ AI วันนี้</h2>
+    <p style="font-size:15px;color:#64748B;margin-top:8px">เลือกหัวข้อที่ต้องการฝึก</p>
+  </div>
+  <div class="streak-bar">
+    <div class="snum">🔥</div>
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#FFF">เริ่มฝึกวันนี้!</div>
+      <div class="stext">ฝึกทุกวันเพื่อพัฒนาภาษาอังกฤษ</div>
+    </div>
+  </div>
+  <div class="feature-grid">
+    <button class="feature-card" onclick="goTo('vocabulary')">
+      <div class="ficon">📚</div><div class="ftitle">คำศัพท์</div><div class="fsub">20 คำ · Flashcard</div>
+    </button>
+    <button class="feature-card" onclick="goTo('pronunciation')">
+      <div class="ficon">🎤</div><div class="ftitle">ออกเสียง</div><div class="fsub">ฝึกพูด · อัดเสียง</div>
+    </button>
+    <button class="feature-card" onclick="goTo('listening')">
+      <div class="ficon">🎧</div><div class="ftitle">การฟัง</div><div class="fsub">ฟัง · พิมพ์ · คะแนน</div>
+    </button>
+    <button class="feature-card" onclick="goTo('chatbot')">
+      <div class="ficon">💬</div><div class="ftitle">สนทนา</div><div class="fsub">4 บทสนทนา · AI</div>
+    </button>
+  </div>
+  <div style="margin:0 16px 16px">
+    <div style="font-size:14px;font-weight:700;color:#1E293B;margin-bottom:10px">ทักษะที่ฝึกได้</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <span style="background:#EEF2FF;color:#4338CA;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600">📖 อ่าน</span>
+      <span style="background:#FEF3C7;color:#D97706;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600">🎤 พูด</span>
+      <span style="background:#D1FAE5;color:#065F46;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600">🎧 ฟัง</span>
+      <span style="background:#FCE7F3;color:#9D174D;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600">✍️ เขียน</span>
+    </div>
+  </div>
+</div>
+<div id="screen-vocabulary" class="screen">
+  <div class="header"><h1>📚 คำศัพท์</h1><p>แตะการ์ดเพื่อดูความหมาย · เลื่อนซ้าย/ขวา</p></div>
+  <div class="vocab-area">
+    <div class="vocab-counter" id="vocab-counter">1 / 20</div>
+    <div class="flashcard-wrap">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="card-face" id="card-front">
+          <div class="badge" id="card-badge">A1</div>
+          <div class="card-word" id="card-word">Hello</div>
+          <div class="card-phonetic" id="card-phonetic">/həˈloʊ/</div>
+          <div class="card-hint">แตะเพื่อดูความหมาย</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-type" id="card-type">interjection</div>
+          <div class="card-meaning" id="card-meaning">สวัสดี</div>
+          <div class="card-example" id="card-example">"Hello! How are you today?"</div>
+        </div>
+      </div>
+    </div>
+    <div class="vocab-actions">
+      <button class="speak-btn" onclick="speakWord()" title="ฟังเสียง">🔊</button>
+      <button class="btn btn-outline" style="flex:1" onclick="prevWord()">← ก่อนหน้า</button>
+      <button class="btn btn-primary" style="flex:1" onclick="nextWord()">ถัดไป →</button>
+    </div>
+  </div>
+</div>
+<div id="screen-pronunciation" class="screen">
+  <div class="header"><h1>🎤 ออกเสียง</h1><p>ฟัง → พูด → ฟังเสียงตัวเอง → ให้คะแนน</p></div>
+  <div style="padding:0 16px 16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 4px">
+      <span id="pron-counter" style="font-size:13px;color:#94A3B8">ข้อ 1/8</span>
+      <button class="btn btn-outline btn-sm" onclick="nextPron()">ข้อถัดไป →</button>
+    </div>
+    <div class="card">
+      <div class="pron-target" id="pron-word">Good morning</div>
+      <div class="pron-phonetic" id="pron-phonetic">/ɡʊd ˈmɔːrnɪŋ/</div>
+      <div class="pron-thai" id="pron-thai">อรุณสวัสดิ์</div>
+      <button class="btn btn-amber btn-full" onclick="speakPron()">🔊 ฟังตัวอย่าง</button>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;color:#475569;margin-bottom:12px">ขั้นตอนการฝึก</div>
+      <div class="pron-step"><div class="step-num">1</div><div><div style="font-size:14px;font-weight:600;color:#1E293B">ฟังตัวอย่าง</div><div style="font-size:12px;color:#94A3B8">กดปุ่มด้านบนเพื่อฟัง</div></div></div>
+      <div class="pron-step"><div class="step-num">2</div><div><div style="font-size:14px;font-weight:600;color:#1E293B">บันทึกเสียงของคุณ</div><div style="font-size:12px;color:#94A3B8">กดค้างเพื่อพูด แล้วปล่อย</div></div></div>
+      <div class="pron-step" style="border-bottom:none"><div class="step-num">3</div><div><div style="font-size:14px;font-weight:600;color:#1E293B">ให้คะแนนตัวเอง</div><div style="font-size:12px;color:#94A3B8">เปรียบเทียบแล้วให้ดาว</div></div></div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div id="rec-status" style="font-size:13px;color:#94A3B8;margin-bottom:12px">กดค้างปุ่มเพื่อพูด</div>
+      <button id="rec-btn" class="btn btn-red btn-full" ontouchstart="startRecord(event)" ontouchend="stopRecord(event)" onmousedown="startRecord(event)" onmouseup="stopRecord(event)">🎙️ กดค้างเพื่อพูด</button>
+      <div id="rec-indicator" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:12px">
+        <div class="recording-indicator"></div>
+        <span style="font-size:13px;color:#EF4444;font-weight:600">กำลังบันทึก...</span>
+      </div>
+      <div id="play-rec-wrap" style="display:none;margin-top:12px">
+        <button class="btn btn-outline btn-full" onclick="playRecording()">▶️ ฟังเสียงของคุณ</button>
+      </div>
+      <div id="rate-wrap" style="display:none;margin-top:16px">
+        <div style="font-size:14px;font-weight:600;color:#1E293B;margin-bottom:8px">คุณออกเสียงได้ดีแค่ไหน?</div>
+        <div class="star-rating" id="star-row">
+          <span class="star" onclick="ratePron(1)">⭐</span>
+          <span class="star" onclick="ratePron(2)">⭐</span>
+          <span class="star" onclick="ratePron(3)">⭐</span>
+          <span class="star" onclick="ratePron(4)">⭐</span>
+          <span class="star" onclick="ratePron(5)">⭐</span>
+        </div>
+        <div id="rate-msg" style="font-size:14px;color:#64748B"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="screen-listening" class="screen">
+  <div class="header"><h1>🎧 การฟัง</h1><p>ฟังแล้วพิมพ์ประโยคที่ได้ยิน</p></div>
+  <div>
+    <div style="display:flex;justify-content:space-between;padding:12px 16px 0">
+      <span id="listen-counter" style="font-size:13px;color:#94A3B8;font-weight:500">ข้อ 1/6</span>
+      <span id="listen-avg" style="font-size:13px;color:#94A3B8;font-weight:500"></span>
+    </div>
+    <div class="listen-sentence-card">
+      <h3>ฟังแล้วพิมพ์ประโยคที่ได้ยิน</h3>
+      <p id="listen-thai">ความหมาย: ...</p>
+      <div class="play-btn-row">
+        <button class="play-big" onclick="playListen(false)">🔊 ฟัง</button>
+        <button class="play-big" onclick="playListen(true)">🐢 ช้าๆ</button>
+      </div>
+      <div id="play-count-text" style="font-size:12px;opacity:.7;margin-top:8px"></div>
+    </div>
+    <div class="answer-area">
+      <div style="font-size:14px;font-weight:600;color:#475569;margin-bottom:8px">พิมพ์ที่ได้ยิน:</div>
+      <textarea id="listen-answer" class="answer-input" placeholder="พิมพ์ประโยคที่ได้ยินที่นี่..." rows="3"></textarea>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="btn btn-outline btn-sm" onclick="toggleHint()">💡 คำใบ้</button>
+        <button class="btn btn-amber btn-full" onclick="submitListen()">ตรวจคำตอบ</button>
+      </div>
+      <div id="listen-hint" style="display:none;background:#FFFBEB;border-radius:12px;padding:12px;margin-top:10px">
+        <div id="listen-hint-text" style="font-size:13px;color:#92400E"></div>
+      </div>
+    </div>
+    <div id="listen-result" style="display:none;padding:0 16px 16px">
+      <div class="card" style="text-align:center">
+        <div id="result-emoji" style="font-size:48px;margin-bottom:8px">🎉</div>
+        <div id="result-msg" style="font-size:20px;font-weight:700;color:#1E293B;margin-bottom:12px">ยอดเยี่ยม!</div>
+        <div class="score-bar-wrap"><div class="score-bar-fill" id="score-bar-fill" style="width:0%;background:#10B981"></div></div>
+        <div id="score-text" style="font-size:16px;font-weight:700;color:#475569;margin:8px 0 16px">0%</div>
+        <div style="font-size:13px;font-weight:600;color:#10B981;text-align:left;margin-bottom:6px">ประโยคที่ถูกต้อง:</div>
+        <div id="diff-row" style="text-align:left;margin-bottom:12px;line-height:2"></div>
+        <div style="font-size:13px;font-weight:600;color:#94A3B8;text-align:left;margin-bottom:4px">คำตอบของคุณ:</div>
+        <div id="your-answer" style="font-size:14px;color:#475569;text-align:left;font-style:italic;margin-bottom:20px"></div>
+        <button class="btn btn-amber btn-full" onclick="nextListen()">ข้อถัดไป →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="screen-chatbot" class="screen">
+  <div id="chat-select-view">
+    <div class="header"><h1>💬 สนทนา</h1><p>เลือกบทสนทนาเพื่อฝึก</p></div>
+    <div style="padding:8px 0"><div id="dialogue-list"></div></div>
+  </div>
+  <div id="chat-active-view" style="display:none;flex-direction:column;height:calc(100vh - 70px)">
+    <div class="chat-header">
+      <button class="chat-back" onclick="backToSelect()">← กลับ</button>
+      <div class="chat-title-wrap">
+        <h3 id="chat-title">💬 Chat</h3>
+        <p id="chat-sub"></p>
+      </div>
+    </div>
+    <div id="chat-messages" class="chat-messages" style="overflow-y:auto;flex:1"></div>
+    <div id="finished-card" style="display:none" class="finished-card">
+      <div style="font-size:56px;margin-bottom:12px">🎊</div>
+      <div style="font-size:22px;font-weight:800;color:#1E293B;margin-bottom:8px">บทสนทนาเสร็จแล้ว!</div>
+      <div style="font-size:14px;color:#64748B;margin-bottom:20px">คุณทำได้ดีมาก ลองฝึกบทใหม่กัน</div>
+      <button class="btn btn-red" onclick="backToSelect()">เลือกบทใหม่</button>
+    </div>
+    <div id="chat-prompt-bar" style="display:none" class="prompt-bar">
+      <div class="plabel" id="prompt-label">💭 ...</div>
+      <button class="ptoggle" onclick="toggleExample()">ดูตัวอย่าง</button>
+      <div class="pexample" id="example-text" style="display:none"></div>
+    </div>
+    <div id="chat-input-wrap" class="chat-input-bar">
+      <input id="chat-input" class="chat-input" placeholder="พิมพ์ภาษาอังกฤษที่นี่..." disabled>
+      <button id="chat-send-btn" class="chat-send" onclick="sendChat()" disabled>➤</button>
+    </div>
+  </div>
+</div>
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="goTo('home')"><span class="icon">🏠</span><span>หน้าหลัก</span></button>
+  <button class="nav-btn" id="nav-vocabulary" onclick="goTo('vocabulary')"><span class="icon">📚</span><span>คำศัพท์</span></button>
+  <button class="nav-btn" id="nav-pronunciation" onclick="goTo('pronunciation')"><span class="icon">🎤</span><span>ออกเสียง</span></button>
+  <button class="nav-btn" id="nav-listening" onclick="goTo('listening')"><span class="icon">🎧</span><span>การฟัง</span></button>
+  <button class="nav-btn" id="nav-chatbot" onclick="goTo('chatbot')"><span class="icon">💬</span><span>สนทนา</span></button>
+</nav>
+<script>
+const VOCAB=[{word:"Hello",phonetic:"/həˈloʊ/",type:"interjection",meaning:"สวัสดี",example:"Hello! How are you today?",level:"A1"},{word:"Thank you",phonetic:"/θæŋk juː/",type:"phrase",meaning:"ขอบคุณ",example:"Thank you for your help!",level:"A1"},{word:"Sorry",phonetic:"/ˈsɒri/",type:"interjection",meaning:"ขอโทษ",example:"I'm sorry I was late.",level:"A1"},{word:"Please",phonetic:"/pliːz/",type:"adverb",meaning:"กรุณา",example:"Please help me with this.",level:"A1"},{word:"Excuse me",phonetic:"/ɪkˈskjuːz miː/",type:"phrase",meaning:"ขอโทษนะครับ/ค่ะ",example:"Excuse me, where is the bathroom?",level:"A1"},{word:"Beautiful",phonetic:"/ˈbjuːtɪfl/",type:"adjective",meaning:"สวยงาม",example:"What a beautiful sunset!",level:"A2"},{word:"Delicious",phonetic:"/dɪˈlɪʃəs/",type:"adjective",meaning:"อร่อยมาก",example:"This food is absolutely delicious.",level:"A2"},{word:"Understand",phonetic:"/ˌʌndəˈstænd/",type:"verb",meaning:"เข้าใจ",example:"Do you understand the instructions?",level:"A2"},{word:"Remember",phonetic:"/rɪˈmembər/",type:"verb",meaning:"จำได้",example:"I can't remember his name.",level:"A2"},{word:"Important",phonetic:"/ɪmˈpɔːrtənt/",type:"adjective",meaning:"สำคัญ",example:"This is a very important meeting.",level:"A2"},{word:"Opportunity",phonetic:"/ˌɒpəˈtjuːnɪti/",type:"noun",meaning:"โอกาส",example:"This is a great opportunity to learn.",level:"B1"},{word:"Challenge",phonetic:"/ˈtʃælɪndʒ/",type:"noun",meaning:"ความท้าทาย",example:"Learning English is a fun challenge.",level:"B1"},{word:"Experience",phonetic:"/ɪkˈspɪəriəns/",type:"noun",meaning:"ประสบการณ์",example:"She has five years of experience.",level:"B1"},{word:"Recommend",phonetic:"/ˌrekəˈmend/",type:"verb",meaning:"แนะนำ",example:"I recommend trying the local food.",level:"B1"},{word:"Apologize",phonetic:"/əˈpɒlədʒaɪz/",type:"verb",meaning:"ขอโทษ (อย่างเป็นทางการ)",example:"I apologize for the mistake.",level:"B1"},{word:"Consequently",phonetic:"/ˈkɒnsɪkwəntli/",type:"adverb",meaning:"ดังนั้น",example:"He was late; consequently, he missed the meeting.",level:"B2"},{word:"Sophisticated",phonetic:"/səˈfɪstɪkeɪtɪd/",type:"adjective",meaning:"ซับซ้อน, มีความรู้",example:"The system is very sophisticated.",level:"B2"},{word:"Accomplishment",phonetic:"/əˈkʌmplɪʃmənt/",type:"noun",meaning:"ความสำเร็จ",example:"Getting this job is a great accomplishment.",level:"B2"},{word:"Negotiate",phonetic:"/nɪˈɡəʊʃieɪt/",type:"verb",meaning:"เจรจา",example:"We need to negotiate the price.",level:"B2"},{word:"Perseverance",phonetic:"/ˌpɜːrsɪˈvɪərəns/",type:"noun",meaning:"ความอดทน, ความพยายาม",example:"Success requires perseverance.",level:"B2"}];
+const SENTENCES=[{text:"Good morning, how are you?",phonetic:"/ɡʊd ˈmɔːrnɪŋ haʊ ɑːr juː/",thai:"อรุณสวัสดิ์ คุณเป็นอย่างไรบ้าง?"},{text:"I would like a cup of coffee, please.",phonetic:"",thai:"ฉันขอกาแฟหนึ่งแก้วครับ"},{text:"Could you speak more slowly?",phonetic:"",thai:"คุณช่วยพูดช้าลงหน่อยได้ไหม?"},{text:"Where is the nearest hospital?",phonetic:"",thai:"โรงพยาบาลที่ใกล้ที่สุดอยู่ที่ไหน?"},{text:"I am very happy to meet you.",phonetic:"",thai:"ฉันดีใจมากที่ได้รู้จักคุณ"},{text:"The weather today is quite nice.",phonetic:"",thai:"อากาศวันนี้ดีมาก"},{text:"Thank you for your help, I appreciate it.",phonetic:"",thai:"ขอบคุณสำหรับความช่วยเหลือ ฉันซาบซึ้งมาก"},{text:"Excuse me, can you help me find this address?",phonetic:"",thai:"ขอโทษนะครับ คุณช่วยหาที่อยู่นี้ให้ได้ไหม?"}];
+const LISTENING=[{text:"I need to find my passport.",thai:"ฉันต้องหาพาสปอร์ตของฉัน"},{text:"The train leaves at seven thirty.",thai:"รถไฟออกเวลาเจ็ดโมงครึ่ง"},{text:"Please turn left at the traffic light.",thai:"กรุณาเลี้ยวซ้ายที่ไฟแดง"},{text:"Can I have the menu, please?",thai:"ขอเมนูหน่อยได้ไหมครับ?"},{text:"I would like to book a table for two.",thai:"ฉันอยากจองโต๊ะสำหรับสองคน"},{text:"How much does this cost?",thai:"อันนี้ราคาเท่าไหร่?"}];
+const DIALOGUES=[{id:1,icon:"✈️",title:"At the Airport",titleThai:"ที่สนามบิน",level:"A1",conversation:[{role:"bot",text:"Hello! Welcome to Bangkok Airport. May I see your passport, please?"},{role:"user",prompt:"แสดงพาสปอร์ต",example:"Here is my passport.",keywords:["passport","here","my"]},{role:"bot",text:"Thank you. What is the purpose of your visit?"},{role:"user",prompt:"บอกว่ามาท่องเที่ยว",example:"I'm here for tourism.",keywords:["tourism","holiday","vacation","tourist","travel"]},{role:"bot",text:"How long will you be staying in Thailand?"},{role:"user",prompt:"บอกระยะเวลาที่จะอยู่",example:"I will stay for two weeks.",keywords:["week","day","month","stay"]},{role:"bot",text:"Enjoy your stay in Thailand! Have a wonderful trip!"}]},{id:2,icon:"🍽️",title:"At the Restaurant",titleThai:"ที่ร้านอาหาร",level:"A2",conversation:[{role:"bot",text:"Good evening! Do you have a reservation?"},{role:"user",prompt:"บอกว่าจองไว้แล้ว",example:"Yes, I have a reservation for two.",keywords:["yes","reservation","booked","table"]},{role:"bot",text:"Perfect! Please follow me. Here is your table and menu."},{role:"user",prompt:"ขอแนะนำเมนู",example:"What do you recommend?",keywords:["recommend","suggestion","popular","special","best"]},{role:"bot",text:"Our pad thai and green curry are very popular! Would you like to order now?"},{role:"user",prompt:"สั่งอาหาร",example:"I'll have the pad thai, please.",keywords:["pad","curry","order","like","have","please"]},{role:"bot",text:"Excellent choice! Your food will be ready in about 15 minutes."}]},{id:3,icon:"🏨",title:"At the Hotel",titleThai:"ที่โรงแรม",level:"B1",conversation:[{role:"bot",text:"Good afternoon! Welcome to the Grand Hotel. How can I help you?"},{role:"user",prompt:"เช็คอิน",example:"I'd like to check in, please.",keywords:["check","reservation","booking","room"]},{role:"bot",text:"Of course! May I have your name and booking confirmation?"},{role:"user",prompt:"บอกชื่อและเลขการจอง",example:"My name is John Smith, confirmation number 12345.",keywords:["name","number","confirmation","booking"]},{role:"bot",text:"Thank you, Mr. Smith. You have a deluxe room on the 8th floor."},{role:"user",prompt:"ถามสิ่งอำนวยความสะดวก",example:"What facilities does the hotel have?",keywords:["facility","pool","gym","breakfast","wifi","restaurant","spa"]},{role:"bot",text:"We have a rooftop pool, fitness center, and complimentary breakfast from 7 to 10 AM. Enjoy your stay!"}]},{id:4,icon:"💼",title:"Job Interview",titleThai:"สัมภาษณ์งาน",level:"B2",conversation:[{role:"bot",text:"Good morning! Please have a seat. Thank you for coming in today."},{role:"user",prompt:"ทักทายและแนะนำตัว",example:"Good morning! I'm very excited about this opportunity.",keywords:["morning","thank","excited","opportunity","pleased","meet"]},{role:"bot",text:"Tell me about yourself and your experience."},{role:"user",prompt:"เล่าประสบการณ์",example:"I have three years of experience in marketing.",keywords:["experience","year","work","skill","major","graduate","study"]},{role:"bot",text:"What are your greatest strengths?"},{role:"user",prompt:"บอกจุดแข็งของตัวเอง",example:"I'm a quick learner and I work well under pressure.",keywords:["strength","skill","good","learn","team","work","pressure","leader"]},{role:"bot",text:"Excellent! We'll be in touch within the next few days. Thank you for your time!"}]}];
+let currentScreen='home',vocabIndex=0,cardFlipped=false,pronIndex=0,mediaRecorder=null,recordedChunks=[],recordedBlob=null,listenIndex=0,listenResults=[],listenPlayCount=0,showHint=false,listenSubmitted=false,chatDialogue=null,chatStep=0,chatWaiting=false,chatFinished=false,showExample=false;
+function goTo(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('screen-'+s).classList.add('active');document.getElementById('nav-'+s).classList.add('active');currentScreen=s;if(s==='vocabulary')initVocab();if(s==='pronunciation')initPron();if(s==='listening')initListen();if(s==='chatbot')initChatbot();}
+function speak(text,rate){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate||0.8;speechSynthesis.speak(u);}
+function initVocab(){renderVocab();}
+function renderVocab(){const v=VOCAB[vocabIndex];document.getElementById('vocab-counter').textContent=(vocabIndex+1)+' / '+VOCAB.length;document.getElementById('card-badge').textContent=v.level;document.getElementById('card-badge').className='badge badge-'+v.level;document.getElementById('card-word').textContent=v.word;document.getElementById('card-phonetic').textContent=v.phonetic;document.getElementById('card-type').textContent=v.type;document.getElementById('card-meaning').textContent=v.meaning;document.getElementById('card-example').textContent='"'+v.example+'"';if(cardFlipped){cardFlipped=false;document.getElementById('flashcard').classList.remove('flipped');}}
+function flipCard(){cardFlipped=!cardFlipped;document.getElementById('flashcard').classList.toggle('flipped',cardFlipped);}
+function nextWord(){vocabIndex=(vocabIndex+1)%VOCAB.length;renderVocab();}
+function prevWord(){vocabIndex=(vocabIndex-1+VOCAB.length)%VOCAB.length;renderVocab();}
+function speakWord(){speak(VOCAB[vocabIndex].word,0.7);}
+let touchStartX=0;
+document.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;});
+document.addEventListener('touchend',e=>{if(currentScreen!=='vocabulary')return;const dx=e.changedTouches[0].clientX-touchStartX;if(Math.abs(dx)>60){if(dx<0)nextWord();else prevWord();}});
+function initPron(){renderPron();}
+function renderPron(){const s=SENTENCES[pronIndex];document.getElementById('pron-counter').textContent='ข้อ '+(pronIndex+1)+'/'+SENTENCES.length;document.getElementById('pron-word').textContent=s.text;document.getElementById('pron-phonetic').textContent=s.phonetic;document.getElementById('pron-thai').textContent=s.thai;document.getElementById('rec-status').textContent='กดค้างปุ่มเพื่อพูด';document.getElementById('rec-indicator').style.display='none';document.getElementById('play-rec-wrap').style.display='none';document.getElementById('rate-wrap').style.display='none';document.getElementById('rate-msg').textContent='';recordedBlob=null;}
+function speakPron(){speak(SENTENCES[pronIndex].text,0.75);}
+function nextPron(){pronIndex=(pronIndex+1)%SENTENCES.length;renderPron();}
+async function startRecord(e){e.preventDefault();if(!navigator.mediaDevices){alert('ไม่สามารถเข้าถึงไมค์ได้');return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});recordedChunks=[];mediaRecorder=new MediaRecorder(stream);mediaRecorder.ondataavailable=ev=>recordedChunks.push(ev.data);mediaRecorder.onstop=()=>{recordedBlob=new Blob(recordedChunks,{type:'audio/webm'});document.getElementById('play-rec-wrap').style.display='block';document.getElementById('rate-wrap').style.display='block';document.getElementById('rec-indicator').style.display='none';stream.getTracks().forEach(t=>t.stop());};mediaRecorder.start();document.getElementById('rec-indicator').style.display='flex';document.getElementById('rec-status').textContent='กำลังบันทึก...';}catch(err){alert('ไม่สามารถเข้าถึงไมค์ได้: '+err.message);}}
+function stopRecord(e){e.preventDefault();if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();document.getElementById('rec-status').textContent='บันทึกเสร็จแล้ว!';}}
+function playRecording(){if(!recordedBlob)return;const url=URL.createObjectURL(recordedBlob);new Audio(url).play();}
+const rateMessages=['ต้องฝึกเพิ่มครับ 💪','พอใช้ได้ ฝึกต่อไปนะ 📖','ดีมาก! 👍','ดีมากเลย! 🌟','ยอดเยี่ยม! เก่งมาก! 🎉'];
+function ratePron(stars){const els=document.querySelectorAll('#star-row .star');els.forEach((s,i)=>{s.textContent=i<stars?'⭐':'☆';});document.getElementById('rate-msg').textContent=rateMessages[stars-1];document.getElementById('rate-msg').style.color=stars>=4?'#10B981':'#64748B';}
+function initListen(){renderListen();}
+function renderListen(){const s=LISTENING[listenIndex];document.getElementById('listen-counter').textContent='ข้อ '+(listenIndex+1)+'/'+LISTENING.length;document.getElementById('listen-thai').textContent='ความหมาย: '+s.thai;document.getElementById('listen-answer').value='';document.getElementById('listen-answer').disabled=false;document.getElementById('listen-result').style.display='none';document.getElementById('listen-hint').style.display='none';listenPlayCount=0;showHint=false;listenSubmitted=false;document.getElementById('play-count-text').textContent='';updateListenAvg();}
+function updateListenAvg(){if(listenResults.length>0){const avg=Math.round(listenResults.reduce((a,b)=>a+b,0)/listenResults.length);document.getElementById('listen-avg').textContent='เฉลี่ย: '+avg+'%';}else{document.getElementById('listen-avg').textContent='';}}
+function playListen(slow){const s=LISTENING[listenIndex];listenPlayCount++;document.getElementById('play-count-text').textContent='ฟังแล้ว '+listenPlayCount+' ครั้ง';speak(s.text,slow?0.5:0.75);}
+function toggleHint(){showHint=!showHint;const h=document.getElementById('listen-hint');h.style.display=showHint?'block':'none';if(showHint){const s=LISTENING[listenIndex];const words=s.text.split(' ');document.getElementById('listen-hint-text').innerHTML='ประโยคมี '+words.length+' คำ<br>เริ่มต้นด้วย: "'+words[0]+'"';}}
+function normalizeText(t){return t.toLowerCase().replace(/[^a-z\s]/g,'').trim();}
+function scoreAnswer(orig,ans){const ow=normalizeText(orig).split(/\s+/);const uw=normalizeText(ans).split(/\s+/);let correct=0;ow.forEach(w=>{if(uw.includes(w))correct++;});return Math.round(correct/ow.length*100);}
+function submitListen(){const ans=document.getElementById('listen-answer').value.trim();if(!ans)return;document.getElementById('listen-answer').disabled=true;listenSubmitted=true;const s=LISTENING[listenIndex];const sc=scoreAnswer(s.text,ans);listenResults.push(sc);updateListenAvg();const emoji=sc>=90?'🎉':sc>=70?'👍':sc>=50?'💪':'📖';const msg=sc>=90?'ยอดเยี่ยมมาก!':sc>=70?'ดีมาก! เกือบถูกทั้งหมด':sc>=50?'ไม่เลว ฝึกต่อไปนะ!':'ฟังอีกครั้งแล้วลองใหม่';const color=sc>=70?'#10B981':sc>=50?'#F59E0B':'#EF4444';document.getElementById('result-emoji').textContent=emoji;document.getElementById('result-msg').textContent=msg;document.getElementById('score-bar-fill').style.width=sc+'%';document.getElementById('score-bar-fill').style.background=color;document.getElementById('score-text').textContent=sc+'% ถูกต้อง';const origWords=s.text.split(' ');const userWords=normalizeText(ans).split(/\s+/);let diffHtml='';origWords.forEach(w=>{const clean=normalizeText(w);const ok=userWords.includes(clean);diffHtml+='<span class="diff-word '+(ok?'correct-w':'wrong-w')+'">'+w+' </span>';});document.getElementById('diff-row').innerHTML=diffHtml;document.getElementById('your-answer').textContent=ans;document.getElementById('listen-result').style.display='block';}
+function nextListen(){listenIndex=(listenIndex+1)%LISTENING.length;renderListen();}
+function initChatbot(){document.getElementById('chat-select-view').style.display='block';document.getElementById('chat-active-view').style.display='none';const list=document.getElementById('dialogue-list');list.innerHTML='';DIALOGUES.forEach(d=>{const userSteps=d.conversation.filter(c=>c.role==='user').length;const btn=document.createElement('button');btn.className='dialogue-card';btn.innerHTML='<div class="dicon">'+d.icon+'</div><div style="flex:1"><div class="dtitle">'+d.title+'</div><div class="dsub">'+d.titleThai+'</div><div class="dlevel">Level: '+d.level+' · '+userSteps+' ตา</div></div><span style="font-size:18px;color:#CBD5E1">→</span>';btn.onclick=()=>startDialogue(d);list.appendChild(btn);});}
+function startDialogue(d){chatDialogue=d;chatStep=0;chatWaiting=false;chatFinished=false;showExample=false;document.getElementById('chat-select-view').style.display='none';document.getElementById('chat-active-view').style.display='flex';document.getElementById('chat-title').textContent=d.icon+' '+d.title;document.getElementById('chat-sub').textContent=d.titleThai;document.getElementById('chat-messages').innerHTML='';document.getElementById('finished-card').style.display='none';document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('example-text').style.display='none';document.getElementById('chat-input').disabled=true;document.getElementById('chat-input').value='';document.getElementById('chat-send-btn').disabled=true;const first=d.conversation[0];if(first.role==='bot'){setTimeout(()=>{addBotMsg(first.text);chatStep=1;chatWaiting=true;setChatWaiting(true);},300);}}
+function backToSelect(){initChatbot();}
+function addBotMsg(text){const el=document.createElement('div');el.className='bubble bubble-bot';const safeText=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');el.innerHTML='<button onclick="speak(this.dataset.t,0.8)" data-t="'+text.replace(/"/g,'&quot;')+'" style="background:none;border:none;cursor:pointer;font-size:13px;margin-bottom:4px;display:block">🔊</button>'+safeText;document.getElementById('chat-messages').appendChild(el);scrollChat();speak(text,0.8);}
+function addUserMsg(text){const el=document.createElement('div');el.className='bubble bubble-user';el.textContent=text;document.getElementById('chat-messages').appendChild(el);scrollChat();}
+function addFeedbackMsg(text){const el=document.createElement('div');el.className='bubble bubble-feedback';el.textContent=text;document.getElementById('chat-messages').appendChild(el);scrollChat();}
+function scrollChat(){const msgs=document.getElementById('chat-messages');setTimeout(()=>{msgs.scrollTop=msgs.scrollHeight;},50);}
+function setChatWaiting(w){chatWaiting=w;document.getElementById('chat-input').disabled=!w;document.getElementById('chat-send-btn').disabled=!w;document.getElementById('chat-input').placeholder=w?'พิมพ์ภาษาอังกฤษที่นี่...':'รอ AI ตอบ...';if(w&&chatDialogue){const step=chatDialogue.conversation[chatStep];if(step&&step.role==='user'){document.getElementById('chat-prompt-bar').style.display='block';document.getElementById('prompt-label').textContent='💭 '+step.prompt;document.getElementById('example-text').textContent='💡 "'+step.example+'"';document.getElementById('example-text').style.display='none';showExample=false;}}else{document.getElementById('chat-prompt-bar').style.display='none';}}
+function toggleExample(){showExample=!showExample;document.getElementById('example-text').style.display=showExample?'block':'none';document.querySelector('.ptoggle').textContent=showExample?'ซ่อนตัวอย่าง':'ดูตัวอย่าง';}
+function checkKeywords(text,keywords){const lower=text.toLowerCase();return keywords.some(k=>lower.includes(k));}
+function sendChat(){const input=document.getElementById('chat-input');const text=input.value.trim();if(!text||!chatWaiting||!chatDialogue)return;input.value='';setChatWaiting(false);addUserMsg(text);const step=chatDialogue.conversation[chatStep];const good=step.keywords?checkKeywords(text,step.keywords):true;const feedback=good?null:'Good try! You could also say: "'+step.example+'"';setTimeout(()=>{if(feedback){addFeedbackMsg(feedback);speak(feedback,0.8);}const nextIdx=chatStep+1;if(nextIdx<chatDialogue.conversation.length){setTimeout(()=>{addBotMsg(chatDialogue.conversation[nextIdx].text);if(nextIdx+1<chatDialogue.conversation.length){chatStep=nextIdx+1;setChatWaiting(true);}else{chatFinished=true;document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('chat-input-wrap').style.display='none';document.getElementById('finished-card').style.display='block';}},feedback?2500:500);}else{chatFinished=true;document.getElementById('chat-prompt-bar').style.display='none';document.getElementById('chat-input-wrap').style.display='none';document.getElementById('finished-card').style.display='block';}},300);}
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});});
+</script>
+</body>
+</html>
