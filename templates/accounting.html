@@ -4436,21 +4436,28 @@ function docFilterSidebar(kind,val){
    คำนวณจากเลขสูงสุดที่มีอยู่จริงใน incRows ของปีนั้นๆ (ไม่ใช้ตัวนับแยก)
    ผลคือถ้าลบ "บิลล่าสุด" ทิ้ง แล้วสร้างใหม่ จะได้เลขเดิมกลับมา (ไม่ข้ามเลขไปเรื่อยๆ) */
 function nextDocNo(kind){
-  const beYear=String((new Date().getFullYear()+543)%100).padStart(2,'0');
-  const prefix=kind==='iv'?'IV':'DO';
-  const pat=new RegExp('^'+prefix+beYear+'-(\\d{3,})$');
+  const now=new Date();
+  const beYear=String((now.getFullYear()+543)%100).padStart(2,'0');
+  const beMonth=String(now.getMonth()+1).padStart(2,'0');
+  if(kind==='do'){
+    // รูปแบบ S6906/001
+    const prefix='S'+beYear+beMonth+'/';
+    const pat=new RegExp('^S'+beYear+beMonth+'\\/(\\d+)$');
+    let maxSeq=0;
+    incRows.forEach(function(r){
+      const no=r.inv&&r.inv.invNo;
+      if(no){const m=pat.exec(no);if(m){const n=parseInt(m[1],10);if(n>maxSeq)maxSeq=n;}}
+    });
+    return prefix+String(maxSeq+1).padStart(3,'0');
+  }
+  // IV ใช้รูปแบบเดิม IV69-001
+  const pat=new RegExp('^IV'+beYear+'-(\\d{3,})$');
   let maxSeq=0;
   incRows.forEach(function(r){
     const no=r.inv&&r.inv.invNo;
-    if(no){
-      const m=pat.exec(no);
-      if(m){
-        const n=parseInt(m[1],10);
-        if(n>maxSeq)maxSeq=n;
-      }
-    }
+    if(no){const m=pat.exec(no);if(m){const n=parseInt(m[1],10);if(n>maxSeq)maxSeq=n;}}
   });
-  return prefix+beYear+'-'+String(maxSeq+1).padStart(3,'0');
+  return 'IV'+beYear+'-'+String(maxSeq+1).padStart(3,'0');
 }
 function docGenerateDocNo(kind){
   const id=_docState[kind].currentId;
