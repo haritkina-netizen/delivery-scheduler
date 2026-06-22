@@ -315,13 +315,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
       </div>
 
-      <!-- Target hint -->
+      <!-- Example hints -->
       <div style="margin-bottom:14px">
-        <button id="teacher-hint-btn" class="btn btn-outline btn-full btn-sm" onclick="toggleTargetHint()">💡 ดูประโยคแนะนำ</button>
+        <button id="teacher-hint-btn" class="btn btn-outline btn-full btn-sm" onclick="toggleTargetHint()">💡 ดูตัวอย่างคำตอบ</button>
         <div id="teacher-target-wrap" style="display:none;margin-top:8px;background:#EEF2FF;border-radius:14px;padding:14px">
-          <div style="font-size:11px;font-weight:700;color:#4338CA;margin-bottom:6px">📝 ลองพูดประโยคนี้:</div>
-          <div id="teacher-target-text" style="font-size:16px;font-weight:700;color:#1E293B;line-height:1.5"></div>
-          <button style="margin-top:8px;background:none;border:none;color:#4F46E5;font-size:13px;font-weight:600;cursor:pointer;padding:0" onclick="speakTargetSlow()">🔊 ฟังช้าๆ</button>
+          <div style="font-size:11px;font-weight:700;color:#4338CA;margin-bottom:8px">💡 ตัวอย่างคำตอบ (พูดแบบของตัวเองก็ได้!):</div>
+          <div id="teacher-target-text" style="font-size:14px;color:#1E293B;line-height:2.2"></div>
+          <button style="margin-top:6px;background:none;border:none;color:#4F46E5;font-size:13px;font-weight:600;cursor:pointer;padding:0" onclick="speakTargetSlow()">🔊 ฟังตัวอย่างแรก</button>
         </div>
       </div>
 
@@ -351,12 +351,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div id="teacher-level-badge" class="pron-level-badge level-fair"></div>
         </div>
 
-        <div style="font-size:12px;color:#64748B;margin-bottom:6px;font-weight:600">วิเคราะห์ทีละคำ:</div>
+        <div style="font-size:12px;color:#64748B;margin-bottom:6px;font-weight:600">ความชัดเจนของการออกเสียง:</div>
         <div class="diff-row" id="teacher-chips"></div>
         <div style="display:flex;gap:6px;justify-content:center;margin:8px 0;flex-wrap:wrap">
-          <span style="font-size:11px;color:#065F46;background:#D1FAE5;padding:3px 8px;border-radius:10px;font-weight:600">✅ ถูก</span>
-          <span style="font-size:11px;color:#92400E;background:#FEF3C7;padding:3px 8px;border-radius:10px;font-weight:600">⚠️ เกือบถูก</span>
-          <span style="font-size:11px;color:#991B1B;background:#FEE2E2;padding:3px 8px;border-radius:10px;font-weight:600">❌ ผิด/ขาด</span>
+          <span style="font-size:11px;color:#065F46;background:#D1FAE5;padding:3px 8px;border-radius:10px;font-weight:600">✅ ชัดเจน</span>
+          <span style="font-size:11px;color:#92400E;background:#FEF3C7;padding:3px 8px;border-radius:10px;font-weight:600">⚠️ ไม่แน่ใจ</span>
+          <span style="font-size:11px;color:#991B1B;background:#FEE2E2;padding:3px 8px;border-radius:10px;font-weight:600">❌ ไม่ชัด</span>
         </div>
 
         <!-- Teacher response bubble -->
@@ -367,7 +367,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
         <!-- Wrong word replay -->
         <div id="teacher-wrong-words-row" style="display:none;margin-bottom:10px">
-          <div style="font-size:12px;color:#991B1B;font-weight:600;margin-bottom:6px">🔁 ฟังคำที่ต้องฝึก:</div>
+          <div style="font-size:12px;color:#92400E;font-weight:600;margin-bottom:6px">⚠️ ลองออกเสียงคำเหล่านี้ให้ชัดขึ้น:</div>
           <div id="teacher-wrong-btns" style="display:flex;flex-wrap:wrap;gap:6px"></div>
         </div>
 
@@ -453,34 +453,94 @@ const DIALOGUES=[{id:1,icon:"✈️",title:"At the Airport",titleThai:"ที่
 
 const AI_TEACHER=[
   {id:1,icon:"👋",title:"Greetings",titleThai:"การทักทาย",level:"A1",exchanges:[
-    {q:"Hello! I am your AI English teacher. Please say hello and introduce yourself!",qThai:"สวัสดีค่ะ! ครูคือครู AI พูดทักทายและแนะนำตัวเองให้ฟังหน่อยนะคะ",target:"Hello teacher! Nice to meet you."},
-    {q:"Nice to meet you! How are you today?",qThai:"ยินดีที่ได้รู้จักค่ะ! วันนี้เป็นอย่างไรบ้าง?",target:"I am fine, thank you. And you?"},
-    {q:"I am great! Where are you from?",qThai:"ครูก็สบายดีค่ะ! คุณมาจากที่ไหน?",target:"I am from Thailand."},
-    {q:"Thailand is wonderful! Why are you learning English?",qThai:"ไทยสวยมากเลยค่ะ! ทำไมถึงเรียนภาษาอังกฤษ?",target:"I am learning English to improve my career and travel abroad."}
+    {q:"Hello! I am your AI English teacher. My name is Emma. What is your name?",qThai:"สวัสดีค่ะ! ฉันชื่อเอ็มม่า คุณชื่ออะไรคะ?",
+     hints:["My name is Somchai. Nice to meet you!","Hi! I am Nid. I am very happy to meet you.","Hello teacher! My name is Karn."],
+     responses:[{kw:["my name","i am","i'm","im","name is","called"],replies:["Lovely name! Nice to meet you! How are you feeling today?","What a nice name! So happy to meet you! How are you today?"]}],
+     defaultReply:"Nice to meet you! How are you feeling today?"},
+    {q:"How are you today? Are you excited to practice English?",qThai:"วันนี้เป็นอย่างไรบ้าง? ตื่นเต้นที่จะฝึกภาษาอังกฤษไหมคะ?",
+     hints:["I am great! Yes, I am very excited to practice.","I feel good today. I really want to improve my English.","I am a little nervous but very happy to be here."],
+     responses:[{kw:["good","great","fine","well","happy","excited","yes","wonderful"],replies:["Wonderful! I am excited too! Tell me, where are you from?","That is great to hear! Now, where are you from?"]},{kw:["tired","busy","okay","not bad","nervous"],replies:["That is okay! English practice will cheer you up! Where are you from?","Do not worry, we will have fun! So tell me, where are you from?"]}],
+     defaultReply:"That is great! Let us practice together! Where are you from?"},
+    {q:"Where are you from? Tell me a little about your hometown!",qThai:"คุณมาจากที่ไหนคะ? เล่าเกี่ยวกับบ้านเกิดให้ฟังสักนิดนะคะ",
+     hints:["I am from Bangkok. It is a very big and busy city.","I come from Chiang Mai. It is beautiful and has nice weather.","I live in Khon Kaen. It is in the northeast of Thailand."],
+     responses:[{kw:["bangkok","thailand","thai","chiang mai","phuket","pattaya","korat","khon kaen","udon","ayutthaya"],replies:["Oh wonderful! Thailand is such a beautiful country! What do you love most about your city?","Amazing! I have heard so many great things about Thailand! Do you enjoy living there?"]},{kw:["city","town","village","province","capital"],replies:["How interesting! That sounds like a wonderful place to live! What is your favorite thing about it?","That sounds lovely! What makes your hometown special to you?"]}],
+     defaultReply:"Interesting! That sounds like a wonderful place! What do you enjoy most about living there?"},
+    {q:"Why are you learning English? What is your goal?",qThai:"ทำไมถึงเรียนภาษาอังกฤษคะ? เป้าหมายของคุณคืออะไร?",
+     hints:["I want to improve my English for my work and career.","I am learning English because I love to travel abroad.","I study English to communicate with foreigners and make new friends."],
+     responses:[{kw:["work","job","career","business","company","office","professional"],replies:["That is a great goal! English is so important for business. Keep practicing every day!","Excellent! English will really help your career. You are doing the right thing!"]},{kw:["travel","abroad","foreign","country","trip","tourist","world"],replies:["How exciting! English will help you travel anywhere in the world! Which country do you want to visit?","Wonderful! English is the perfect language for travelers! Where do you dream of going?"]},{kw:["study","university","school","exam","test","education"],replies:["Great plan! English skills will help you succeed in your studies!","Excellent goal! Keep working hard and you will do great in your exams!"]}],
+     defaultReply:"That is a wonderful reason! English will open so many doors for you. Keep it up!"}
   ]},
-  {id:2,icon:"☕",title:"Daily Routine",titleThai:"ชีวิตประจำวัน",level:"A2",exchanges:[
-    {q:"Let's talk about your daily routine. What time do you usually wake up?",qThai:"คุยเรื่องชีวิตประจำวัน ปกติตื่นนอนกี่โมง?",target:"I usually wake up at six o clock in the morning."},
-    {q:"What do you eat for breakfast?",qThai:"กินอะไรเป็นอาหารเช้า?",target:"I eat rice with eggs and drink coffee for breakfast."},
-    {q:"How do you travel to work?",qThai:"ไปทำงานด้วยอะไร?",target:"I go to work by car every day."},
-    {q:"What do you do to relax after work?",qThai:"หลังเลิกงานทำอะไรเพื่อผ่อนคลาย?",target:"I like to watch television and spend time with my family."}
+  {id:2,icon:"☕",title:"Daily Life",titleThai:"ชีวิตประจำวัน",level:"A2",exchanges:[
+    {q:"Tell me about your morning. What did you do this morning before coming here?",qThai:"เล่าเรื่องตอนเช้าของคุณให้ฟังหน่อยสิคะ ทำอะไรบ้างก่อนมาที่นี่?",
+     hints:["I woke up early and had breakfast. Then I took a shower.","This morning I ate rice and drank coffee. After that I came here.","I got up at seven o clock and got ready for the day."],
+     responses:[{kw:["coffee","breakfast","eat","food","rice","noodle","toast","cereal"],replies:["Yum! Breakfast is the most important meal of the day! What is your usual breakfast?","That sounds delicious! Do you always eat breakfast in the morning?"]},{kw:["wake","woke","got up","seven","six","eight","shower","bath"],replies:["I see! That sounds like a busy morning! What time do you usually wake up?","Interesting! What time did you get up? Do you wake up early every day?"]}],
+     defaultReply:"That sounds like a great start to the day! What do you usually eat for breakfast?"},
+    {q:"How do you travel to work or school every day? Do you like your commute?",qThai:"เดินทางไปทำงานหรือโรงเรียนยังไงคะ? ชอบการเดินทางของคุณไหม?",
+     hints:["I go to work by car. The traffic is sometimes very bad in Bangkok.","I take the BTS to work every day. It is fast and convenient.","I ride my motorcycle. It only takes about twenty minutes."],
+     responses:[{kw:["car","drive","driving","motorcycle","bike","motorbike"],replies:["I see! How long does the drive take? Is the traffic bad where you live?","Interesting! Driving can be stressful in traffic. Do you enjoy it?"]},{kw:["bus","train","bts","mrt","subway","public","sky train"],replies:["That is smart! Public transport is so convenient! Is it crowded in the mornings?","Great choice! Is the station close to your home?"]},{kw:["walk","home","work from home","online","remote","zoom"],replies:["Lucky you! Working or studying from home is so comfortable! Do you prefer it?","Oh how nice! No commute is wonderful! What do you like most about working from home?"]}],
+     defaultReply:"That is interesting! How long does it take you to get to work or school?"},
+    {q:"What do you like to do in your free time? Tell me about your hobbies!",qThai:"ชอบทำอะไรในเวลาว่างคะ? เล่าเรื่องงานอดิเรกให้ฟังหน่อย!",
+     hints:["I like to listen to music and watch movies in my free time.","My hobby is playing football with my friends on weekends.","I enjoy cooking and trying new recipes when I have free time."],
+     responses:[{kw:["music","song","sing","guitar","piano","drum","instrument"],replies:["Oh how wonderful! Music is so beautiful! What kind of music do you love most?","That is amazing! Do you play any instruments or do you just listen?"]},{kw:["game","gaming","play","video","phone","mobile","online","esport"],replies:["Fun! Gaming is very popular these days! What kind of games do you like to play?","That sounds exciting! Do you play online with friends or by yourself?"]},{kw:["read","book","novel","manga","comic","magazine"],replies:["Wonderful! Reading is so good for improving English! What kind of books do you enjoy?","Great hobby! Reading in English will really help your language skills!"]},{kw:["sport","exercise","gym","run","football","badminton","swim","yoga","muay thai"],replies:["That is great! Exercise is so important! How often do you work out?","Healthy and active! That is wonderful! Do you play in a team or alone?"]}],
+     defaultReply:"How interesting! That sounds like a great hobby. How long have you been doing that?"},
+    {q:"What do you usually do in the evenings after work or school?",qThai:"ตอนเย็นหลังเลิกงานหรือโรงเรียนทำอะไรบ้างคะ?",
+     hints:["After work I usually have dinner with my family and then watch TV.","In the evenings I like to go for a walk or exercise at the gym.","I spend my evenings studying English and reading books."],
+     responses:[{kw:["family","parent","mom","dad","children","kids","wife","husband","home"],replies:["How sweet! Family time is so precious! What do you all do together in the evenings?","That is lovely! Spending quality time with family is so important!"]},{kw:["netflix","movie","series","watch","tv","youtube","drama","film"],replies:["I love watching shows too! Do you watch in English sometimes? It is great for learning!","That is relaxing! Do you ever watch English movies to help with your listening?"]},{kw:["cook","cooking","dinner","eat","food","restaurant","cafe"],replies:["Delicious! Do you enjoy cooking? What is your favorite dish to make?","How wonderful! Cooking is such a valuable skill! What do you love making?"]}],
+     defaultReply:"That sounds like a nice way to relax! Is that your usual evening routine?"}
   ]},
-  {id:3,icon:"✈️",title:"Travel",titleThai:"การท่องเที่ยว",level:"A2",exchanges:[
-    {q:"Do you enjoy traveling? Where have you visited?",qThai:"ชอบท่องเที่ยวไหม? เคยไปที่ไหนบ้าง?",target:"Yes, I love traveling. I have visited many places in Thailand."},
-    {q:"What is the most beautiful place you have been to?",qThai:"สถานที่สวยงามที่สุดที่เคยไปคือที่ไหน?",target:"The most beautiful place I have visited is the beach in Phuket."},
-    {q:"If you could go anywhere in the world, where would you go?",qThai:"ถ้าไปที่ไหนก็ได้ในโลก จะไปที่ไหน?",target:"I would love to visit Japan to see the cherry blossoms."},
-    {q:"What do you always pack when you travel?",qThai:"เวลาท่องเที่ยวเตรียมอะไรบ้าง?",target:"I always pack my passport, clothes, and camera when I travel."}
+  {id:3,icon:"✈️",title:"Travel Talk",titleThai:"พูดคุยเรื่องท่องเที่ยว",level:"A2",exchanges:[
+    {q:"Do you enjoy traveling? Tell me about a place you have visited that you loved!",qThai:"ชอบท่องเที่ยวไหมคะ? เล่าเรื่องสถานที่ที่เคยไปและชอบมากให้ฟังหน่อยนะคะ",
+     hints:["Yes I love traveling! I visited Phuket last year and it was amazing.","I enjoy traveling very much. I went to Chiang Mai and the temples were beautiful.","I have been to Japan once. It was the best trip of my life."],
+     responses:[{kw:["yes","love","enjoy","like","amazing","beautiful","great","wonderful","fantastic"],replies:["Wonderful! Where is the most beautiful place you have been to?","That sounds amazing! What made that trip so special for you?"]},{kw:["phuket","chiang","koh","beach","island","sea","samui","krabi"],replies:["Oh how beautiful! Thai beaches are truly stunning! What did you do there — did you swim?","Lovely! Thailand has gorgeous beaches! What was your favorite activity there?"]},{kw:["japan","korea","singapore","taiwan","europe","america","bali","paris"],replies:["Wow, international travel! That must have been so exciting! What was the best part of the trip?","Amazing! International travel is so rewarding! How was the experience overall?"]}],
+     defaultReply:"That sounds incredible! What was your favorite thing about that place?"},
+    {q:"If you could travel anywhere in the world right now, where would you go and why?",qThai:"ถ้าคุณสามารถท่องเที่ยวที่ไหนก็ได้ในโลกตอนนี้ จะไปที่ไหนและทำไมคะ?",
+     hints:["I would love to visit Japan to see the cherry blossoms and eat sushi.","I want to go to Switzerland because the mountains and scenery are so beautiful.","My dream destination is New York City because it is so exciting and vibrant."],
+     responses:[{kw:["japan","tokyo","osaka","kyoto","cherry","sushi","anime"],replies:["Japan is absolutely amazing! The food, culture, and technology are incredible! What would you do first when you get there?","Oh I love Japan too! Cherry blossoms, ramen, temples — so much to enjoy! When do you hope to go?"]},{kw:["europe","paris","london","italy","france","rome","spain","switzerland"],replies:["Europe is so beautiful and full of history! Which city interests you the most?","How wonderful! European cities are so rich in culture and architecture!"]},{kw:["america","usa","new york","los angeles","hawaii","california"],replies:["The USA is incredibly diverse! There is so much to see — from cities to national parks!","Amazing! America has everything — cities, beaches, nature, and great food!"]}],
+     defaultReply:"That sounds like a dream destination! What would be the very first thing you would do when you arrive?"},
+    {q:"When you travel, what do you prefer — beaches, mountains, or cities? Tell me why!",qThai:"เวลาท่องเที่ยว ชอบทะเล ภูเขา หรือเมืองมากกว่ากันคะ? บอกเหตุผลด้วยนะคะ!",
+     hints:["I prefer beaches because I love swimming and relaxing by the sea.","I love mountains because the fresh air and beautiful scenery are so peaceful.","I enjoy cities because there is so much to see — shopping, food, and culture."],
+     responses:[{kw:["beach","sea","ocean","swim","relax","sand","wave","snorkel"],replies:["I love beaches too! Nothing beats relaxing by the ocean! Which beach is your favorite?","Beautiful! Beach life is so relaxing and refreshing! Do you like swimming in the sea?"]},{kw:["mountain","hiking","nature","fresh","cool","forest","waterfall","national"],replies:["Mountains are so peaceful and majestic! Do you enjoy hiking? Have you climbed any big mountains?","That is refreshing! Fresh mountain air is so wonderful for the mind and body!"]},{kw:["city","shopping","food","culture","museum","night","nightlife","café","restaurant"],replies:["City travel is so exciting! There is always something new to discover! What do you love most about exploring cities?","Great choice! Cities are full of variety and surprises! Do you love trying local street food?"]}],
+     defaultReply:"That is a great preference! Every kind of destination offers something special. What do you love doing most when you travel?"},
+    {q:"Have you ever had a funny or unexpected experience while traveling? I want to hear it!",qThai:"เคยมีประสบการณ์ตลกหรือไม่คาดฝันตอนท่องเที่ยวไหมคะ? อยากฟังค่ะ!",
+     hints:["Once I got lost in a city and could not find my hotel. It was scary but funny later!","I once accidentally ordered the wrong food because I could not read the menu. It was spicy!","My flight was delayed for six hours once. I had to sleep at the airport!"],
+     responses:[{kw:["lost","get lost","wrong","direction","map","confused","no idea"],replies:["Oh no! Getting lost can be so scary but it makes the best story later! How did you find your way?","Haha! Getting lost is such a classic travel story! Did someone help you in the end?"]},{kw:["food","ate","tried","eat","spicy","strange","wrong","menu","order"],replies:["Food adventures are the most memorable part of travel! Was it surprisingly delicious or terrible?","Ha! Trying unexpected food is both exciting and risky! Would you eat it again?"]},{kw:["miss","missed","late","flight","train","bus","delay","cancelled"],replies:["Oh dear! Missing transportation is so stressful! What did you do — did it all work out okay?","That must have been so nerve-wracking! How did you manage to sort it out?"]}],
+     defaultReply:"That sounds like quite an adventure! Every travel experience teaches us something new. What did you learn from it?"}
   ]},
-  {id:4,icon:"🍜",title:"Food",titleThai:"อาหาร",level:"B1",exchanges:[
-    {q:"What is your all-time favorite food?",qThai:"อาหารโปรดตลอดกาลของคุณคืออะไร?",target:"My favorite food is pad thai. It is very delicious."},
-    {q:"Do you know how to cook? What can you make?",qThai:"ทำอาหารเป็นไหม? ทำอะไรได้บ้าง?",target:"Yes, I can cook fried rice and green curry."},
-    {q:"Imagine you are at a restaurant. How would you order food?",qThai:"ลองนึกภาพว่าอยู่ที่ร้านอาหาร จะสั่งยังไง?",target:"Excuse me, I would like to order the pad thai and water, please."},
-    {q:"How would you ask for the bill at a restaurant?",qThai:"จะขอบิลที่ร้านอาหารยังไง?",target:"Excuse me, could I have the bill please?"}
+  {id:4,icon:"🍜",title:"Food & Tastes",titleThai:"อาหารและรสนิยม",level:"B1",exchanges:[
+    {q:"What is your absolute favorite food? Please describe it — make me hungry!",qThai:"อาหารที่คุณชอบมากที่สุดตลอดกาลคืออะไรคะ? อธิบายให้ฟังหน่อย — อยากให้หิวด้วย!",
+     hints:["My favorite food is pad thai. It is sweet, sour, and slightly spicy with noodles and egg.","I love green curry. It is rich, creamy, and full of amazing Thai spices.","My favorite is mango sticky rice — sweet, soft, and absolutely delicious."],
+     responses:[{kw:["pad thai","tom yum","som tum","green curry","mango","sticky","basil","larb","massaman","thai"],replies:["Thai food is absolutely incredible! So many amazing flavors! Is yours spicy? I love spicy food!","I love Thai cuisine too! The balance of sweet, sour, spicy, and savory is extraordinary!"]},{kw:["sushi","ramen","japanese","korean","pizza","pasta","burger","steak","french"],replies:["Yum! That sounds so delicious! What do you love most about it — the taste, the texture?","Great taste in food! Do you make it at home or do you always go out to eat it?"]},{kw:["spicy","sweet","sour","salty","savory","crispy","soft","creamy","rich"],replies:["Mmm that sounds incredible! I can almost taste it! How often do you eat it?","That sounds absolutely mouthwatering! You are making me very hungry right now!"]}],
+     defaultReply:"That sounds wonderful! What makes it so special — is it the taste, the smell, or the memories it brings?"},
+    {q:"Do you like cooking? What can you cook well? Teach me something!",qThai:"ชอบทำอาหารไหมคะ? ทำอาหารอะไรได้ดีบ้าง? สอนหน่อยสิคะ!",
+     hints:["Yes I love cooking! I can make a great fried rice and tom yum soup.","I can cook simple dishes like omelets and instant noodles with extra vegetables.","I am not very good at cooking but I can make pad kra pao — Thai basil chicken."],
+     responses:[{kw:["yes","love","enjoy","like","cook","cooking","make","prepare","good at"],replies:["How wonderful! Cooking is such a valuable life skill! What is your signature dish — the one you are most proud of?","Amazing! Home cooking is always the best! What special ingredients do you use?"]},{kw:["no","can't","not good","bad","don't","never","rarely","simple","basic","easy"],replies:["That is perfectly fine! Not everyone needs to cook — what simple things can you make when you need to?","Do not worry! Even simple cooking counts! What easy dishes do you manage to make?"]},{kw:["fried rice","omelette","noodle","boil","instant","egg","toast"],replies:["Ha! Those are actually great starting points — everyone starts somewhere in the kitchen!","Simple but delicious! Fried rice is such a classic comfort food! Do you add any special ingredients?"]}],
+     defaultReply:"Interesting! Do you prefer cooking at home or going out to your favorite restaurant?"},
+    {q:"Is there any food you really dislike or cannot eat? Why?",qThai:"มีอาหารที่ไม่ชอบหรือกินไม่ได้เลยไหมคะ? ทำไมคะ?",
+     hints:["I do not like durian because the smell is very strong and strange for me.","I cannot eat very spicy food. My stomach cannot handle it!","I dislike food with a slimy texture like okra. I do not know why!"],
+     responses:[{kw:["durian","smell","texture","slimy","raw","weird","strange","gross","bitter"],replies:["I completely understand! Food texture and smell are so important! Is there a way it could be cooked that you might like it better?","That is very natural! Some flavors and textures are really hard to get used to! Have you ever tried it prepared differently?"]},{kw:["allergy","allergic","sick","stomach","health","intolerant","dairy","gluten","shellfish","nut"],replies:["Oh that is very important information! Do you always have to check ingredients when eating at restaurants?","Food allergies are so serious! You must be very careful. Do people understand your allergy easily?"]},{kw:["nothing","everything","anything","all","any","eat everything"],replies:["Wow you eat everything! That is wonderful — you can enjoy food from every culture around the world!","Amazing! People who eat everything are the most adventurous! Have you ever eaten something very unusual?"]}],
+     defaultReply:"Interesting! It is perfectly normal to have food preferences. Have you ever tried it cooked in a completely different way?"},
+    {q:"Imagine you are opening your dream restaurant. Describe it to me!",qThai:"ลองจินตนาการว่าคุณกำลังเปิดร้านอาหารในฝัน อธิบายให้ฟังหน่อยสิคะ!",
+     hints:["I would open a cozy Thai restaurant with authentic home-style cooking and a beautiful garden.","My dream is to open a dessert cafe with amazing Thai sweets and good coffee.","I would create a fusion restaurant that combines Thai flavors with Japanese presentation."],
+     responses:[{kw:["thai","traditional","authentic","local","street","home","classic"],replies:["Thai cuisine is world-famous! What would be your must-order signature dish that no other restaurant has?","How wonderful! Authentic Thai food restaurants are so beloved everywhere! What would make yours special?"]},{kw:["cafe","coffee","dessert","cake","bakery","sweet","pastry","tea"],replies:["How cozy and inviting! A cafe sounds so warm and welcoming! What would your specialty drink or dessert be?","Love it! Cafes are incredibly popular now. What kind of atmosphere would you create — modern, vintage, or natural?"]},{kw:["fusion","modern","creative","mix","international","japanese","italian","east","west"],replies:["Fusion cuisine is so exciting and creative! What two cuisines would you combine?","How innovative! Fusion cooking is such an art form! What would be your most unique dish on the menu?"]}],
+     defaultReply:"What a fun dream! What would be your most special dish that nobody else can find anywhere else?"}
   ]},
-  {id:5,icon:"💼",title:"Work & Goals",titleThai:"งานและเป้าหมาย",level:"B1",exchanges:[
-    {q:"Tell me about yourself. What do you do for work?",qThai:"เล่าเกี่ยวกับตัวเองหน่อย ทำงานอะไรอยู่?",target:"I work at a company. I have been working there for five years."},
-    {q:"What do you enjoy most about your job?",qThai:"ชอบอะไรมากที่สุดในงาน?",target:"I enjoy working with my team and solving problems every day."},
-    {q:"What skills are you trying to improve?",qThai:"กำลังพัฒนาทักษะอะไรอยู่บ้าง?",target:"I am improving my English speaking and computer skills."},
-    {q:"What are your plans for the next year?",qThai:"แผนในปีหน้าของคุณคืออะไร?",target:"Next year I plan to get a promotion and travel abroad."}
+  {id:5,icon:"💭",title:"Dreams & Goals",titleThai:"ความฝันและเป้าหมาย",level:"B1",exchanges:[
+    {q:"What is your biggest dream in life? Do not be shy — I want to hear everything!",qThai:"ความฝันที่ยิ่งใหญ่ที่สุดในชีวิตคืออะไรคะ? อย่าเขินนะคะ อยากฟังทุกอย่างเลย!",
+     hints:["My biggest dream is to travel around the world and experience different cultures.","I dream of starting my own business one day and being my own boss.","My dream is to have a happy family, a nice house, and a job I love."],
+     responses:[{kw:["travel","world","abroad","country","international","explore","see","visit"],replies:["What an exciting dream! The world is so big and beautiful! Which country would you want to visit first on your world tour?","A world traveler — I love it! That is a wonderful dream! How are you working towards making it happen?"]},{kw:["business","own","company","start","entrepreneur","boss","shop","brand"],replies:["Entrepreneurship is so exciting and bold! What kind of business would you start?","Amazing ambition! Starting your own business takes courage and hard work. What would your business do?"]},{kw:["family","children","house","home","marry","wedding","partner","kids"],replies:["How beautiful! A happy family and a loving home — that is truly the best foundation for a wonderful life!","That is the loveliest dream! What kind of life do you imagine for yourself and your family?"]},{kw:["famous","singer","actor","artist","star","celebrity","popular"],replies:["Exciting dream! What would you want to be famous for? What talent or skill would you share with the world?","Go for it! What steps are you taking right now to get closer to that dream?"]}],
+     defaultReply:"What a wonderful dream! I truly believe you can achieve it! What is one small step you are taking right now to get there?"},
+    {q:"What skills are you working on improving right now? How do you do it?",qThai:"ตอนนี้กำลังพัฒนาทักษะอะไรอยู่คะ? ทำอย่างไรบ้าง?",
+     hints:["I am working on my English speaking and listening skills every day.","Right now I am learning coding and computer skills for my career.","I am trying to improve my cooking skills by watching YouTube videos and practicing."],
+     responses:[{kw:["english","language","speaking","writing","listening","communication","vocabulary"],replies:["Excellent! English is such a valuable skill in today's world! What aspect of English do you find most challenging?","Perfect! English skills will open so many opportunities for you! What is your favorite way to practice?"]},{kw:["computer","coding","programming","technology","digital","software","data","ai"],replies:["Tech skills are in enormous demand right now! What programming language or technology are you focusing on?","Amazing! Technology skills are so powerful in today's world! What kind of projects do you want to build?"]},{kw:["music","art","sport","creative","design","drawing","photography","writing"],replies:["Creative skills are so beautiful and unique! How do you practice — do you have a teacher or are you self-taught?","Wonderful! Creative talents are so special. What inspired you to develop this particular skill?"]}],
+     defaultReply:"That is impressive dedication to self-improvement! How much time do you spend practicing or learning each day?"},
+    {q:"If you could change one thing about the world, what would it be and why?",qThai:"ถ้าคุณสามารถเปลี่ยนแปลงสิ่งหนึ่งในโลกได้ จะเปลี่ยนอะไรและทำไมคะ?",
+     hints:["I would eliminate poverty so that everyone has enough food and education.","I would stop pollution and climate change to save the planet for future generations.","I would make everyone speak kindly to each other so there would be no more wars."],
+     responses:[{kw:["peace","war","conflict","violence","fight","hate","kindness","love"],replies:["A world of peace — what a powerful and beautiful vision! How do you think ordinary people like us can help create it?","That is such a meaningful wish! Peace and kindness are the most important things. What can we each do daily?"]},{kw:["environment","climate","pollution","nature","green","planet","tree","ocean","animal"],replies:["The environment is so critically important right now! What do you personally do in your life to help protect our planet?","A greener and cleaner world for everyone! What small habits do you think make the biggest positive difference?"]},{kw:["poverty","poor","money","hunger","food","education","equality","fair"],replies:["What a compassionate and generous heart you have! Education and equal opportunity truly can change millions of lives!","That shows such deep empathy! Reducing inequality would transform the entire world for the better!"]}],
+     defaultReply:"That is such a thoughtful and meaningful answer! You clearly care deeply about making the world better. What can each person do individually to help?"},
+    {q:"If you could meet anyone — alive today or from history — who would it be and what would you ask them?",qThai:"ถ้าคุณสามารถพบกับใครก็ได้ ทั้งที่ยังมีชีวิตอยู่หรือในประวัติศาสตร์ จะเลือกใครและจะถามอะไรคะ?",
+     hints:["I would love to meet Steve Jobs and ask him how he created such innovative products.","I would choose to meet His Majesty King Bhumibol and thank him for everything he did for Thailand.","I want to meet Elon Musk and ask him how he stays motivated when things get very difficult."],
+     responses:[{kw:["king","queen","royal","rama","royal family","majesty","monarch","leader","president","politician"],replies:["A wonderful and respectful choice! Great leaders hold so much wisdom! What is the most important question you would ask them?","How meaningful! Our leaders shape the course of history! What would you want to learn from them most?"]},{kw:["einstein","newton","tesla","darwin","curie","scientist","inventor","genius","researcher"],replies:["A brilliant mind indeed! Science has changed everything about human life! What big question would you want answered?","Incredible choice! Scientific geniuses have given us so much. Which of their discoveries do you most admire?"]},{kw:["singer","actor","artist","celebrity","musician","star","director","writer","poet","idol"],replies:["Fun and exciting choice! They must be incredibly talented! What would you most want to say or ask them?","Exciting! Meeting your favorite celebrity or artist would be a dream! What would be your very first question?"]},{kw:["elon","musk","jobs","gates","zuckerberg","bezos","entrepreneur","billionaire","ceo"],replies:["A visionary business mind! What leadership lesson would you most want to learn from them?","Great choice! These people have changed the world with their ideas! What would you ask about their journey to success?"]}],
+     defaultReply:"What a fascinating and thoughtful choice! If you had just five minutes with them, what is the single most important question you would ask?"}
   ]}
 ];
 
@@ -769,20 +829,25 @@ function renderTeacherStep(){
   dots.innerHTML=teacherTopic.exchanges.map((_,i)=>'<span class="progress-dot'+(i<teacherStep?' done':i===teacherStep?' current':'')+'"></span>').join('');
   document.getElementById('teacher-q-text').textContent=ex.q;
   document.getElementById('teacher-q-thai').textContent=ex.qThai;
-  document.getElementById('teacher-target-text').textContent=ex.target;
+  if(ex.hints&&ex.hints.length){
+    document.getElementById('teacher-target-text').innerHTML=ex.hints.map(h=>'<div style="padding:4px 0;border-bottom:1px solid #E0E7FF">💬 '+h+'</div>').join('');
+    document.getElementById('teacher-hint-btn').style.display='';
+  } else {
+    document.getElementById('teacher-hint-btn').style.display='none';
+  }
   document.getElementById('teacher-target-wrap').style.display='none';
-  document.getElementById('teacher-hint-btn').textContent='💡 ดูประโยคแนะนำ';
+  document.getElementById('teacher-hint-btn').textContent='💡 ดูตัวอย่างคำตอบ';
   setDisplay('teacher-mic-area','block');setDisplay('teacher-result-area','none');
-  document.getElementById('teacher-mic-status').textContent='กดไมค์แล้วพูดเป็นภาษาอังกฤษ';
+  document.getElementById('teacher-mic-status').textContent='กดไมค์แล้วตอบเป็นภาษาอังกฤษ — พูดได้เลย!';
   setTeacherMicIdle();
   setTimeout(()=>speak(ex.q,0.85),400);
 }
 function replayTeacherQ(){speak(teacherTopic.exchanges[teacherStep].q,0.8);}
-function speakTargetSlow(){speak(document.getElementById('teacher-target-text').textContent,0.55);}
+function speakTargetSlow(){const ex=teacherTopic.exchanges[teacherStep];if(ex.hints&&ex.hints.length)speak(ex.hints[0],0.6);}
 function toggleTargetHint(){
   showTargetHint=!showTargetHint;
   document.getElementById('teacher-target-wrap').style.display=showTargetHint?'block':'none';
-  document.getElementById('teacher-hint-btn').textContent=showTargetHint?'🙈 ซ่อนประโยค':'💡 ดูประโยคแนะนำ';
+  document.getElementById('teacher-hint-btn').textContent=showTargetHint?'🙈 ซ่อนตัวอย่าง':'💡 ดูตัวอย่างคำตอบ';
 }
 function setTeacherMicIdle(){document.getElementById('teacher-mic-btn').className='mic-btn mic-btn-idle';document.getElementById('teacher-mic-label').textContent='กดเพื่อพูด';teacherListening=false;}
 function setTeacherMicListening(){document.getElementById('teacher-mic-btn').className='mic-btn mic-btn-listening';document.getElementById('teacher-mic-label').textContent='กำลังฟัง...';teacherListening=true;}
@@ -794,22 +859,20 @@ function toggleTeacherMic(){
   teacherRecog.onstart=()=>{setTeacherMicListening();document.getElementById('teacher-mic-status').textContent='กำลังฟัง... พูดเลย!';};
   teacherRecog.onresult=(event)=>{
     const results=event.results[0];
-    const target=teacherTopic.exchanges[teacherStep].target;
-    let bestSpoken='',bestScore=-1,bestConf=0,bestAlign=null;
+    let bestSpoken='',bestConf=0;
     for(let i=0;i<results.length;i++){
-      const t=results[i].transcript,conf=results[i].confidence||0.5;
-      const al=alignWords(target,t),ws=computeScore(al);
-      if(ws*0.8+conf*20>bestScore){bestScore=ws*0.8+conf*20;bestSpoken=t;bestConf=conf;bestAlign=al;}
+      const conf=results[i].confidence||0.5;
+      if(conf>bestConf){bestConf=conf;bestSpoken=results[i].transcript;}
     }
-    showTeacherResult(bestSpoken,bestAlign,bestConf);
+    const wordGrades=getWordClarity(results);
+    showTeacherResult(bestSpoken,wordGrades,bestConf);
   };
   teacherRecog.onerror=()=>setTeacherMicIdle();
   teacherRecog.onend=()=>setTeacherMicIdle();
   teacherRecog.start();
 }
-function showTeacherResult(spoken,alignment,confidence){
-  const score=computeScore(alignment);
-  const ds=confidence<0.4?Math.max(0,score-10):score;
+function showTeacherResult(spoken,wordGrades,confidence){
+  const ds=confidence>0?Math.min(100,Math.round(confidence*105)):60;
   teacherScores.push(ds);
   setDisplay('teacher-mic-area','none');setDisplay('teacher-result-area','block');
   document.getElementById('teacher-recognized').textContent='"'+spoken+'"';
@@ -818,35 +881,62 @@ function showTeacherResult(spoken,alignment,confidence){
   const lvl=getPronLevel(ds);
   const badge=document.getElementById('teacher-level-badge');
   badge.textContent=lvl.emoji+' '+lvl.label;badge.className='pron-level-badge '+lvl.cls;
-  renderChips(alignment,'teacher-chips');
-  const wrongWords=alignment.filter(a=>a.grade==='miss').map(a=>a.target);
-  // Teacher feedback
-  let feedback='';
-  if(ds>=85){
-    feedback='🎉 Excellent pronunciation! You said it very clearly! I am impressed!';
-    setTimeout(()=>speak(feedback,0.9),600);
-  } else if(ds>=70){
-    feedback='👍 Very good! Your pronunciation is improving. ';
-    if(wrongWords.length){feedback+='Practice these words: "'+wrongWords.slice(0,2).join(', ')+'". Listen now!';}
-    setTimeout(()=>{speak(feedback,0.9);if(wrongWords.length)setTimeout(()=>speak(wrongWords.slice(0,2).join('. '),0.5),3500);},600);
-  } else if(ds>=45){
-    feedback='💪 Good try! Listen carefully to the words I highlight in red. I will say them slowly.';
-    setTimeout(()=>{speak(feedback,0.9);if(wrongWords.length)setTimeout(()=>wrongWords.slice(0,3).forEach((w,i)=>setTimeout(()=>speak(w,0.45),i*2200)),3000);},600);
-  } else {
-    feedback='📖 Let me say the full sentence slowly for you. Please listen carefully, then try again!';
-    const target=teacherTopic.exchanges[teacherStep].target;
-    setTimeout(()=>{speak(feedback,0.9);setTimeout(()=>speak(target,0.45),2800);},600);
-  }
-  document.getElementById('teacher-feedback-text').textContent=feedback;
-  // Wrong word replay buttons
+  renderFreeformChips(wordGrades,'teacher-chips');
+  // Contextual teacher response
+  const ex=teacherTopic.exchanges[teacherStep];
+  const contextReply=getContextualResponse(ex,spoken);
+  let pronNote='';
+  if(ds>=85)pronNote=' Your pronunciation sounds very clear!';
+  else if(ds>=70)pronNote=' Try to speak a little more clearly next time!';
+  else if(ds<50)pronNote=' Remember to speak slowly and clearly.';
+  const fullFeedback=contextReply+(pronNote?' —'+pronNote:'');
+  document.getElementById('teacher-feedback-text').textContent=fullFeedback;
+  setTimeout(()=>speak(contextReply+(pronNote?' '+pronNote:''),0.88),600);
+  // Unclear word replay buttons
+  const unclearWords=wordGrades.filter(w=>w.grade==='near'||w.grade==='miss').map(w=>w.word);
   const wrongRow=document.getElementById('teacher-wrong-words-row');
   const wrongBtns=document.getElementById('teacher-wrong-btns');
-  if(wrongWords.length>0){
+  if(unclearWords.length>0&&ds<80){
     wrongRow.style.display='block';
-    wrongBtns.innerHTML=wrongWords.map(w=>'<button onclick="speak(\''+w+'\',0.45)" style="background:#FEE2E2;color:#991B1B;border:none;border-radius:20px;padding:6px 14px;font-size:14px;font-weight:600;cursor:pointer">🔊 '+w+'</button>').join('');
+    wrongBtns.innerHTML=unclearWords.slice(0,5).map(w=>'<button onclick="speak(\''+w.replace(/'/g,"\\'")+'\',.5)" style="background:#FEF3C7;color:#92400E;border:none;border-radius:20px;padding:6px 14px;font-size:14px;font-weight:600;cursor:pointer">🔊 '+w+'</button>').join('');
   } else {wrongRow.style.display='none';}
   const isLast=teacherStep>=teacherTopic.exchanges.length-1;
   document.getElementById('teacher-next-btn').textContent=isLast?'🏆 ดูผลลัพธ์':'ถัดไป →';
+}
+function getContextualResponse(exchange,transcript){
+  const lc=transcript.toLowerCase();
+  for(const resp of exchange.responses){
+    if(resp.kw&&resp.kw.some(k=>lc.includes(k))){
+      const r=resp.replies;
+      return r[Math.floor(Math.random()*r.length)];
+    }
+  }
+  return exchange.defaultReply||"That is interesting! Can you tell me more about that?";
+}
+function getWordClarity(speechResults){
+  const best=speechResults[0];
+  const bestWords=best.transcript.trim().split(/\s+/).filter(w=>w);
+  if(!bestWords.length)return[];
+  if(speechResults.length<2){
+    const conf=best.confidence||0.6;
+    return bestWords.map(w=>({word:w,grade:conf>=0.7?'exact':conf>=0.4?'near':'miss'}));
+  }
+  const alts=[];
+  for(let i=1;i<Math.min(speechResults.length,4);i++)alts.push(speechResults[i].transcript.toLowerCase().split(/\s+/));
+  return bestWords.map(word=>{
+    const wl=word.toLowerCase();
+    const matchCount=alts.filter(alt=>alt.some(aw=>aw===wl||levenshtein(wl,aw)<=1)).length;
+    if(matchCount===alts.length)return{word,grade:'exact'};
+    if(matchCount>0)return{word,grade:'near'};
+    return{word,grade:'miss'};
+  });
+}
+function renderFreeformChips(wordGrades,containerId){
+  document.getElementById(containerId).innerHTML=wordGrades.map(w=>{
+    const cls=w.grade==='exact'?'chip-ok':w.grade==='near'?'chip-near':'chip-bad';
+    const label=w.grade==='exact'?'ชัดเจน':w.grade==='near'?'ไม่แน่ใจ':'ไม่ชัด';
+    return'<span class="diff-chip '+cls+'"><span>'+w.word+'</span><span class="chip-label">'+label+'</span></span>';
+  }).join('');
 }
 function teacherRetry(){
   setDisplay('teacher-mic-area','block');setDisplay('teacher-result-area','none');
