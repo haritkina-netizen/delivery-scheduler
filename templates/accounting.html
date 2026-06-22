@@ -5964,31 +5964,16 @@ function printDeliveryNote(id){
 
 /* ── SUB-ITEM DESC AUTOCOMPLETE ── */
 const PRODUCT_PRESETS=[
-  'เครื่องดื่มว่านหางจระเข้ กลิ่นองุ่นขาว 300 ml/24 ขวด ตราเวร่าโกลด์',
-  'เครื่องดื่มว่านหางจระเข้ กลิ่นลิ้นจี่ 300 ml/24 ขวด ตราเวร่าโกลด์',
-  'น้ำเม็ดแมงลัก30% ผสมน้ำผึ้ง 300 ml/24 ขวด ตราเวร่าโกลด์',
-  'เครื่องดื่มว่านหางจระเข้ กลิ่นทับทิม 300 ml/24 ขวด ตราเวร่าโกลด์',
-  'เครื่องดื่มว่านหางจระเข้ ผสมน้ำกระเจี๊ยบและน้ำพุทราจีน33.80% 300 ml/24 ขวด ตราเวร่าโกล์ด',
-  'เครื่องดื่มชาดำผสมเนื้อว่านหางจระเข้ กลิ่นฮันนี่เลมอน 300 ml/24 ขวด ตราเวร่าโกล์ด',
+  {code:'8857200111218',desc:'เครื่องดื่มว่านหางจระเข้ กลิ่นองุ่นขาว300 ml/24 ขวด ตราเวร่าโกลด์'},
+  {code:'8857200111225',desc:'เครื่องดื่มว่านหางจระเข้ กลิ่นลิ้นจี่300 ml/24 ขวด ตราเวร่าโกลด์'},
+  {code:'8857200111331',desc:'น้ำเม็ดแมงลัก30% ผสมน้ำผึ้ง 300 ml/24 ขวด ตราเวร่าโกล์ด'},
+  {code:'8857200111362',desc:'เครื่องดื่มว่านหางจระเข้ กลิ่นทับทิม300 ml/24 ขวด ตราเวร่าโกล์ด'},
+  {code:'8857200113939',desc:'เครื่องดื่มว่านหางจระเข้ผสมน้ำกระเจี๊ยบและน้ำพุทราจีน 33.80% 300 ml/24 ขวด'},
+  {code:'8857200111270',desc:'เครื่องดื่มชาดำผสมเนื้อว่าน หางจระเข้ กลิ่นฮันนี่เลมอน 300 ml/24 ขวด'},
 ];
 function getSubDescSuggestions(q, sourceRows){
   const ql=(q||'').toLowerCase();
-  const codeMap={}, order=[];
-  // presets first
-  PRODUCT_PRESETS.forEach(desc=>{
-    if(!ql||desc.toLowerCase().includes(ql)){
-      if(!(desc in codeMap)){codeMap[desc]='';order.push(desc);}
-    }
-  });
-  // then from existing data
-  (sourceRows||[]).forEach(r=>(r.subs||[]).forEach(s=>{
-    const desc=s.desc;
-    if(!desc)return;
-    if(ql && !desc.toLowerCase().includes(ql))return;
-    if(!(desc in codeMap)){codeMap[desc]='';order.push(desc);}
-    if(s.code && !codeMap[desc])codeMap[desc]=s.code;
-  }));
-  return order.slice(0,12).map(desc=>({desc,code:codeMap[desc]}));
+  return PRODUCT_PRESETS.filter(p=>!ql||p.desc.toLowerCase().includes(ql));
 }
 /* wrappers accessible from oninput attributes */
 function subAcShowExp(el){subAcShow(el,rows);}
