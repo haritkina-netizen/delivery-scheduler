@@ -1875,7 +1875,7 @@ async function loadData(){
     }
     if(data.rows&&data.rows.length){
       nid=data.nid||1;
-      rows=data.rows;
+      rows=data.rows.map(r=>({...r,_expanded:false}));
       renderTable();recalc();
       document.getElementById('savedBadge').textContent='📂 โหลดข้อมูลแล้ว ('+rows.length+' รายการ)';
       return true;
@@ -3758,7 +3758,7 @@ async function incLoadData(){
     const data=await accGet(INC_STORAGE_KEY);
     if(data&&data.rows&&data.rows.length){
       incNid=data.nid||(INC_ID_OFFSET+1);
-      incRows=data.rows;window.incRows=incRows;
+      incRows=data.rows.map(r=>({...r,_expanded:false}));window.incRows=incRows;
       return true;
     }
   }catch(e){}
