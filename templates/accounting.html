@@ -2589,7 +2589,7 @@ function renderTable(){
       <td class="ac" style="font-weight:600;padding:2px 4px" id="tc_${r.id}">
         ${hasSubs
           ?`<span style="display:block;text-align:right;font-size:12px;color:#999;padding:5px 7px">${amt?fmt(amt+vat):'-'}</span>`
-          :`<input type="number" min="0" step="0.01" placeholder="0.00" value="${amt?(amt+vat):''}"
+          :`<input type="number" min="0" step="0.01" placeholder="0.00" value="${amt?((Math.round((amt+vat)*100)/100).toFixed(2)):''}"
               onchange="totalChange(${r.id},this.value)"
               title="กรอกยอดรวม — ระบบคำนวณย้อนกลับหายอดก่อน VAT ให้อัตโนมัติ"
               style="text-align:right;width:100%;font-family:inherit;border:1px solid transparent;
@@ -2762,7 +2762,7 @@ function amtChange(id,val){
   const amt=rowAmt(r),vat=rowVat(r);
   const vc=document.getElementById('vc_'+id),tc=document.getElementById('tc_'+id);
   if(vc)vc.textContent=r.hasVat&&amt?fmt(vat):'-';
-  if(tc){const inp=tc.querySelector('input');if(inp)inp.value=amt?(amt+vat):'';}
+  if(tc){const inp=tc.querySelector('input');if(inp)inp.value=amt?(Math.round((amt+vat)*100)/100).toFixed(2):'';}
   recalc();saveData();
 }
 function totalChange(id,val){
