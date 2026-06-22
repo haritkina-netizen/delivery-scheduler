@@ -4088,7 +4088,7 @@ function incBuildSubInner(r){
       <td style="padding:4px 6px">
         <input type="text" placeholder="ชื่อสินค้า / รายการ" value="${esc(s.desc)}"
           onchange="incSubDesc(${rid},'${s.sid}',this.value)"
-          oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)"
+          oninput="subAcShowInc(this)" onfocus="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)"
           style="width:100%;min-width:100px;border:1px solid transparent;border-radius:4px;padding:4px 7px;font-size:12px;font-family:inherit;background:transparent;color:#1a1a1a"/>
       </td>
       <td style="padding:4px 5px;width:172px">${modeToggle}${qtyCell}</td>
@@ -4155,7 +4155,7 @@ function incBuildSubInner(r){
           <button onclick="incDelSub(${rid},'${s.sid}')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:22px;padding:0;line-height:1">×</button>
         </div>
         <div>${lbl('รหัสสินค้า','#065f46')}<input type="text" placeholder="รหัสสินค้า" value="${esc(s.code||'')}" onchange="incSubCode(${rid},'${s.sid}',this.value)" style="${F};border:1px solid #b5e4d1;background:#f0fdf7;color:#065f46;text-align:center;font-size:13px"/></div>
-        <div>${lbl('ชื่อสินค้า / รายการ')}<input type="text" placeholder="ชื่อสินค้า..." value="${esc(s.desc)}" onchange="incSubDesc(${rid},'${s.sid}',this.value)" oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)" style="${F}"/></div>
+        <div>${lbl('ชื่อสินค้า / รายการ')}<input type="text" placeholder="ชื่อสินค้า..." value="${esc(s.desc)}" onchange="incSubDesc(${rid},'${s.sid}',this.value)" oninput="subAcShowInc(this)" onfocus="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)" style="${F}"/></div>
         <div style="height:0.5px;background:#e8f5ee;margin-bottom:10px"></div>
         ${qtyBlock}
         <div style="background:#e6f7f1;border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:4px">
@@ -4619,7 +4619,7 @@ function docRenderItems(kind){
         +'<div style="font-size:9px;color:#888;margin-top:1px">฿/ขวด</div>');
     return '<div class="doc-item-row">'
       +'<input type="text" placeholder="รหัส" value="'+esc(s.code||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'code\',this.value)"/>'
-      +'<input type="text" placeholder="ชื่อสินค้า / รายการ" value="'+esc(s.desc||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'desc\',this.value)" oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)"/>'
+      +'<input type="text" placeholder="ชื่อสินค้า / รายการ" value="'+esc(s.desc||'')+'" onchange="docItemChange(\''+kind+'\',\''+s.sid+'\',\'desc\',this.value)" oninput="subAcShowInc(this)" onfocus="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)"/>'
       +'<div>'+modeToggle+qtyCell+'</div>'
       +'<div>'+priceCell+'</div>'
       +'<div style="text-align:right;font-weight:700;color:#5b7d76;font-size:12.5px">'+(s.amount?fmt(parseFloat(s.amount)):'-')+'</div>'
@@ -5963,9 +5963,24 @@ function printDeliveryNote(id){
 
 
 /* ── SUB-ITEM DESC AUTOCOMPLETE ── */
+const PRODUCT_PRESETS=[
+  'เครื่องดื่มว่านหางจระเข้ กลิ่นองุ่นขาว 300 ml/24 ขวด ตราเวร่าโกลด์',
+  'เครื่องดื่มว่านหางจระเข้ กลิ่นลิ้นจี่ 300 ml/24 ขวด ตราเวร่าโกลด์',
+  'น้ำเม็ดแมงลัก30% ผสมน้ำผึ้ง 300 ml/24 ขวด ตราเวร่าโกลด์',
+  'เครื่องดื่มว่านหางจระเข้ กลิ่นทับทิม 300 ml/24 ขวด ตราเวร่าโกลด์',
+  'เครื่องดื่มว่านหางจระเข้ ผสมน้ำกระเจี๊ยบและน้ำพุทราจีน33.80% 300 ml/24 ขวด ตราเวร่าโกล์ด',
+  'เครื่องดื่มชาดำผสมเนื้อว่านหางจระเข้ กลิ่นฮันนี่เลมอน 300 ml/24 ขวด ตราเวร่าโกล์ด',
+];
 function getSubDescSuggestions(q, sourceRows){
   const ql=(q||'').toLowerCase();
   const codeMap={}, order=[];
+  // presets first
+  PRODUCT_PRESETS.forEach(desc=>{
+    if(!ql||desc.toLowerCase().includes(ql)){
+      if(!(desc in codeMap)){codeMap[desc]='';order.push(desc);}
+    }
+  });
+  // then from existing data
   (sourceRows||[]).forEach(r=>(r.subs||[]).forEach(s=>{
     const desc=s.desc;
     if(!desc)return;
@@ -5973,7 +5988,7 @@ function getSubDescSuggestions(q, sourceRows){
     if(!(desc in codeMap)){codeMap[desc]='';order.push(desc);}
     if(s.code && !codeMap[desc])codeMap[desc]=s.code;
   }));
-  return order.slice(0,10).map(desc=>({desc,code:codeMap[desc]}));
+  return order.slice(0,12).map(desc=>({desc,code:codeMap[desc]}));
 }
 /* wrappers accessible from oninput attributes */
 function subAcShowExp(el){subAcShow(el,rows);}
