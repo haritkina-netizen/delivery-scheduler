@@ -4127,57 +4127,64 @@ function incBuildSubInner(r){
       const amt=parseFloat(s.amount)||0;
 
       const qtyHtml=mode==='qty'
-        ?`<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <input type="number" min="0" step="any" placeholder="0" value="${s.qty||''}"
-              onchange="incSubQty(${rid},'${s.sid}',this.value)"
-              style="width:60px;border:1px solid #fcd34d;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#fffbeb;color:#92400e;text-align:right;font-weight:600"/>
-            <input type="text" list="subUnitPresets" placeholder="หน่วย" value="${esc(s.unit||'')}"
-              onchange="incSubUnit(${rid},'${s.sid}',this.value)"
-              style="width:60px;border:1px solid #fcd34d;border-radius:6px;padding:5px 6px;font-size:12px;font-family:inherit;background:#fffbeb;color:#92400e"/>
-            <span style="font-size:10px;color:#888">×</span>
-            <input type="number" min="0" step="0.01" placeholder="0.00" value="${s.unitPrice||''}"
-              onchange="incSubUnitPrice(${rid},'${s.sid}',this.value)"
-              style="width:70px;border:1px solid #ddd;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#fff;text-align:right"/>
-            <span style="font-size:10px;color:#888">฿/${esc(s.unit||'หน่วย')}</span>
+        ?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px">
+            <div style="display:flex;align-items:center;gap:4px">
+              <input type="number" min="0" step="any" placeholder="0" value="${s.qty||''}"
+                onchange="incSubQty(${rid},'${s.sid}',this.value)"
+                style="width:64px;border:1px solid #fcd34d;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#fffbeb;color:#92400e;text-align:right;font-weight:600"/>
+              <input type="text" list="subUnitPresets" placeholder="หน่วย" value="${esc(s.unit||'')}"
+                onchange="incSubUnit(${rid},'${s.sid}',this.value)"
+                style="flex:1;min-width:0;border:1px solid #fcd34d;border-radius:6px;padding:5px 6px;font-size:12px;font-family:inherit;background:#fffbeb;color:#92400e"/>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <input type="number" min="0" step="0.01" placeholder="0.00" value="${s.unitPrice||''}"
+                onchange="incSubUnitPrice(${rid},'${s.sid}',this.value)"
+                style="flex:1;min-width:0;border:1px solid #ddd;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#fff;text-align:right"/>
+              <span style="font-size:10px;color:#888;white-space:nowrap">฿/${esc(s.unit||'หน่วย')}</span>
+            </div>
           </div>`
-        :`<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <input type="number" min="0" step="1" placeholder="0" value="${s.lang||''}"
-              onchange="incSubLang(${rid},'${s.sid}',this.value)"
-              style="width:52px;border:1px solid #b5e4d1;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#f0fdf7;color:#065f46;text-align:right;font-weight:600"/>
-            <span style="font-size:11px;color:#5b7d76;font-weight:600">ลัง</span>
-            <input type="number" min="0" step="1" placeholder="0" value="${s.bottle||''}"
-              onchange="incSubBottle(${rid},'${s.sid}',this.value)"
-              style="width:52px;border:1px solid #93c5fd;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#eff6ff;color:#1d4ed8;text-align:right;font-weight:600"/>
-            <span style="font-size:11px;color:#0369a1;font-weight:600">ขวด</span>
-            ${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)?`<span style="font-size:10px;color:#5b7d76">= ${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)} ขวด</span>`:''}
-            <input type="number" min="0" step="0.01" placeholder="0.00" value="${s.pricePerBottle||''}"
-              onchange="incSubPrice(${rid},'${s.sid}',this.value)"
-              style="width:60px;border:1px solid #ddd;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#fff;text-align:right"/>
-            <span style="font-size:10px;color:#888">฿/ขวด</span>
-          </div>`;
+        :`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px">
+            <div style="display:flex;align-items:center;gap:4px">
+              <input type="number" min="0" step="1" placeholder="0" value="${s.lang||''}"
+                onchange="incSubLang(${rid},'${s.sid}',this.value)"
+                style="width:56px;border:1px solid #b5e4d1;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#f0fdf7;color:#065f46;text-align:right;font-weight:600"/>
+              <span style="font-size:12px;color:#5b7d76;font-weight:600">ลัง</span>
+              <input type="number" min="0" step="1" placeholder="0" value="${s.bottle||''}"
+                onchange="incSubBottle(${rid},'${s.sid}',this.value)"
+                style="width:56px;border:1px solid #93c5fd;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#eff6ff;color:#1d4ed8;text-align:right;font-weight:600"/>
+              <span style="font-size:12px;color:#0369a1;font-weight:600">ขวด</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end">
+              <input type="number" min="0" step="0.01" placeholder="0.00" value="${s.pricePerBottle||''}"
+                onchange="incSubPrice(${rid},'${s.sid}',this.value)"
+                style="width:72px;border:1px solid #ddd;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;background:#fff;text-align:right"/>
+              <span style="font-size:10px;color:#888">฿/ขวด</span>
+            </div>
+          </div>
+          ${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)?`<div style="font-size:10px;color:#5b7d76;margin-top:3px">= ${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)} ขวด</div>`:''}`;
 
-      return`<div style="background:var(--bg,#fff);border:0.5px solid #b5e4d1;border-radius:10px;margin:0 10px 8px;padding:10px 12px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      return`<div style="background:var(--bg,#fff);border:0.5px solid #b5e4d1;border-radius:10px;margin:0 10px 8px;padding:10px 12px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;min-width:0">
           <span style="font-size:11px;color:#bbb;flex-shrink:0">${i+1}</span>
           <input type="text" placeholder="รหัสสินค้า" value="${esc(s.code||'')}"
             onchange="incSubCode(${rid},'${s.sid}',this.value)"
-            style="width:90px;border:1px solid #b5e4d1;border-radius:6px;padding:4px 6px;font-size:11px;font-family:inherit;background:#f0fdf7;color:#065f46;text-align:center;flex-shrink:0"/>
-          <input type="text" placeholder="ชื่อสินค้า / รายการ" value="${esc(s.desc)}"
+            style="width:80px;flex-shrink:0;border:1px solid #b5e4d1;border-radius:6px;padding:4px 6px;font-size:11px;font-family:inherit;background:#f0fdf7;color:#065f46;text-align:center"/>
+          <input type="text" placeholder="ชื่อสินค้า" value="${esc(s.desc)}"
             onchange="incSubDesc(${rid},'${s.sid}',this.value)"
             oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)"
-            style="flex:1;border:none;border-bottom:1px solid #e0e0e0;padding:4px 2px;font-size:13px;font-family:inherit;background:transparent;color:var(--text,#1a1a1a)"/>
+            style="flex:1;min-width:0;border:none;border-bottom:1px solid #e0e0e0;padding:4px 2px;font-size:13px;font-family:inherit;background:transparent;color:var(--text,#1a1a1a)"/>
           <button onclick="incDelSub(${rid},'${s.sid}')"
-            style="background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:0 2px;line-height:1;flex-shrink:0">×</button>
+            style="flex-shrink:0;background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:0 2px;line-height:1">×</button>
         </div>
-        <div style="display:flex;gap:4px;margin-bottom:8px">
+        <div style="display:flex;gap:4px;margin-bottom:6px">
           <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','crate')"
-            style="font-size:10px;padding:3px 8px;border-radius:6px;cursor:pointer;border:1px solid ${mode==='crate'?'#5b7d76':'#ddd'};background:${mode==='crate'?'#5b7d76':'#f9f9f9'};color:${mode==='crate'?'#fff':'#999'}">ลัง/ขวด</button>
+            style="font-size:10px;padding:3px 10px;border-radius:6px;cursor:pointer;border:1px solid ${mode==='crate'?'#5b7d76':'#ddd'};background:${mode==='crate'?'#5b7d76':'#f9f9f9'};color:${mode==='crate'?'#fff':'#999'}">ลัง/ขวด</button>
           <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','qty')"
-            style="font-size:10px;padding:3px 8px;border-radius:6px;cursor:pointer;border:1px solid ${mode==='qty'?'#b45309':'#ddd'};background:${mode==='qty'?'#b45309':'#f9f9f9'};color:${mode==='qty'?'#fff':'#999'}">หน่วยอื่น</button>
+            style="font-size:10px;padding:3px 10px;border-radius:6px;cursor:pointer;border:1px solid ${mode==='qty'?'#b45309':'#ddd'};background:${mode==='qty'?'#b45309':'#f9f9f9'};color:${mode==='qty'?'#fff':'#999'}">หน่วยอื่น</button>
         </div>
         ${qtyHtml}
         <div style="display:flex;justify-content:flex-end;margin-top:8px;padding-top:6px;border-top:0.5px solid #e0e0e0">
-          <span style="font-size:14px;font-weight:700;color:#5b7d76">${amt?fmt(amt):'-'}</span>
+          <span style="font-size:15px;font-weight:700;color:#5b7d76">${amt?fmt(amt):'-'}</span>
         </div>
       </div>`;
     }).join('');
