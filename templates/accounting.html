@@ -390,6 +390,43 @@ tbody td input[type=number]{text-align:right}
 .rec-add-row button:hover{background:#14304d}
 
 
+/* ── LINE CHAT WIDGET ── */
+#line-fab{position:fixed;bottom:24px;right:24px;z-index:9998;width:52px;height:52px;border-radius:50%;background:#06c755;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(6,199,85,.4);display:flex;align-items:center;justify-content:center;transition:transform .18s,box-shadow .18s;padding:0}
+#line-fab:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(6,199,85,.5)}
+#line-panel{position:fixed;bottom:86px;right:24px;z-index:9997;width:300px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.18);display:none;flex-direction:column;overflow:hidden;border:1px solid #e2e8f0}
+#line-panel.open{display:flex}
+.line-panel-hdr{background:#06c755;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.line-panel-hdr h4{font-size:14px;font-weight:700;margin:0}
+.line-panel-hdr button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;opacity:.85;padding:0 2px}
+.line-panel-hdr button:hover{opacity:1}
+.line-tabs{display:flex;border-bottom:1px solid #e2e8f0}
+.line-tab{flex:1;padding:9px 4px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;color:#888;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.line-tab.active{color:#06c755;border-bottom-color:#06c755}
+.line-tab-content{display:none;padding:12px;max-height:320px;overflow-y:auto}
+.line-tab-content.active{display:block}
+.line-member{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.line-member:last-child{border-bottom:none}
+.line-member-info .line-member-name{font-size:13px;font-weight:600;color:#1e293b}
+.line-member-info .line-member-id{font-size:11px;color:#94a3b8;margin-top:1px}
+.line-open-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;background:#06c755;color:#fff;border:none;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;text-decoration:none;white-space:nowrap}
+.line-open-btn:hover{background:#05a847}
+.line-open-btn.disabled{background:#ddd;color:#aaa;cursor:default;pointer-events:none}
+.line-group-box .line-group-label{font-size:11px;color:#64748b;margin-bottom:6px}
+.line-group-url{width:100%;border:1px solid #e2e8f0;border-radius:7px;padding:7px 10px;font-size:12px;font-family:inherit;color:#1e293b;margin-bottom:8px;outline:none;box-sizing:border-box}
+.line-group-url:focus{border-color:#06c755;box-shadow:0 0 0 3px rgba(6,199,85,.12)}
+.line-action-btn{width:100%;padding:8px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;margin-bottom:6px}
+.line-action-btn.primary{background:#06c755;color:#fff}
+.line-action-btn.primary:hover{background:#05a847}
+.line-action-btn.outline{background:#fff;color:#06c755;border:2px solid #06c755}
+.line-action-btn.outline:hover{background:#f0fdf4}
+.line-no-data{text-align:center;color:#94a3b8;font-size:12.5px;padding:20px 8px;line-height:1.7}
+.rec-list-item{flex-direction:column;align-items:stretch!important;gap:4px}
+.rec-list-item .rec-item-top{display:flex;align-items:center;justify-content:space-between}
+.rec-list-item .rec-item-line{display:flex;align-items:center;gap:5px}
+.rec-list-item .rec-item-line input{flex:1;font-family:inherit;font-size:11.5px;border:1px solid #e2e8f0;border-radius:5px;padding:3px 7px;color:#555;background:#f8fafc}
+.rec-list-item .rec-item-line input:focus{border-color:#06c755;outline:none;background:#fff}
+.rec-list-item .rec-item-line label{font-size:10px;color:#94a3b8;white-space:nowrap;flex-shrink:0}
+
 /* ── UNDO TOAST ── */
 .undo-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
   background:#1a1a1a;color:#fff;border-radius:10px;padding:10px 16px;font-size:13px;
@@ -1020,6 +1057,7 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
         <div class="doc-frow c2">
           <div class="doc-field"><label>ที่อยู่ลูกค้า</label><input type="text" id="doc-iv-custaddr" onchange="docInvField('iv','custAddr',this.value)"/></div>
           <div class="doc-field"><label>โทร. ลูกค้า</label><input type="text" id="doc-iv-custphone" onchange="docInvField('iv','custPhone',this.value)"/></div>
+          <div class="doc-field"><label>LINE ID ลูกค้า <a id="doc-iv-line-btn" href="#" target="_blank" onclick="return openCustLineFromDoc('iv')" style="font-size:10px;background:#06c755;color:#fff;padding:1px 7px;border-radius:10px;text-decoration:none;margin-left:4px">เปิด LINE</a></label><input type="text" id="doc-iv-custline" placeholder="@lineId..." onchange="docInvField('iv','custLine',this.value)"/></div>
         </div>
         <div class="doc-frow">
           <div class="doc-field"><label>สถานที่ส่งสินค้า</label><input type="text" id="doc-iv-deliv" placeholder="ศูนย์กระจายสินค้า..." onchange="docInvField('iv','delivAddr',this.value)"/></div>
@@ -2182,12 +2220,20 @@ function renderRecList(){
     el.innerHTML='<div style="text-align:center;color:#aaa;font-size:13px;padding:8px">ยังไม่มีรายชื่อ</div>';
     return;
   }
-  el.innerHTML=_recorders.map((n,i)=>
-    '<div class="rec-list-item">'+
-      '<span>'+n+'</span>'+
-      '<button class="rec-del-btn" onclick="delRecorder('+i+')" title="ลบ">×</button>'+
-    '</div>'
-  ).join('');
+  el.innerHTML=_recorders.map((n,i)=>{
+    const lid=(_lineIds[n]||'');
+    return '<div class="rec-list-item">'+
+      '<div class="rec-item-top">'+
+        '<span>'+n+'</span>'+
+        '<button class="rec-del-btn" onclick="delRecorder('+i+')" title="ลบ">×</button>'+
+      '</div>'+
+      '<div class="rec-item-line">'+
+        '<label>LINE ID:</label>'+
+        '<input type="text" placeholder="@lineId หรือ lineId..." value="'+lid+'" '+
+          'oninput="updateLineId(\''+n+'\',this.value)" onblur="saveLineIds()"/>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
 function addRecorderModal(){
   const inp=document.getElementById('recNewName');
@@ -2207,6 +2253,10 @@ function delRecorder(idx){
   saveRecorders();
   renderRecList();
   renderTable();recalc();
+}
+
+function updateLineId(name,val){
+  _lineIds[name]=(val||'').replace(/^@/,'').trim();
 }
 
 /* ── CATEGORY MANAGEMENT ── */
@@ -4500,6 +4550,7 @@ function docLoadRecord(kind,id){
     document.getElementById('doc-iv-custtax').value=r.inv.custTaxId||'';
     document.getElementById('doc-iv-custaddr').value=r.inv.custAddr||'';
     document.getElementById('doc-iv-custphone').value=r.inv.custPhone||'';
+    document.getElementById('doc-iv-custline').value=r.inv.custLine||'';
     document.getElementById('doc-iv-deliv').value=r.inv.delivAddr||'';
   }else{
     document.getElementById('doc-do-invno').value=r.inv.invNo||'';
@@ -4539,6 +4590,7 @@ function docRefreshInvFields(kind,r){
     document.getElementById('doc-iv-custaddr').value=r.inv.custAddr||'';
     document.getElementById('doc-iv-custtax').value=r.inv.custTaxId||'';
     document.getElementById('doc-iv-custphone').value=r.inv.custPhone||'';
+    document.getElementById('doc-iv-custline').value=r.inv.custLine||'';
     document.getElementById('doc-iv-deliv').value=r.inv.delivAddr||'';
   }else{
     document.getElementById('doc-do-deliv').value=r.inv.delivAddr||'';
@@ -4555,7 +4607,7 @@ function docInvField(kind,field,val){
     r.desc=val;
   }
   r.inv[field]=val;
-  if(r.supplier&&['custAddr','custTaxId','custPhone','delivAddr'].includes(field)){
+  if(r.supplier&&['custAddr','custTaxId','custPhone','custLine','delivAddr'].includes(field)){
     saveCustomerProfile(r.supplier,r.inv);
   }
   if(field==='invNo')docRenderSidebar(kind);
@@ -5549,7 +5601,7 @@ async function _loadCustProfiles(){
 function saveCustomerProfile(name,inv){
   if(!name)return;
   if(!_custProfilesCache[name])_custProfilesCache[name]={};
-  ['custAddr','custTaxId','custPhone','delivAddr'].forEach(k=>{if(inv[k])_custProfilesCache[name][k]=inv[k];});
+  ['custAddr','custTaxId','custPhone','custLine','delivAddr'].forEach(k=>{if(inv[k])_custProfilesCache[name][k]=inv[k];});
   accSet('customer_profiles',_custProfilesCache);
 }
 function getCustomerProfile(name){return _custProfilesCache[name]||null;}
@@ -5557,7 +5609,7 @@ function getAllCustomerProfiles(){return _custProfilesCache||{};}
 /* รวมข้อมูลลูกค้า: เอาจากโปรไฟล์ที่บันทึกไว้ก่อน ถ้าช่องไหนยังไม่มี ให้ค้นจากบิลเก่าที่มีชื่อลูกค้าตรงกัน (เรียงจากล่าสุด) มาเติมให้ */
 function getCustomerInfo(name,excludeId){
   const prof=getCustomerProfile(name)||{};
-  const result={custAddr:prof.custAddr||'',custTaxId:prof.custTaxId||'',custPhone:prof.custPhone||'',delivAddr:prof.delivAddr||'',desc:''};
+  const result={custAddr:prof.custAddr||'',custTaxId:prof.custTaxId||'',custPhone:prof.custPhone||'',custLine:prof.custLine||'',delivAddr:prof.delivAddr||'',desc:''};
   const matches=(window.incRows||[]).filter(function(r){return r.supplier===name&&r.inv&&r.id!==excludeId;})
     .sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
   matches.forEach(function(r){
@@ -5609,6 +5661,10 @@ function renderInvFields(rid){
         <input type="text" value="${esc(d.custPhone||'')}" placeholder=""
           onchange="incInvField(${rid},'custPhone',this.value)"
           style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 7px;font-size:12px;font-family:inherit"/></div>
+      <div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">LINE ID ลูกค้า</label>
+        <input type="text" value="${esc(d.custLine||'')}" placeholder="@lineId..."
+          onchange="incInvField(${rid},'custLine',this.value)"
+          style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 7px;font-size:12px;font-family:inherit"/></div>
       <div style="grid-column:1/-1"><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">สถานที่ส่งสินค้า</label>
         <input type="text" value="${esc(d.delivAddr||'')}" placeholder="ศูนย์กระจายสินค้า..."
           onchange="incInvField(${rid},'delivAddr',this.value)"
@@ -5620,7 +5676,7 @@ function incInvField(rid,field,val){
   const r=(window.incRows||[]).find(x=>x.id===rid);if(!r)return;
   if(!r.inv)r.inv={};r.inv[field]=val;
   // auto-save to customer profile
-  if(r.supplier&&['custAddr','custTaxId','custPhone','delivAddr'].includes(field)){
+  if(r.supplier&&['custAddr','custTaxId','custPhone','custLine','delivAddr'].includes(field)){
     saveCustomerProfile(r.supplier,r.inv);
   }
   incSaveData();
@@ -6764,8 +6820,8 @@ document.getElementById('page-ledger').style.display='block';
 document.getElementById('page-ledger').style.opacity='1';
 
 (async function init(){
-  await Promise.all([loadCats(), loadRecorders(), incLoadCats(), loadCompanyProfile(), _loadCustProfiles()]);
-  cfBuild(); incCfBuild();
+  await Promise.all([loadCats(), loadRecorders(), incLoadCats(), loadCompanyProfile(), _loadCustProfiles(), loadLineData()]);
+  cfBuild(); incCfBuild(); initLinePanel();
   const [incLoaded, expLoaded] = await Promise.all([incLoadData(), loadData()]);
   if(incLoaded){incRenderTable();incRecalc();}
   else{incRenderTable();incRecalc();}
@@ -6776,6 +6832,130 @@ document.getElementById('page-ledger').style.opacity='1';
   }
   updateMeta();
 })();
+
+/* ── LINE WIDGET JS ── */
+let _lineIds={};
+let _lineGroupUrl='';
+
+async function loadLineData(){
+  const ids=await accGet('expense_line_ids');
+  if(ids&&typeof ids==='object')_lineIds=ids;
+  const grp=await accGet('expense_line_group');
+  if(typeof grp==='string')_lineGroupUrl=grp;
+}
+function saveLineIds(){accSet('expense_line_ids',_lineIds);}
+function saveLineGroupData(){accSet('expense_line_group',_lineGroupUrl);}
+
+function toggleLinePanel(){
+  const p=document.getElementById('line-panel');
+  if(p.classList.contains('open')){p.classList.remove('open');}
+  else{p.classList.add('open');renderLineTeam();renderLineCust();}
+}
+function switchLineTab(tab,btn){
+  document.querySelectorAll('.line-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.line-tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('line-tab-'+tab).classList.add('active');
+  if(tab==='team')renderLineTeam();
+  if(tab==='cust')renderLineCust();
+}
+function lineGroupEdited(){
+  document.getElementById('lineGroupSaveBtn').style.display='block';
+}
+function saveLineGroupUrl(){
+  _lineGroupUrl=(document.getElementById('lineGroupInput').value||'').trim();
+  saveLineGroupData();
+  document.getElementById('lineGroupSaveBtn').style.display='none';
+  const btn=document.getElementById('lineGroupOpenBtn');
+  btn.disabled=!_lineGroupUrl;
+}
+function openLineGroup(){
+  if(!_lineGroupUrl)return;
+  window.open(_lineGroupUrl,'_blank');
+}
+function renderLineTeam(){
+  const el=document.getElementById('lineTeamList');if(!el)return;
+  if(!_recorders.length){el.innerHTML='<div class="line-no-data">ยังไม่มีรายชื่อพนักงาน<br>เพิ่มได้ที่หน้าบันทึกรายจ่าย/รายรับ</div>';return;}
+  el.innerHTML=_recorders.map(n=>{
+    const lid=(_lineIds[n]||'').trim();
+    const url=lid?'https://line.me/ti/p/~'+encodeURIComponent(lid):'';
+    return '<div class="line-member">'+
+      '<div class="line-member-info">'+
+        '<div class="line-member-name">'+n+'</div>'+
+        (lid?'<div class="line-member-id">@'+lid+'</div>':'<div class="line-member-id" style="color:#f59e0b">ยังไม่มี LINE ID</div>')+
+      '</div>'+
+      (url?'<a class="line-open-btn" href="'+url+'" target="_blank">เปิด LINE</a>':
+           '<span class="line-open-btn disabled">เปิด LINE</span>')+
+    '</div>';
+  }).join('');
+}
+function renderLineCust(){
+  const el=document.getElementById('lineCustList');if(!el)return;
+  const profiles=getAllCustomerProfiles();
+  const names=Object.keys(profiles).filter(n=>profiles[n].custLine);
+  if(!names.length){
+    el.innerHTML='<div class="line-no-data">ยังไม่มีข้อมูล LINE ลูกค้า<br>เพิ่ม LINE ID ในข้อมูลลูกค้า<br>ตอนออกใบกำกับภาษี / ใบส่งสินค้า</div>';
+    return;
+  }
+  el.innerHTML=names.map(n=>{
+    const lid=profiles[n].custLine;
+    const url='https://line.me/ti/p/~'+encodeURIComponent(lid);
+    return '<div class="line-member">'+
+      '<div class="line-member-info">'+
+        '<div class="line-member-name">'+n+'</div>'+
+        '<div class="line-member-id">@'+lid+'</div>'+
+      '</div>'+
+      '<a class="line-open-btn" href="'+url+'" target="_blank">เปิด LINE</a>'+
+    '</div>';
+  }).join('');
+}
+function openCustLineFromDoc(kind){
+  const lid=(document.getElementById('doc-'+kind+'-custline').value||'').replace(/^@/,'').trim();
+  if(!lid)return false;
+  window.open('https://line.me/ti/p/~'+encodeURIComponent(lid),'_blank');
+  return false;
+}
+function initLinePanel(){
+  const inp=document.getElementById('lineGroupInput');
+  if(inp){inp.value=_lineGroupUrl||'';}
+  const openBtn=document.getElementById('lineGroupOpenBtn');
+  if(openBtn){openBtn.disabled=!_lineGroupUrl;}
+}
 </script>
+
+<!-- LINE CHAT WIDGET -->
+<button id="line-fab" onclick="toggleLinePanel()" title="เปิด LINE Chat">
+  <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+    <path d="M20 4C11.163 4 4 10.269 4 18c0 4.413 2.373 8.356 6.105 10.97-.268 1-.97 3.64-.989 3.769-.024.157.058.312.208.381a.42.42 0 00.388-.036c.199-.133 5.05-3.342 6.64-4.378.503.07 1.02.106 1.548.106 8.837 0 16-6.269 16-14S28.837 4 20 4z" fill="white"/>
+  </svg>
+</button>
+<div id="line-panel">
+  <div class="line-panel-hdr">
+    <h4>💬 LINE Chat</h4>
+    <button onclick="toggleLinePanel()">×</button>
+  </div>
+  <div class="line-tabs">
+    <button class="line-tab active" onclick="switchLineTab('group',this)">กลุ่มทีม</button>
+    <button class="line-tab" onclick="switchLineTab('team',this)">ทีมงาน</button>
+    <button class="line-tab" onclick="switchLineTab('cust',this)">ลูกค้า</button>
+  </div>
+  <div class="line-tab-content active" id="line-tab-group">
+    <div class="line-group-box">
+      <div class="line-group-label">ลิงก์กลุ่ม LINE ทีมงาน</div>
+      <input class="line-group-url" id="lineGroupInput" type="text" placeholder="วาง URL กลุ่ม LINE ที่นี่..." oninput="lineGroupEdited()"/>
+      <button class="line-action-btn primary" id="lineGroupSaveBtn" onclick="saveLineGroupUrl()" style="display:none">💾 บันทึก URL กลุ่ม</button>
+      <button class="line-action-btn outline" id="lineGroupOpenBtn" onclick="openLineGroup()">เปิดกลุ่ม LINE</button>
+    </div>
+  </div>
+  <div class="line-tab-content" id="line-tab-team">
+    <div id="lineTeamList"><div class="line-no-data">กำลังโหลด...</div></div>
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;font-size:11px;color:#94a3b8">
+      เพิ่ม LINE ID ของพนักงานได้ที่ ⚙ จัดการผู้ลงบันทึก
+    </div>
+  </div>
+  <div class="line-tab-content" id="line-tab-cust">
+    <div id="lineCustList"><div class="line-no-data">กำลังโหลด...</div></div>
+  </div>
+</div>
 </body>
 </html>
