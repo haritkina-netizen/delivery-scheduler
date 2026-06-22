@@ -4127,41 +4127,40 @@ function incBuildSubInner(r){
     <tr style="background:#eaf7f0"><td colspan="7" style="padding:0">${addBtn}</td></tr>`;
 
   if(window.innerWidth<=768){
-    /* ── MOBILE: แบบ 1 — label บน, 3 col qty row ── */
-    const inp=(val,extra)=>`style="display:block;width:100%;min-width:0;box-sizing:border-box;font-family:inherit;border-radius:8px;padding:8px 6px;font-size:14px;${extra}"`;
-    const lbl=(txt,col)=>`<div style="font-size:10px;font-weight:600;color:${col||'#666'};margin-bottom:4px">${txt}</div>`;
+    /* ── MOBILE: แบบ 9 — full-width stacked ── */
+    const F='display:block;width:100%;min-width:0;box-sizing:border-box;font-family:inherit;border-radius:10px;padding:10px 12px;font-size:15px;border:1px solid #e0e0e0;background:#fafafa;color:#1a1a1a;margin-bottom:8px';
+    const lbl=(txt,col)=>`<div style="font-size:10px;font-weight:700;color:${col||'#999'};margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">${txt}</div>`;
 
     const cards=r.subs.map((s,i)=>{
       const mode=s.mode==='qty'?'qty':'crate';
       const amt=parseFloat(s.amount)||0;
       const totalBottles=(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0);
 
-      const qtyRow=mode==='qty'
-        ?`<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:6px;margin-bottom:6px">
-            <div>${lbl('จำนวน','#92400e')}<input type="number" min="0" step="any" placeholder="0" value="${s.qty||''}" onchange="incSubQty(${rid},'${s.sid}',this.value)" ${inp('','border:2px solid #fcd34d;background:#fffbeb;color:#92400e;font-weight:700;text-align:center')}/></div>
-            <div>${lbl('หน่วย','#92400e')}<input type="text" list="subUnitPresets" placeholder="หน่วย" value="${esc(s.unit||'')}" onchange="incSubUnit(${rid},'${s.sid}',this.value)" ${inp('','border:2px solid #fcd34d;background:#fffbeb;color:#92400e')}/></div>
-            <div>${lbl('ราคา/หน่วย')}<input type="number" min="0" step="0.01" placeholder="0.00" value="${s.unitPrice||''}" onchange="incSubUnitPrice(${rid},'${s.sid}',this.value)" ${inp('','border:1px solid #ddd;background:#fff;text-align:right')}/></div>
-          </div>`
-        :`<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:6px;margin-bottom:6px">
-            <div>${lbl('ลัง','#065f46')}<input type="number" min="0" step="1" placeholder="0" value="${s.lang||''}" onchange="incSubLang(${rid},'${s.sid}',this.value)" ${inp('','border:2px solid #b5e4d1;background:#f0fdf7;color:#065f46;font-weight:700;text-align:center')}/></div>
-            <div>${lbl('ขวด','#185fa5')}<input type="number" min="0" step="1" placeholder="0" value="${s.bottle||''}" onchange="incSubBottle(${rid},'${s.sid}',this.value)" ${inp('','border:2px solid #93c5fd;background:#eff6ff;color:#185fa5;font-weight:700;text-align:center')}/></div>
-            <div>${lbl('ราคา/ขวด')}<input type="number" min="0" step="0.01" placeholder="0.00" value="${s.pricePerBottle||''}" onchange="incSubPrice(${rid},'${s.sid}',this.value)" ${inp('','border:1px solid #ddd;background:#fff;text-align:right')}/></div>
-          </div>
-          ${totalBottles?`<div style="font-size:11px;color:#5b7d76;margin-bottom:6px">= ${totalBottles} ขวด</div>`:''}`;
+      const qtyBlock=mode==='qty'?`
+        <div>${lbl('จำนวน','#92400e')}<input type="number" min="0" step="any" placeholder="0" value="${s.qty??''}" onchange="incSubQty(${rid},'${s.sid}',this.value)" style="${F};border:2px solid #fcd34d;background:#fffbeb;color:#92400e;font-weight:700;font-size:18px;text-align:center"/></div>
+        <div>${lbl('หน่วย','#92400e')}<input type="text" list="subUnitPresets" placeholder="เช่น กก., ชิ้น, แพ็ค" value="${esc(s.unit||'')}" onchange="incSubUnit(${rid},'${s.sid}',this.value)" style="${F};border:2px solid #fcd34d;background:#fffbeb;color:#92400e"/></div>
+        <div>${lbl('ราคาต่อหน่วย (฿)')}<input type="number" min="0" step="0.01" placeholder="0.00" value="${s.unitPrice??''}" onchange="incSubUnitPrice(${rid},'${s.sid}',this.value)" style="${F};font-size:18px;text-align:right"/></div>`
+      :`<div>${lbl('จำนวนลัง','#065f46')}<input type="number" min="0" step="1" placeholder="0" value="${s.lang??''}" onchange="incSubLang(${rid},'${s.sid}',this.value)" style="${F};border:2px solid #b5e4d1;background:#f0fdf7;color:#065f46;font-weight:700;font-size:18px;text-align:center"/></div>
+        <div>${lbl('จำนวนขวด (เพิ่มเติม)','#185fa5')}<input type="number" min="0" step="1" placeholder="0" value="${s.bottle??''}" onchange="incSubBottle(${rid},'${s.sid}',this.value)" style="${F};border:2px solid #93c5fd;background:#eff6ff;color:#185fa5;font-weight:700;font-size:18px;text-align:center"/></div>
+        ${totalBottles?`<div style="font-size:12px;color:#5b7d76;margin-bottom:8px;padding:6px 10px;background:#e6f7f1;border-radius:8px">รวม ${totalBottles} ขวด</div>`:''}
+        <div>${lbl('ราคาต่อขวด (฿)')}<input type="number" min="0" step="0.01" placeholder="0.00" value="${s.pricePerBottle??''}" onchange="incSubPrice(${rid},'${s.sid}',this.value)" style="${F};font-size:18px;text-align:right"/></div>`;
 
-      return`<div style="background:#fff;border:1px solid #b5e4d1;border-radius:12px;margin:0 0 10px;padding:12px;box-sizing:border-box;width:100%">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-          <span style="font-size:11px;font-weight:600;color:#5b7d76;background:#e6f7f1;border-radius:20px;padding:1px 9px;flex-shrink:0">#${i+1}</span>
-          <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','crate')" style="font-size:11px;padding:3px 10px;border-radius:20px;cursor:pointer;border:1.5px solid ${mode==='crate'?'#5b7d76':'#ddd'};background:${mode==='crate'?'#5b7d76':'#f5f5f5'};color:${mode==='crate'?'#fff':'#aaa'};flex-shrink:0">ลัง/ขวด</button>
-          <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','qty')" style="font-size:11px;padding:3px 10px;border-radius:20px;cursor:pointer;border:1.5px solid ${mode==='qty'?'#b45309':'#ddd'};background:${mode==='qty'?'#b45309':'#f5f5f5'};color:${mode==='qty'?'#fff':'#aaa'};flex-shrink:0">หน่วยอื่น</button>
-          <button onclick="incDelSub(${rid},'${s.sid}')" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#ccc;font-size:20px;padding:0;line-height:1;flex-shrink:0">×</button>
+      return`<div style="background:#fff;border:1px solid #d1f0e4;border-radius:14px;margin:0 0 12px;padding:14px;box-sizing:border-box;width:100%">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span style="font-size:12px;font-weight:700;color:#5b7d76;background:#e6f7f1;border-radius:20px;padding:3px 12px">#${i+1}</span>
+          <div style="display:flex;gap:6px">
+            <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','crate')" style="font-size:11px;padding:4px 14px;border-radius:20px;cursor:pointer;border:1.5px solid ${mode==='crate'?'#5b7d76':'#ddd'};background:${mode==='crate'?'#5b7d76':'#f5f5f5'};color:${mode==='crate'?'#fff':'#aaa'};font-weight:600">ลัง/ขวด</button>
+            <button type="button" onclick="incSubSetMode(${rid},'${s.sid}','qty')" style="font-size:11px;padding:4px 14px;border-radius:20px;cursor:pointer;border:1.5px solid ${mode==='qty'?'#b45309':'#ddd'};background:${mode==='qty'?'#b45309':'#f5f5f5'};color:${mode==='qty'?'#fff':'#aaa'};font-weight:600">หน่วยอื่น</button>
+          </div>
+          <button onclick="incDelSub(${rid},'${s.sid}')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:22px;padding:0;line-height:1">×</button>
         </div>
-        <div style="margin-bottom:6px">${lbl('รหัสสินค้า')}<input type="text" placeholder="รหัสสินค้า" value="${esc(s.code||'')}" onchange="incSubCode(${rid},'${s.sid}',this.value)" ${inp('','border:1px solid #b5e4d1;background:#f0fdf7;color:#065f46;text-align:center;font-size:12px')}/></div>
-        <div style="margin-bottom:8px">${lbl('ชื่อสินค้า / รายการ')}<input type="text" placeholder="ชื่อสินค้า..." value="${esc(s.desc)}" onchange="incSubDesc(${rid},'${s.sid}',this.value)" oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)" ${inp('','border:1px solid #e0e0e0;background:#fafafa')}/></div>
-        ${qtyRow}
-        <div style="background:#e6f7f1;border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:12px;color:#5b7d76">ยอดรวม</span>
-          <span style="font-size:16px;font-weight:700;color:#0f6e56">${amt?fmt(amt):'-'}</span>
+        <div>${lbl('รหัสสินค้า','#065f46')}<input type="text" placeholder="รหัสสินค้า" value="${esc(s.code||'')}" onchange="incSubCode(${rid},'${s.sid}',this.value)" style="${F};border:1px solid #b5e4d1;background:#f0fdf7;color:#065f46;text-align:center;font-size:13px"/></div>
+        <div>${lbl('ชื่อสินค้า / รายการ')}<input type="text" placeholder="ชื่อสินค้า..." value="${esc(s.desc)}" onchange="incSubDesc(${rid},'${s.sid}',this.value)" oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)" style="${F}"/></div>
+        <div style="height:0.5px;background:#e8f5ee;margin-bottom:10px"></div>
+        ${qtyBlock}
+        <div style="background:#e6f7f1;border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span style="font-size:13px;color:#5b7d76;font-weight:600">ยอดรวม</span>
+          <span style="font-size:20px;font-weight:700;color:#0f6e56">${amt?fmt(amt):'-'}</span>
         </div>
       </div>`;
     }).join('');
