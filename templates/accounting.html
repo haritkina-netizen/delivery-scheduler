@@ -2589,75 +2589,132 @@ function renderTable(){
 function buildSubInner(r){
   const el=document.getElementById('si_'+r.id);
   if(!el)return;
+  const rid=r.id;
+  const isMobile=window.innerWidth<=768;
+
   if(!r.subs||!r.subs.length){
-    el.innerHTML=`<div style="padding:6px 16px">
-      <button class="add-sub-btn" onclick="addSub(${r.id})">＋ เพิ่มรายการย่อย</button></div>`;
+    el.innerHTML=`<div style="padding:8px 12px">
+      <button class="add-sub-btn" onclick="addSub(${rid})">＋ เพิ่มรายการย่อย</button></div>`;
     return;
   }
-  const rid=r.id;
+
   const subBase=r.subs.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
   const subVat=r.subs.reduce((a,s)=>a+(s.hasVat?(parseFloat(s.amount)||0)*0.07:0),0);
 
-  const sRows=r.subs.map((s,i)=>{
-    const sAmt=parseFloat(s.amount)||0;
-    const sVat=s.hasVat?sAmt*0.07:0;
-    return`<tr>
-      <td style="width:36px;text-align:center;color:#bbb;font-size:11px;padding:5px 4px">${i+1}</td>
-      <td colspan="3" style="padding:4px 6px">
-        <input type="text" placeholder="รายการย่อย ${i+1}" value="${esc(s.desc)}"
-          onchange="subDesc(${rid},'${s.sid}',this.value)"
-          oninput="subAcShowExp(this)" onblur="setTimeout(subAcHide,150)"
-          style="width:100%;border:1px solid transparent;border-radius:4px;padding:4px 7px;
-            font-size:12px;font-family:inherit;background:transparent;color:#1a1a1a"/>
-      </td>
-      <td style="width:72px;text-align:center;padding:4px 3px">
-        <span class="vb ${s.hasVat?'vy':'vn'}" onclick="subToggleVat(${rid},'${s.sid}')"
-          title="คลิกเพื่อเปลี่ยน VAT" style="font-size:10px;padding:2px 5px;cursor:pointer">
-          ${s.hasVat?'มี VAT':'ไม่มี'}
-        </span>
-      </td>
-      <td style="width:105px;padding:4px 6px">
-        <input type="number" min="0" step="0.01" placeholder="0.00" value="${s.amount||''}"
-          id="sa_${rid}_${s.sid}"
-          onchange="subAmt(${rid},'${s.sid}',this.value)"
-          style="width:100%;border:1px solid transparent;border-radius:4px;padding:4px 7px;
-            font-size:12px;font-family:inherit;background:transparent;color:#1a1a1a;text-align:right"/>
-      </td>
-      <td id="sv_${rid}_${s.sid}" style="width:90px;text-align:right;font-size:12px;
-        color:${s.hasVat?'#888':'#ccc'};padding:4px 8px;font-variant-numeric:tabular-nums">
-        ${s.hasVat&&sAmt?fmt(sVat):'-'}</td>
-      <td id="sd_${rid}_${s.sid}" style="width:105px;text-align:right;font-size:12px;
-        color:#555;padding:4px 8px;font-variant-numeric:tabular-nums">
-        ${sAmt?fmt(sAmt+sVat):'-'}</td>
-      <td style="width:30px;padding:3px 2px">
-        <button onclick="delSub(${rid},'${s.sid}')"
-          style="background:none;border:none;cursor:pointer;color:#ccc;font-size:15px;padding:3px">×</button>
-      </td>
-    </tr>`;
-  }).join('');
+  if(isMobile){
+    /* ── MOBILE: card per sub-item ── */
+    const cards=r.subs.map((s,i)=>{
+      const sAmt=parseFloat(s.amount)||0;
+      const sVat=s.hasVat?sAmt*0.07:0;
+      const total=sAmt+sVat;
+      return`<div style="background:var(--bg,#fff);border:0.5px solid var(--line,#ddd);border-radius:10px;margin:0 10px 8px;padding:10px 12px;position:relative">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:11px;color:#bbb;min-width:16px">${i+1}</span>
+          <input type="text" placeholder="รายการย่อย ${i+1}" value="${esc(s.desc)}"
+            onchange="subDesc(${rid},'${s.sid}',this.value)"
+            oninput="subAcShowExp(this)" onblur="setTimeout(subAcHide,150)"
+            style="flex:1;border:none;border-bottom:1px solid #e0e0e0;border-radius:0;padding:4px 2px;
+              font-size:13px;font-family:inherit;background:transparent;color:var(--text,#1a1a1a)"/>
+          <button onclick="delSub(${rid},'${s.sid}')"
+            style="background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:0 2px;line-height:1">×</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="vb ${s.hasVat?'vy':'vn'}" onclick="subToggleVat(${rid},'${s.sid}')"
+            style="font-size:10px;padding:2px 7px;cursor:pointer;border-radius:20px;flex-shrink:0">
+            ${s.hasVat?'มี VAT':'ไม่มี'}</span>
+          <div style="flex:1;text-align:right">
+            <input type="number" min="0" step="0.01" placeholder="0.00" value="${s.amount||''}"
+              id="sa_${rid}_${s.sid}"
+              onchange="subAmt(${rid},'${s.sid}',this.value)"
+              style="width:90px;border:none;border-bottom:1px solid #e0e0e0;border-radius:0;padding:4px 2px;
+                font-size:13px;font-family:inherit;background:transparent;text-align:right;color:var(--text,#1a1a1a)"/>
+          </div>
+          <div style="text-align:right;min-width:80px">
+            <div id="sd_${rid}_${s.sid}" style="font-size:13px;font-weight:600;color:var(--text,#1a1a1a)">
+              ${total?fmt(total):'-'}</div>
+            ${s.hasVat&&sVat?`<div id="sv_${rid}_${s.sid}" style="font-size:10px;color:#999">VAT ${fmt(sVat)}</div>`
+              :`<div id="sv_${rid}_${s.sid}"></div>`}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
 
-  const foot=`
-    <tr style="background:#e8f0f8">
-      <td></td>
-      <td colspan="3" style="font-size:11px;color:#666;font-style:italic;text-align:right;padding:5px 8px">
-        รวม ${r.subs.length} รายการย่อย</td>
-      <td></td><td></td>
-      <td id="sf_b_${rid}" style="text-align:right;font-weight:600;font-size:12px;
-        color:#1a3a5c;padding:5px 8px;font-variant-numeric:tabular-nums">${fmt(subBase)}</td>
-      <td id="sf_v_${rid}" style="text-align:right;font-size:12px;color:#555;padding:5px 8px;
-        font-variant-numeric:tabular-nums">${subVat>0?fmt(subVat):'-'}</td>
-      <td id="sf_t_${rid}" style="text-align:right;font-weight:700;font-size:12px;
-        color:#1a3a5c;padding:5px 8px;font-variant-numeric:tabular-nums">
-        ${subBase?fmt(subBase+subVat):'-'}</td>
-      <td></td>
-    </tr>
-    <tr style="background:#f0f5fb">
-      <td colspan="10" style="padding:5px 14px">
-        <button class="add-sub-btn" onclick="addSub(${rid})">＋ เพิ่มรายการย่อย</button>
-      </td>
-    </tr>`;
+    const foot=`<div style="margin:4px 10px 8px;padding:8px 12px;background:var(--bg2,#f4f7fc);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:11px;color:#888">รวม ${r.subs.length} รายการย่อย</span>
+      <div style="text-align:right">
+        <div id="sf_t_${rid}" style="font-size:14px;font-weight:700;color:var(--text,#1a3a5c)">${subBase?fmt(subBase+subVat):'-'}</div>
+        ${subVat?`<div id="sf_v_${rid}" style="font-size:10px;color:#999">VAT ${fmt(subVat)}</div>`:`<div id="sf_v_${rid}"></div>`}
+        <div id="sf_b_${rid}" style="display:none">${fmt(subBase)}</div>
+      </div>
+    </div>
+    <div style="padding:4px 10px 10px">
+      <button class="add-sub-btn" onclick="addSub(${rid})">＋ เพิ่มรายการย่อย</button>
+    </div>`;
 
-  el.innerHTML=`<table style="width:100%;border-collapse:collapse">${sRows}${foot}</table>`;
+    el.innerHTML=cards+foot;
+
+  } else {
+    /* ── DESKTOP: original table layout ── */
+    const sRows=r.subs.map((s,i)=>{
+      const sAmt=parseFloat(s.amount)||0;
+      const sVat=s.hasVat?sAmt*0.07:0;
+      return`<tr>
+        <td style="width:36px;text-align:center;color:#bbb;font-size:11px;padding:5px 4px">${i+1}</td>
+        <td colspan="3" style="padding:4px 6px">
+          <input type="text" placeholder="รายการย่อย ${i+1}" value="${esc(s.desc)}"
+            onchange="subDesc(${rid},'${s.sid}',this.value)"
+            oninput="subAcShowExp(this)" onblur="setTimeout(subAcHide,150)"
+            style="width:100%;border:1px solid transparent;border-radius:4px;padding:4px 7px;
+              font-size:12px;font-family:inherit;background:transparent;color:#1a1a1a"/>
+        </td>
+        <td style="width:72px;text-align:center;padding:4px 3px">
+          <span class="vb ${s.hasVat?'vy':'vn'}" onclick="subToggleVat(${rid},'${s.sid}')"
+            title="คลิกเพื่อเปลี่ยน VAT" style="font-size:10px;padding:2px 5px;cursor:pointer">
+            ${s.hasVat?'มี VAT':'ไม่มี'}</span>
+        </td>
+        <td style="width:105px;padding:4px 6px">
+          <input type="number" min="0" step="0.01" placeholder="0.00" value="${s.amount||''}"
+            id="sa_${rid}_${s.sid}"
+            onchange="subAmt(${rid},'${s.sid}',this.value)"
+            style="width:100%;border:1px solid transparent;border-radius:4px;padding:4px 7px;
+              font-size:12px;font-family:inherit;background:transparent;color:#1a1a1a;text-align:right"/>
+        </td>
+        <td id="sv_${rid}_${s.sid}" style="width:90px;text-align:right;font-size:12px;
+          color:${s.hasVat?'#888':'#ccc'};padding:4px 8px;font-variant-numeric:tabular-nums">
+          ${s.hasVat&&sAmt?fmt(sVat):'-'}</td>
+        <td id="sd_${rid}_${s.sid}" style="width:105px;text-align:right;font-size:12px;
+          color:#555;padding:4px 8px;font-variant-numeric:tabular-nums">
+          ${sAmt?fmt(sAmt+sVat):'-'}</td>
+        <td style="width:30px;padding:3px 2px">
+          <button onclick="delSub(${rid},'${s.sid}')"
+            style="background:none;border:none;cursor:pointer;color:#ccc;font-size:15px;padding:3px">×</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    const foot=`
+      <tr style="background:#e8f0f8">
+        <td></td>
+        <td colspan="3" style="font-size:11px;color:#666;font-style:italic;text-align:right;padding:5px 8px">
+          รวม ${r.subs.length} รายการย่อย</td>
+        <td></td><td></td>
+        <td id="sf_b_${rid}" style="text-align:right;font-weight:600;font-size:12px;
+          color:#1a3a5c;padding:5px 8px;font-variant-numeric:tabular-nums">${fmt(subBase)}</td>
+        <td id="sf_v_${rid}" style="text-align:right;font-size:12px;color:#555;padding:5px 8px;
+          font-variant-numeric:tabular-nums">${subVat>0?fmt(subVat):'-'}</td>
+        <td id="sf_t_${rid}" style="text-align:right;font-weight:700;font-size:12px;
+          color:#1a3a5c;padding:5px 8px;font-variant-numeric:tabular-nums">
+          ${subBase?fmt(subBase+subVat):'-'}</td>
+        <td></td>
+      </tr>
+      <tr style="background:#f0f5fb">
+        <td colspan="10" style="padding:5px 14px">
+          <button class="add-sub-btn" onclick="addSub(${rid})">＋ เพิ่มรายการย่อย</button>
+        </td>
+      </tr>`;
+
+    el.innerHTML=`<table style="width:100%;border-collapse:collapse">${sRows}${foot}</table>`;
+  }
 }
 
 /* ── FIELD CHANGES (onchange = fires on blur only, no re-render while typing) ── */
