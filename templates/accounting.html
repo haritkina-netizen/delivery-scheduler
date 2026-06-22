@@ -5972,8 +5972,13 @@ const PRODUCT_PRESETS=[
   {code:'8857200111270',desc:'เครื่องดื่มชาดำผสมเนื้อว่าน หางจระเข้ กลิ่นฮันนี่เลมอน 300 ml/24 ขวด'},
 ];
 function getSubDescSuggestions(q, sourceRows){
-  const ql=(q||'').toLowerCase();
-  return PRODUCT_PRESETS.filter(p=>!ql||p.desc.toLowerCase().includes(ql));
+  const ql=(q||'').trim();
+  // ถ้าพิมพ์เลข 1-6 ให้แสดง preset ตามลำดับนั้นก่อน
+  const n=parseInt(ql,10);
+  if(ql===String(n) && n>=1 && n<=PRODUCT_PRESETS.length){
+    return [PRODUCT_PRESETS[n-1]];
+  }
+  return PRODUCT_PRESETS.filter(p=>!ql||p.desc.toLowerCase().includes(ql.toLowerCase()));
 }
 /* wrappers accessible from oninput attributes */
 function subAcShowExp(el){subAcShow(el,rows);}
