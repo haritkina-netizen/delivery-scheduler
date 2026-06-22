@@ -2579,7 +2579,7 @@ function renderTable(){
       <td>
         ${hasSubs
           ?`<span style="display:block;text-align:right;font-size:12px;color:#999;padding:5px 7px">${fmt(amt)}</span>`
-          :`<input type="number" min="0" step="0.01" placeholder="0.00" value="${r.amount||''}"
+          :`<input type="number" min="0" step="0.01" placeholder="0.00" value="${r.amount?parseFloat(r.amount).toFixed(2):''}"
               onchange="amtChange(${r.id},this.value)"
               style="text-align:right;width:100%;font-family:inherit;border:1px solid transparent;
                 border-radius:5px;padding:5px 7px;font-size:13px;background:transparent;color:#1a1a1a"/>`
@@ -2768,7 +2768,7 @@ function amtChange(id,val){
 function totalChange(id,val){
   const r=rows.find(x=>x.id===id);if(!r)return;
   const total=parseFloat(val)||0;
-  r.amount=r.hasVat?total/1.07:total;
+  r.amount=Math.round((r.hasVat?total/1.07:total)*100)/100;
   const amt=rowAmt(r),vat=rowVat(r);
   const amtInp=document.querySelector(`tr[data-id="${id}"] input[type=number]:not([onchange*="totalChange"])`);
   if(amtInp)amtInp.value=r.amount?r.amount.toFixed(2):'';
