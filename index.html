@@ -112,12 +112,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .mode-card:active{transform:scale(.97)}
 .mode-teacher{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#FFF}
 .mode-dialogue{background:#FFF;box-shadow:0 2px 12px rgba(0,0,0,.08);border:1.5px solid #E2E8F0}
-/* TEACHER */
-.teacher-bubble{background:#FFF;border:1px solid #E2E8F0;border-radius:0 20px 20px 20px;padding:14px;font-size:15px;color:#1E293B;line-height:1.5}
-.teacher-feedback-bubble{background:#FFFBEB;border:1px solid #FDE68A;border-radius:0 16px 16px 16px;padding:12px;font-size:14px;color:#92400E;line-height:1.5;flex:1}
-.progress-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#E2E8F0;margin:0 3px}
-.progress-dot.done{background:#10B981}
-.progress-dot.current{background:#4F46E5}
+/* TEACHER CHAT */
+.tc-bubble-wrap{display:flex;gap:8px;align-items:flex-end}
+.tc-bubble-wrap.teacher{align-self:flex-start;max-width:88%}
+.tc-bubble-wrap.user{align-self:flex-end;flex-direction:row-reverse;max-width:88%}
+.tc-bubble{padding:12px 16px;font-size:15px;line-height:1.6;border-radius:20px}
+.tc-bubble.teacher{background:#FFF;border:1px solid #E2E8F0;border-radius:4px 20px 20px 20px;color:#1E293B}
+.tc-bubble.user{background:#4F46E5;color:#FFF;border-radius:20px 4px 20px 20px}
+.tc-bubble.thinking{background:#F1F5F9;color:#94A3B8;font-style:italic}
+.tc-avatar{font-size:28px;flex-shrink:0;line-height:1}
+.tc-replay{background:none;border:none;color:#94A3B8;font-size:12px;cursor:pointer;padding:2px 0;display:block;margin-top:3px}
+.tc-replay:hover{color:#4F46E5}
 </style>
 </head>
 <body>
@@ -293,89 +298,51 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div id="teacher-topic-list" style="padding:8px 0"></div>
   </div>
 
-  <!-- Teacher active view -->
-  <div id="teacher-active-view" style="display:none;flex-direction:column;min-height:calc(100vh - 70px)">
-    <div class="header">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+  <!-- Teacher active view — chat style -->
+  <div id="teacher-active-view" style="display:none;flex-direction:column;height:calc(100vh - 70px)">
+    <div class="header" style="flex-shrink:0">
+      <div style="display:flex;align-items:center;justify-content:space-between">
         <button style="background:none;border:none;color:#4F46E5;font-weight:700;cursor:pointer;font-size:14px" onclick="backToTeacherTopics()">← หัวข้อ</button>
-        <span id="teacher-progress-text" style="font-size:13px;color:#94A3B8">ข้อ 1/4</span>
+        <span id="teacher-topic-label" style="font-size:14px;font-weight:700;color:#1E293B"></span>
+        <button style="background:none;border:none;cursor:pointer;font-size:20px;padding:4px" onclick="showTeacherAPISettings()" title="ตั้งค่า API Key">⚙️</button>
       </div>
-      <div id="teacher-progress-dots" style="display:flex;gap:6px;justify-content:center"></div>
     </div>
 
-    <div style="padding:14px 16px;flex:1">
-      <!-- Teacher question bubble -->
-      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
-        <div style="font-size:36px;flex-shrink:0;line-height:1">👩‍🏫</div>
-        <div style="flex:1">
-          <div style="font-size:11px;color:#94A3B8;font-weight:600;margin-bottom:4px">ครู AI:</div>
-          <div class="teacher-bubble" id="teacher-q-text"></div>
-          <div style="font-size:12px;color:#64748B;margin-top:5px;padding:0 2px" id="teacher-q-thai"></div>
-          <button style="margin-top:6px;background:none;border:none;color:#4F46E5;font-size:13px;font-weight:600;cursor:pointer;padding:0" onclick="replayTeacherQ()">🔊 ฟังอีกครั้ง</button>
+    <!-- Scrollable chat history -->
+    <div id="teacher-chat-history" style="flex:1;overflow-y:auto;padding:14px 16px 8px;display:flex;flex-direction:column;gap:12px"></div>
+
+    <!-- Pronunciation feedback card (shown after each user turn) -->
+    <div id="teacher-pron-card" style="display:none;padding:0 16px 8px;flex-shrink:0">
+      <div style="background:#FFF;border-radius:16px;padding:12px 14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #F1F5F9">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:600;color:#475569">ความชัดเจน:</span>
+          <span id="teacher-pron-pct" style="font-size:14px;font-weight:800;color:#1E293B"></span>
+          <span id="teacher-pron-badge" class="pron-level-badge" style="font-size:11px;padding:2px 10px;margin:0"></span>
+        </div>
+        <div class="diff-row" id="teacher-chips" style="margin:0 0 4px;justify-content:flex-start"></div>
+        <div style="display:flex;gap:5px;margin:3px 0;flex-wrap:wrap">
+          <span style="font-size:10px;color:#065F46;background:#D1FAE5;padding:2px 7px;border-radius:8px;font-weight:600">✅ ชัดเจน</span>
+          <span style="font-size:10px;color:#92400E;background:#FEF3C7;padding:2px 7px;border-radius:8px;font-weight:600">⚠️ ไม่แน่ใจ</span>
+          <span style="font-size:10px;color:#991B1B;background:#FEE2E2;padding:2px 7px;border-radius:8px;font-weight:600">❌ ไม่ชัด</span>
+        </div>
+        <div id="teacher-wrong-words-row" style="display:none;margin-top:6px">
+          <div style="font-size:11px;color:#92400E;font-weight:600;margin-bottom:4px">⚠️ ลองออกเสียงคำเหล่านี้ให้ชัดขึ้น:</div>
+          <div id="teacher-wrong-btns" style="display:flex;flex-wrap:wrap;gap:5px"></div>
         </div>
       </div>
+    </div>
 
-      <!-- Example hints -->
-      <div style="margin-bottom:14px">
-        <button id="teacher-hint-btn" class="btn btn-outline btn-full btn-sm" onclick="toggleTargetHint()">💡 ดูตัวอย่างคำตอบ</button>
-        <div id="teacher-target-wrap" style="display:none;margin-top:8px;background:#EEF2FF;border-radius:14px;padding:14px">
-          <div style="font-size:11px;font-weight:700;color:#4338CA;margin-bottom:8px">💡 ตัวอย่างคำตอบ (พูดแบบของตัวเองก็ได้!):</div>
-          <div id="teacher-target-text" style="font-size:14px;color:#1E293B;line-height:2.2"></div>
-          <button style="margin-top:6px;background:none;border:none;color:#4F46E5;font-size:13px;font-weight:600;cursor:pointer;padding:0" onclick="speakTargetSlow()">🔊 ฟังตัวอย่างแรก</button>
-        </div>
-      </div>
-
-      <!-- Mic -->
-      <div id="teacher-mic-area" style="text-align:center;padding:12px 0">
-        <div id="teacher-mic-status" style="font-size:13px;color:#64748B;margin-bottom:14px">กดไมค์แล้วพูดเป็นภาษาอังกฤษ</div>
-        <button class="mic-btn mic-btn-idle" id="teacher-mic-btn" onclick="toggleTeacherMic()">
-          <span style="font-size:32px">🎙️</span>
-          <span id="teacher-mic-label">กดเพื่อพูด</span>
+    <!-- Mic bar (fixed bottom inside view) -->
+    <div style="flex-shrink:0;background:#FFF;border-top:1px solid #F1F5F9;padding:10px 16px 14px">
+      <div id="teacher-mic-status" style="font-size:13px;color:#64748B;margin-bottom:8px;text-align:center">กดไมค์แล้วตอบเป็นภาษาอังกฤษ</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="mic-btn mic-btn-idle" id="teacher-mic-btn" onclick="toggleTeacherMic()" style="width:58px;height:58px;flex-shrink:0">
+          <span style="font-size:26px">🎙️</span>
+          <span id="teacher-mic-label" style="font-size:9px">พูด</span>
         </button>
+        <button class="btn btn-outline btn-full btn-sm" onclick="endTeacherConversation()">🏁 จบบทสนทนา</button>
       </div>
-
-      <!-- Result -->
-      <div id="teacher-result-area" style="display:none">
-        <div style="font-size:12px;color:#94A3B8;margin-bottom:4px">ได้ยินว่า:</div>
-        <div class="recognized-text" id="teacher-recognized"></div>
-
-        <div class="score-ring-wrap" style="margin:12px auto">
-          <svg width="100" height="100" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
-            <circle cx="50" cy="50" r="42" fill="none" stroke="#E2E8F0" stroke-width="10"/>
-            <circle id="teacher-score-circle" cx="50" cy="50" r="42" fill="none" stroke="#10B981" stroke-width="10" stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round" style="transition:stroke-dashoffset .8s"/>
-          </svg>
-          <div class="score-ring-text" id="teacher-score-num">0%</div>
-        </div>
-
-        <div style="text-align:center;margin-bottom:10px">
-          <div id="teacher-level-badge" class="pron-level-badge level-fair"></div>
-        </div>
-
-        <div style="font-size:12px;color:#64748B;margin-bottom:6px;font-weight:600">ความชัดเจนของการออกเสียง:</div>
-        <div class="diff-row" id="teacher-chips"></div>
-        <div style="display:flex;gap:6px;justify-content:center;margin:8px 0;flex-wrap:wrap">
-          <span style="font-size:11px;color:#065F46;background:#D1FAE5;padding:3px 8px;border-radius:10px;font-weight:600">✅ ชัดเจน</span>
-          <span style="font-size:11px;color:#92400E;background:#FEF3C7;padding:3px 8px;border-radius:10px;font-weight:600">⚠️ ไม่แน่ใจ</span>
-          <span style="font-size:11px;color:#991B1B;background:#FEE2E2;padding:3px 8px;border-radius:10px;font-weight:600">❌ ไม่ชัด</span>
-        </div>
-
-        <!-- Teacher response bubble -->
-        <div style="display:flex;gap:10px;align-items:flex-start;margin:12px 0">
-          <div style="font-size:30px;flex-shrink:0">👩‍🏫</div>
-          <div class="teacher-feedback-bubble" id="teacher-feedback-text"></div>
-        </div>
-
-        <!-- Wrong word replay -->
-        <div id="teacher-wrong-words-row" style="display:none;margin-bottom:10px">
-          <div style="font-size:12px;color:#92400E;font-weight:600;margin-bottom:6px">⚠️ ลองออกเสียงคำเหล่านี้ให้ชัดขึ้น:</div>
-          <div id="teacher-wrong-btns" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-        </div>
-
-        <div style="display:flex;gap:10px;margin-top:4px">
-          <button class="btn btn-outline" style="flex:1" onclick="teacherRetry()">🎙️ ลองใหม่</button>
-          <button class="btn btn-primary" style="flex:1" id="teacher-next-btn" onclick="teacherNext()">ถัดไป →</button>
-        </div>
-      </div>
+      <div id="teacher-thinking" style="display:none;text-align:center;padding:6px 0 0;font-size:13px;color:#94A3B8">✨ ครูกำลังตอบ...</div>
     </div>
   </div>
 
@@ -398,6 +365,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
     </div>
     <div style="padding:8px 0"><div id="dialogue-list"></div></div>
+  </div>
+
+  <!-- API Key overlay -->
+  <div id="api-key-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:200;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#FFF;border-radius:24px;padding:28px 24px;width:100%;max-width:400px">
+      <div style="font-size:22px;font-weight:800;color:#1E293B;margin-bottom:6px">⚙️ ตั้งค่า API Key</div>
+      <div style="font-size:13px;color:#64748B;margin-bottom:4px">ใส่ Anthropic API Key เพื่อให้ครู AI ตอบโต้ตามบริบทการสนทนาจริงๆ</div>
+      <div style="font-size:12px;color:#94A3B8;margin-bottom:16px">Key จะเก็บในเครื่องของคุณเท่านั้น ไม่ส่งไปที่อื่น</div>
+      <input id="api-key-input" type="password" placeholder="sk-ant-api03-..." autocomplete="off"
+        style="width:100%;border:2px solid #E2E8F0;border-radius:14px;padding:14px;font-size:14px;font-family:monospace;margin-bottom:12px;box-sizing:border-box;outline:none"
+        onfocus="this.style.borderColor='#4F46E5'" onblur="this.style.borderColor='#E2E8F0'">
+      <div id="api-key-err" style="display:none;font-size:12px;color:#EF4444;margin-bottom:10px"></div>
+      <button class="btn btn-primary btn-full" onclick="saveTeacherAPIKey()">✅ บันทึก &amp; เริ่มคุย</button>
+      <button class="btn btn-outline btn-full" style="margin-top:8px" onclick="closeAPIKeyOverlay(false)">ใช้โหมดพื้นฐาน (ไม่ต้องใส่ key)</button>
+      <div style="font-size:11px;color:#94A3B8;margin-top:14px;text-align:center;line-height:1.6">
+        รับ API Key ได้ที่ console.anthropic.com<br>→ API Keys → Create Key
+      </div>
+    </div>
   </div>
 
   <!-- Dialogue active -->
@@ -452,7 +437,10 @@ const LISTENING=[{text:"I need to find my passport.",thai:"ฉันต้อง
 const DIALOGUES=[{id:1,icon:"✈️",title:"At the Airport",titleThai:"ที่สนามบิน",level:"A1",conversation:[{role:"bot",text:"Hello! Welcome to Bangkok Airport. May I see your passport, please?"},{role:"user",prompt:"แสดงพาสปอร์ต",example:"Here is my passport.",keywords:["passport","here","my"]},{role:"bot",text:"Thank you. What is the purpose of your visit?"},{role:"user",prompt:"บอกว่ามาท่องเที่ยว",example:"I'm here for tourism.",keywords:["tourism","holiday","vacation","tourist","travel"]},{role:"bot",text:"How long will you be staying in Thailand?"},{role:"user",prompt:"บอกระยะเวลา",example:"I will stay for two weeks.",keywords:["week","day","month","stay"]},{role:"bot",text:"Enjoy your stay in Thailand! Have a wonderful trip!"}]},{id:2,icon:"🍽️",title:"At the Restaurant",titleThai:"ที่ร้านอาหาร",level:"A2",conversation:[{role:"bot",text:"Good evening! Do you have a reservation?"},{role:"user",prompt:"บอกว่าจองไว้แล้ว",example:"Yes, I have a reservation for two.",keywords:["yes","reservation","booked","table"]},{role:"bot",text:"Perfect! Please follow me. Here is your table and menu."},{role:"user",prompt:"ขอแนะนำเมนู",example:"What do you recommend?",keywords:["recommend","suggestion","popular","special","best"]},{role:"bot",text:"Our pad thai is very popular! Would you like to order now?"},{role:"user",prompt:"สั่งอาหาร",example:"I'll have the pad thai, please.",keywords:["pad","curry","order","like","have","please"]},{role:"bot",text:"Excellent choice! Your food will be ready in about 15 minutes."}]},{id:3,icon:"🏨",title:"At the Hotel",titleThai:"ที่โรงแรม",level:"B1",conversation:[{role:"bot",text:"Good afternoon! Welcome to the Grand Hotel. How can I help you?"},{role:"user",prompt:"เช็คอิน",example:"I'd like to check in, please.",keywords:["check","reservation","booking","room"]},{role:"bot",text:"Of course! May I have your name and booking confirmation?"},{role:"user",prompt:"บอกชื่อและเลขการจอง",example:"My name is John Smith, confirmation number 12345.",keywords:["name","number","confirmation","booking"]},{role:"bot",text:"Thank you. You have a deluxe room on the 8th floor."},{role:"user",prompt:"ถามสิ่งอำนวยความสะดวก",example:"What facilities does the hotel have?",keywords:["facility","pool","gym","breakfast","wifi","restaurant","spa"]},{role:"bot",text:"We have a rooftop pool, fitness center, and complimentary breakfast. Enjoy your stay!"}]},{id:4,icon:"💼",title:"Job Interview",titleThai:"สัมภาษณ์งาน",level:"B2",conversation:[{role:"bot",text:"Good morning! Please have a seat. Thank you for coming in today."},{role:"user",prompt:"ทักทายและแนะนำตัว",example:"Good morning! I'm very excited about this opportunity.",keywords:["morning","thank","excited","opportunity","pleased","meet"]},{role:"bot",text:"Tell me about yourself and your experience."},{role:"user",prompt:"เล่าประสบการณ์",example:"I have three years of experience in marketing.",keywords:["experience","year","work","skill","major","graduate","study"]},{role:"bot",text:"What are your greatest strengths?"},{role:"user",prompt:"บอกจุดแข็ง",example:"I'm a quick learner and I work well under pressure.",keywords:["strength","skill","good","learn","team","work","pressure","leader"]},{role:"bot",text:"Excellent! We'll be in touch within the next few days. Thank you for your time!"}]}];
 
 const AI_TEACHER=[
-  {id:1,icon:"👋",title:"Greetings",titleThai:"การทักทาย",level:"A1",exchanges:[
+  {id:1,icon:"👋",title:"Greetings",titleThai:"การทักทาย",level:"A1",
+   starterQ:"Hello! I am Emma, your English teacher. It is so nice to meet you! What is your name, and where are you from?",
+   systemPrompt:"You are Emma, a warm and encouraging English teacher for Thai learners. Have a natural, friendly conversation about greetings and introductions (A1 level). Keep each reply to 1-2 short sentences. React genuinely to what the student says — comment on it briefly, then ask ONE follow-up question. Be encouraging and positive. Never mention you are an AI.",
+   exchanges:[
     {q:"Hello! I am your AI English teacher. My name is Emma. What is your name?",qThai:"สวัสดีค่ะ! ฉันชื่อเอ็มม่า คุณชื่ออะไรคะ?",
      hints:["My name is Somchai. Nice to meet you!","Hi! I am Nid. I am very happy to meet you.","Hello teacher! My name is Karn."],
      responses:[{kw:["my name","i am","i'm","im","name is","called"],replies:["Lovely name! Nice to meet you! How are you feeling today?","What a nice name! So happy to meet you! How are you today?"]}],
@@ -470,7 +458,10 @@ const AI_TEACHER=[
      responses:[{kw:["work","job","career","business","company","office","professional"],replies:["That is a great goal! English is so important for business. Keep practicing every day!","Excellent! English will really help your career. You are doing the right thing!"]},{kw:["travel","abroad","foreign","country","trip","tourist","world"],replies:["How exciting! English will help you travel anywhere in the world! Which country do you want to visit?","Wonderful! English is the perfect language for travelers! Where do you dream of going?"]},{kw:["study","university","school","exam","test","education"],replies:["Great plan! English skills will help you succeed in your studies!","Excellent goal! Keep working hard and you will do great in your exams!"]}],
      defaultReply:"That is a wonderful reason! English will open so many doors for you. Keep it up!"}
   ]},
-  {id:2,icon:"☕",title:"Daily Life",titleThai:"ชีวิตประจำวัน",level:"A2",exchanges:[
+  {id:2,icon:"☕",title:"Daily Life",titleThai:"ชีวิตประจำวัน",level:"A2",
+   starterQ:"Hi there! Let us talk about daily life. What did you do this morning before you started your day?",
+   systemPrompt:"You are Emma, a warm English teacher for Thai learners. Have a natural conversation about daily routines and lifestyle (A2 level). Keep each reply to 1-2 short sentences. React to what the student says — acknowledge their answer naturally, then ask ONE follow-up question about their daily life. Keep it friendly and conversational.",
+   exchanges:[
     {q:"Tell me about your morning. What did you do this morning before coming here?",qThai:"เล่าเรื่องตอนเช้าของคุณให้ฟังหน่อยสิคะ ทำอะไรบ้างก่อนมาที่นี่?",
      hints:["I woke up early and had breakfast. Then I took a shower.","This morning I ate rice and drank coffee. After that I came here.","I got up at seven o clock and got ready for the day."],
      responses:[{kw:["coffee","breakfast","eat","food","rice","noodle","toast","cereal"],replies:["Yum! Breakfast is the most important meal of the day! What is your usual breakfast?","That sounds delicious! Do you always eat breakfast in the morning?"]},{kw:["wake","woke","got up","seven","six","eight","shower","bath"],replies:["I see! That sounds like a busy morning! What time do you usually wake up?","Interesting! What time did you get up? Do you wake up early every day?"]}],
@@ -488,7 +479,10 @@ const AI_TEACHER=[
      responses:[{kw:["family","parent","mom","dad","children","kids","wife","husband","home"],replies:["How sweet! Family time is so precious! What do you all do together in the evenings?","That is lovely! Spending quality time with family is so important!"]},{kw:["netflix","movie","series","watch","tv","youtube","drama","film"],replies:["I love watching shows too! Do you watch in English sometimes? It is great for learning!","That is relaxing! Do you ever watch English movies to help with your listening?"]},{kw:["cook","cooking","dinner","eat","food","restaurant","cafe"],replies:["Delicious! Do you enjoy cooking? What is your favorite dish to make?","How wonderful! Cooking is such a valuable skill! What do you love making?"]}],
      defaultReply:"That sounds like a nice way to relax! Is that your usual evening routine?"}
   ]},
-  {id:3,icon:"✈️",title:"Travel Talk",titleThai:"พูดคุยเรื่องท่องเที่ยว",level:"A2",exchanges:[
+  {id:3,icon:"✈️",title:"Travel Talk",titleThai:"พูดคุยเรื่องท่องเที่ยว",level:"A2",
+   starterQ:"Oh I love talking about travel! Have you been anywhere interesting recently? Tell me about it!",
+   systemPrompt:"You are Emma, a warm English teacher for Thai learners. Have a natural conversation about travel experiences and destinations (A2 level). Keep each reply to 1-2 short sentences. React genuinely to what the student says — show interest in their travel stories, then ask ONE specific follow-up question. Be enthusiastic and encouraging.",
+   exchanges:[
     {q:"Do you enjoy traveling? Tell me about a place you have visited that you loved!",qThai:"ชอบท่องเที่ยวไหมคะ? เล่าเรื่องสถานที่ที่เคยไปและชอบมากให้ฟังหน่อยนะคะ",
      hints:["Yes I love traveling! I visited Phuket last year and it was amazing.","I enjoy traveling very much. I went to Chiang Mai and the temples were beautiful.","I have been to Japan once. It was the best trip of my life."],
      responses:[{kw:["yes","love","enjoy","like","amazing","beautiful","great","wonderful","fantastic"],replies:["Wonderful! Where is the most beautiful place you have been to?","That sounds amazing! What made that trip so special for you?"]},{kw:["phuket","chiang","koh","beach","island","sea","samui","krabi"],replies:["Oh how beautiful! Thai beaches are truly stunning! What did you do there — did you swim?","Lovely! Thailand has gorgeous beaches! What was your favorite activity there?"]},{kw:["japan","korea","singapore","taiwan","europe","america","bali","paris"],replies:["Wow, international travel! That must have been so exciting! What was the best part of the trip?","Amazing! International travel is so rewarding! How was the experience overall?"]}],
@@ -506,7 +500,10 @@ const AI_TEACHER=[
      responses:[{kw:["lost","get lost","wrong","direction","map","confused","no idea"],replies:["Oh no! Getting lost can be so scary but it makes the best story later! How did you find your way?","Haha! Getting lost is such a classic travel story! Did someone help you in the end?"]},{kw:["food","ate","tried","eat","spicy","strange","wrong","menu","order"],replies:["Food adventures are the most memorable part of travel! Was it surprisingly delicious or terrible?","Ha! Trying unexpected food is both exciting and risky! Would you eat it again?"]},{kw:["miss","missed","late","flight","train","bus","delay","cancelled"],replies:["Oh dear! Missing transportation is so stressful! What did you do — did it all work out okay?","That must have been so nerve-wracking! How did you manage to sort it out?"]}],
      defaultReply:"That sounds like quite an adventure! Every travel experience teaches us something new. What did you learn from it?"}
   ]},
-  {id:4,icon:"🍜",title:"Food & Tastes",titleThai:"อาหารและรสนิยม",level:"B1",exchanges:[
+  {id:4,icon:"🍜",title:"Food & Tastes",titleThai:"อาหารและรสนิยม",level:"B1",
+   starterQ:"I am so hungry just thinking about this topic! What is your absolute favorite food? Describe it to me!",
+   systemPrompt:"You are Emma, a warm English teacher for Thai learners. Have a natural conversation about food, cooking, and tastes (B1 level). Keep each reply to 1-2 short sentences. React with genuine interest to what the student says — share a brief reaction, then ask ONE follow-up question that goes deeper into the topic. Keep it natural and fun.",
+   exchanges:[
     {q:"What is your absolute favorite food? Please describe it — make me hungry!",qThai:"อาหารที่คุณชอบมากที่สุดตลอดกาลคืออะไรคะ? อธิบายให้ฟังหน่อย — อยากให้หิวด้วย!",
      hints:["My favorite food is pad thai. It is sweet, sour, and slightly spicy with noodles and egg.","I love green curry. It is rich, creamy, and full of amazing Thai spices.","My favorite is mango sticky rice — sweet, soft, and absolutely delicious."],
      responses:[{kw:["pad thai","tom yum","som tum","green curry","mango","sticky","basil","larb","massaman","thai"],replies:["Thai food is absolutely incredible! So many amazing flavors! Is yours spicy? I love spicy food!","I love Thai cuisine too! The balance of sweet, sour, spicy, and savory is extraordinary!"]},{kw:["sushi","ramen","japanese","korean","pizza","pasta","burger","steak","french"],replies:["Yum! That sounds so delicious! What do you love most about it — the taste, the texture?","Great taste in food! Do you make it at home or do you always go out to eat it?"]},{kw:["spicy","sweet","sour","salty","savory","crispy","soft","creamy","rich"],replies:["Mmm that sounds incredible! I can almost taste it! How often do you eat it?","That sounds absolutely mouthwatering! You are making me very hungry right now!"]}],
@@ -524,7 +521,10 @@ const AI_TEACHER=[
      responses:[{kw:["thai","traditional","authentic","local","street","home","classic"],replies:["Thai cuisine is world-famous! What would be your must-order signature dish that no other restaurant has?","How wonderful! Authentic Thai food restaurants are so beloved everywhere! What would make yours special?"]},{kw:["cafe","coffee","dessert","cake","bakery","sweet","pastry","tea"],replies:["How cozy and inviting! A cafe sounds so warm and welcoming! What would your specialty drink or dessert be?","Love it! Cafes are incredibly popular now. What kind of atmosphere would you create — modern, vintage, or natural?"]},{kw:["fusion","modern","creative","mix","international","japanese","italian","east","west"],replies:["Fusion cuisine is so exciting and creative! What two cuisines would you combine?","How innovative! Fusion cooking is such an art form! What would be your most unique dish on the menu?"]}],
      defaultReply:"What a fun dream! What would be your most special dish that nobody else can find anywhere else?"}
   ]},
-  {id:5,icon:"💭",title:"Dreams & Goals",titleThai:"ความฝันและเป้าหมาย",level:"B1",exchanges:[
+  {id:5,icon:"💭",title:"Dreams & Goals",titleThai:"ความฝันและเป้าหมาย",level:"B1",
+   starterQ:"I always love this conversation! Tell me — what is your biggest dream in life? Do not be shy!",
+   systemPrompt:"You are Emma, a warm English teacher for Thai learners. Have a deep, meaningful conversation about personal dreams, goals, and aspirations (B1 level). Keep each reply to 1-2 short sentences. React with genuine warmth and curiosity to what the student shares — acknowledge their dream meaningfully, then ask ONE thoughtful follow-up question. Encourage and inspire them.",
+   exchanges:[
     {q:"What is your biggest dream in life? Do not be shy — I want to hear everything!",qThai:"ความฝันที่ยิ่งใหญ่ที่สุดในชีวิตคืออะไรคะ? อย่าเขินนะคะ อยากฟังทุกอย่างเลย!",
      hints:["My biggest dream is to travel around the world and experience different cultures.","I dream of starting my own business one day and being my own boss.","My dream is to have a happy family, a nice house, and a job I love."],
      responses:[{kw:["travel","world","abroad","country","international","explore","see","visit"],replies:["What an exciting dream! The world is so big and beautiful! Which country would you want to visit first on your world tour?","A world traveler — I love it! That is a wonderful dream! How are you working towards making it happen?"]},{kw:["business","own","company","start","entrepreneur","boss","shop","brand"],replies:["Entrepreneurship is so exciting and bold! What kind of business would you start?","Amazing ambition! Starting your own business takes courage and hard work. What would your business do?"]},{kw:["family","children","house","home","marry","wedding","partner","kids"],replies:["How beautiful! A happy family and a loving home — that is truly the best foundation for a wonderful life!","That is the loveliest dream! What kind of life do you imagine for yourself and your family?"]},{kw:["famous","singer","actor","artist","star","celebrity","popular"],replies:["Exciting dream! What would you want to be famous for? What talent or skill would you share with the world?","Go for it! What steps are you taking right now to get closer to that dream?"]}],
@@ -548,8 +548,8 @@ const AI_TEACHER=[
 let currentScreen='home',vocabIndex=0,cardFlipped=false,pronIndex=0,isListening=false,recognition=null;
 let listenIndex=0,listenResults=[],listenPlayCount=0,showHint=false;
 let chatDialogue=null,chatStep=0,chatWaiting=false,showExample=false;
-let teacherTopic=null,teacherStep=0,teacherListening=false,teacherRecog=null,showTargetHint=false;
-let teacherScores=[];
+let teacherTopic=null,teacherListening=false,teacherRecog=null;
+let teacherScores=[],teacherHistory=[],teacherTurnCount=0;
 
 // NAV
 function goTo(s){
@@ -800,57 +800,91 @@ function sendChat(){
   },300);
 }
 
-// AI TEACHER
+// AI TEACHER — API KEY
+function getTeacherAPIKey(){return localStorage.getItem('engl_teacher_key')||'';}
+function showTeacherAPISettings(){
+  document.getElementById('api-key-overlay').style.display='flex';
+  document.getElementById('api-key-input').value=getTeacherAPIKey();
+  document.getElementById('api-key-err').style.display='none';
+}
+function saveTeacherAPIKey(){
+  const val=document.getElementById('api-key-input').value.trim();
+  if(!val){document.getElementById('api-key-err').textContent='กรุณาใส่ API Key';document.getElementById('api-key-err').style.display='block';return;}
+  localStorage.setItem('engl_teacher_key',val);
+  document.getElementById('api-key-overlay').style.display='none';
+}
+function closeAPIKeyOverlay(){document.getElementById('api-key-overlay').style.display='none';}
+
+async function callTeacherAPI(userText){
+  const key=getTeacherAPIKey();
+  if(!key)return null;
+  const msgs=[...teacherHistory,{role:'user',content:userText}];
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'content-type':'application/json',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:120,system:teacherTopic.systemPrompt,messages:msgs})
+    });
+    if(!res.ok){if(res.status===401){localStorage.removeItem('engl_teacher_key');return '__auth__';}return null;}
+    const d=await res.json();
+    return d.content[0].text;
+  }catch(e){return null;}
+}
+
+// AI TEACHER — UI
 function showTeacherTopics(){
   setDisplay('chat-mode-view','none');setDisplay('teacher-select-view','block');
   const list=document.getElementById('teacher-topic-list');list.innerHTML='';
   AI_TEACHER.forEach(topic=>{
     const btn=document.createElement('button');btn.className='dialogue-card';
-    btn.innerHTML='<div class="dicon">'+topic.icon+'</div><div style="flex:1"><div class="dtitle">'+topic.title+'</div><div class="dsub">'+topic.titleThai+'</div><div class="dlevel">Level: '+topic.level+' · '+topic.exchanges.length+' ข้อ</div></div><span style="font-size:18px;color:#CBD5E1">→</span>';
+    btn.innerHTML='<div class="dicon">'+topic.icon+'</div><div style="flex:1"><div class="dtitle">'+topic.title+'</div><div class="dsub">'+topic.titleThai+'</div><div class="dlevel">Level: '+topic.level+' · สนทนาไม่จำกัด 🤖</div></div><span style="font-size:18px;color:#CBD5E1">→</span>';
     btn.onclick=()=>startTeacherTopic(topic);list.appendChild(btn);
   });
 }
 function backToTeacherTopics(){
   setDisplay('teacher-active-view','none');setDisplay('teacher-finished-view','none');
   setDisplay('teacher-select-view','block');
+  if(teacherListening&&teacherRecog)teacherRecog.stop();
 }
 function startTeacherTopic(topic){
-  teacherTopic=topic;teacherStep=0;teacherScores=[];showTargetHint=false;
+  teacherTopic=topic;teacherHistory=[];teacherScores=[];teacherTurnCount=0;
   setDisplay('teacher-select-view','none');
   document.getElementById('teacher-active-view').style.display='flex';
-  renderTeacherStep();
-}
-function renderTeacherStep(){
-  showTargetHint=false;
-  const ex=teacherTopic.exchanges[teacherStep];
-  const total=teacherTopic.exchanges.length;
-  document.getElementById('teacher-progress-text').textContent='ข้อ '+(teacherStep+1)+'/'+total;
-  const dots=document.getElementById('teacher-progress-dots');
-  dots.innerHTML=teacherTopic.exchanges.map((_,i)=>'<span class="progress-dot'+(i<teacherStep?' done':i===teacherStep?' current':'')+'"></span>').join('');
-  document.getElementById('teacher-q-text').textContent=ex.q;
-  document.getElementById('teacher-q-thai').textContent=ex.qThai;
-  if(ex.hints&&ex.hints.length){
-    document.getElementById('teacher-target-text').innerHTML=ex.hints.map(h=>'<div style="padding:4px 0;border-bottom:1px solid #E0E7FF">💬 '+h+'</div>').join('');
-    document.getElementById('teacher-hint-btn').style.display='';
-  } else {
-    document.getElementById('teacher-hint-btn').style.display='none';
-  }
-  document.getElementById('teacher-target-wrap').style.display='none';
-  document.getElementById('teacher-hint-btn').textContent='💡 ดูตัวอย่างคำตอบ';
-  setDisplay('teacher-mic-area','block');setDisplay('teacher-result-area','none');
-  document.getElementById('teacher-mic-status').textContent='กดไมค์แล้วตอบเป็นภาษาอังกฤษ — พูดได้เลย!';
+  document.getElementById('teacher-topic-label').textContent=topic.icon+' '+topic.title;
+  document.getElementById('teacher-chat-history').innerHTML='';
+  setDisplay('teacher-pron-card','none');
+  document.getElementById('teacher-thinking').style.display='none';
+  document.getElementById('teacher-mic-btn').disabled=false;
   setTeacherMicIdle();
-  setTimeout(()=>speak(ex.q,0.85),400);
+  document.getElementById('teacher-mic-status').textContent='กดไมค์แล้วตอบเป็นภาษาอังกฤษ';
+  const q=topic.starterQ;
+  teacherHistory.push({role:'assistant',content:q});
+  addTeacherBubble('teacher',q);
+  setTimeout(()=>{
+    speak(q,0.85);
+    if(!getTeacherAPIKey())showTeacherAPISettings();
+  },400);
 }
-function replayTeacherQ(){speak(teacherTopic.exchanges[teacherStep].q,0.8);}
-function speakTargetSlow(){const ex=teacherTopic.exchanges[teacherStep];if(ex.hints&&ex.hints.length)speak(ex.hints[0],0.6);}
-function toggleTargetHint(){
-  showTargetHint=!showTargetHint;
-  document.getElementById('teacher-target-wrap').style.display=showTargetHint?'block':'none';
-  document.getElementById('teacher-hint-btn').textContent=showTargetHint?'🙈 ซ่อนตัวอย่าง':'💡 ดูตัวอย่างคำตอบ';
+function addTeacherBubble(role,text){
+  const hist=document.getElementById('teacher-chat-history');
+  const wrap=document.createElement('div');
+  wrap.className='tc-bubble-wrap '+(role==='teacher'?'teacher':'user');
+  const id='tcb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  if(role==='teacher'){
+    wrap.innerHTML='<div class="tc-avatar">👩‍🏫</div><div><div class="tc-bubble teacher" id="'+id+'">'+text+'</div><button class="tc-replay" onclick="speak(document.getElementById(\''+id+'\').textContent,0.85)">🔊 ฟังอีกครั้ง</button></div>';
+  } else {
+    wrap.innerHTML='<div class="tc-bubble user">'+text+'</div>';
+  }
+  hist.appendChild(wrap);
+  setTimeout(()=>{hist.scrollTop=hist.scrollHeight;},50);
 }
-function setTeacherMicIdle(){document.getElementById('teacher-mic-btn').className='mic-btn mic-btn-idle';document.getElementById('teacher-mic-label').textContent='กดเพื่อพูด';teacherListening=false;}
-function setTeacherMicListening(){document.getElementById('teacher-mic-btn').className='mic-btn mic-btn-listening';document.getElementById('teacher-mic-label').textContent='กำลังฟัง...';teacherListening=true;}
+function setTeacherMicIdle(){document.getElementById('teacher-mic-btn').className='mic-btn mic-btn-idle';document.getElementById('teacher-mic-label').textContent='พูด';teacherListening=false;}
+function setTeacherMicListening(){document.getElementById('teacher-mic-btn').className='mic-btn mic-btn-listening';document.getElementById('teacher-mic-label').textContent='ฟัง...';teacherListening=true;}
 function toggleTeacherMic(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){alert('กรุณาใช้ Chrome บน Android');return;}
@@ -860,75 +894,85 @@ function toggleTeacherMic(){
   teacherRecog.onresult=(event)=>{
     const results=event.results[0];
     let bestSpoken='',bestConf=0;
-    for(let i=0;i<results.length;i++){
-      const conf=results[i].confidence||0.5;
-      if(conf>bestConf){bestConf=conf;bestSpoken=results[i].transcript;}
-    }
-    const wordGrades=getWordClarity(results);
-    showTeacherResult(bestSpoken,wordGrades,bestConf);
+    for(let i=0;i<results.length;i++){const conf=results[i].confidence||0.5;if(conf>bestConf){bestConf=conf;bestSpoken=results[i].transcript;}}
+    processTeacherSpeech(bestSpoken,getWordClarity(results),bestConf);
   };
-  teacherRecog.onerror=()=>setTeacherMicIdle();
+  teacherRecog.onerror=(e)=>{setTeacherMicIdle();document.getElementById('teacher-mic-status').textContent=e.error==='not-allowed'?'อนุญาตไมโครโฟนก่อนนะคะ':'กดไมค์แล้วลองใหม่';};
   teacherRecog.onend=()=>setTeacherMicIdle();
   teacherRecog.start();
 }
-function showTeacherResult(spoken,wordGrades,confidence){
+async function processTeacherSpeech(spoken,wordGrades,confidence){
+  document.getElementById('teacher-mic-btn').disabled=true;
+  document.getElementById('teacher-mic-status').textContent='รอครูตอบสักครู่...';
   const ds=confidence>0?Math.min(100,Math.round(confidence*105)):60;
   teacherScores.push(ds);
-  setDisplay('teacher-mic-area','none');setDisplay('teacher-result-area','block');
-  document.getElementById('teacher-recognized').textContent='"'+spoken+'"';
-  const color=ds>=75?'#10B981':ds>=55?'#F59E0B':'#EF4444';
-  renderScoreRing(ds,'teacher-score-circle','teacher-score-num',color);
+  showTeacherPronFeedback(wordGrades,ds);
+  addTeacherBubble('user',spoken);
+  teacherHistory.push({role:'user',content:spoken});
+  document.getElementById('teacher-thinking').style.display='block';
+  let reply=await callTeacherAPI(spoken);
+  document.getElementById('teacher-thinking').style.display='none';
+  if(reply==='__auth__'){
+    addTeacherBubble('teacher','API Key ไม่ถูกต้อง กรุณาตั้งค่าใหม่ที่ ⚙️');
+    showTeacherAPISettings();
+    document.getElementById('teacher-mic-btn').disabled=false;
+    document.getElementById('teacher-mic-status').textContent='กดไมค์แล้วตอบเป็นภาษาอังกฤษ';
+    return;
+  }
+  if(!reply){
+    const ex=teacherTopic.exchanges[teacherTurnCount%teacherTopic.exchanges.length];
+    reply=getContextualResponse(ex,spoken);
+    if(!getTeacherAPIKey())reply+=' 💡 (ใส่ API Key ที่ ⚙️ เพื่อให้ครูตอบตามบริบทจริงๆ)';
+  }
+  teacherHistory.push({role:'assistant',content:reply});
+  addTeacherBubble('teacher',reply);
+  setTimeout(()=>speak(reply.replace(/ 💡.*/,''),0.88),300);
+  teacherTurnCount++;
+  document.getElementById('teacher-mic-btn').disabled=false;
+  document.getElementById('teacher-mic-status').textContent='กดไมค์แล้วตอบเป็นภาษาอังกฤษ';
+}
+function showTeacherPronFeedback(wordGrades,ds){
+  setDisplay('teacher-pron-card','block');
   const lvl=getPronLevel(ds);
-  const badge=document.getElementById('teacher-level-badge');
-  badge.textContent=lvl.emoji+' '+lvl.label;badge.className='pron-level-badge '+lvl.cls;
+  document.getElementById('teacher-pron-pct').textContent=ds+'%';
+  const badge=document.getElementById('teacher-pron-badge');
+  badge.textContent=lvl.emoji+' '+lvl.label;badge.className='pron-level-badge '+lvl.cls;badge.style.cssText='font-size:11px;padding:2px 10px;margin:0';
   renderFreeformChips(wordGrades,'teacher-chips');
-  // Contextual teacher response
-  const ex=teacherTopic.exchanges[teacherStep];
-  const contextReply=getContextualResponse(ex,spoken);
-  let pronNote='';
-  if(ds>=85)pronNote=' Your pronunciation sounds very clear!';
-  else if(ds>=70)pronNote=' Try to speak a little more clearly next time!';
-  else if(ds<50)pronNote=' Remember to speak slowly and clearly.';
-  const fullFeedback=contextReply+(pronNote?' —'+pronNote:'');
-  document.getElementById('teacher-feedback-text').textContent=fullFeedback;
-  setTimeout(()=>speak(contextReply+(pronNote?' '+pronNote:''),0.88),600);
-  // Unclear word replay buttons
-  const unclearWords=wordGrades.filter(w=>w.grade==='near'||w.grade==='miss').map(w=>w.word);
+  const unclear=wordGrades.filter(w=>w.grade!=='exact').map(w=>w.word);
   const wrongRow=document.getElementById('teacher-wrong-words-row');
-  const wrongBtns=document.getElementById('teacher-wrong-btns');
-  if(unclearWords.length>0&&ds<80){
+  if(unclear.length&&ds<80){
     wrongRow.style.display='block';
-    wrongBtns.innerHTML=unclearWords.slice(0,5).map(w=>'<button onclick="speak(\''+w.replace(/'/g,"\\'")+'\',.5)" style="background:#FEF3C7;color:#92400E;border:none;border-radius:20px;padding:6px 14px;font-size:14px;font-weight:600;cursor:pointer">🔊 '+w+'</button>').join('');
+    document.getElementById('teacher-wrong-btns').innerHTML=unclear.slice(0,5).map(w=>'<button onclick="speak(\''+w.replace(/'/g,"\\'")+'\',.5)" style="background:#FEF3C7;color:#92400E;border:none;border-radius:20px;padding:5px 12px;font-size:13px;font-weight:600;cursor:pointer">🔊 '+w+'</button>').join('');
   } else {wrongRow.style.display='none';}
-  const isLast=teacherStep>=teacherTopic.exchanges.length-1;
-  document.getElementById('teacher-next-btn').textContent=isLast?'🏆 ดูผลลัพธ์':'ถัดไป →';
+}
+function endTeacherConversation(){
+  if(teacherListening&&teacherRecog)teacherRecog.stop();
+  document.getElementById('teacher-active-view').style.display='none';
+  document.getElementById('teacher-finished-view').style.display='flex';
+  const avg=teacherScores.length?Math.round(teacherScores.reduce((a,b)=>a+b,0)/teacherScores.length):0;
+  const turns=teacherHistory.filter(m=>m.role==='user').length;
+  const lvl=getPronLevel(avg);
+  document.getElementById('teacher-final-score-text').textContent='พูดไป '+turns+' ครั้ง · ความชัดเจนเฉลี่ย '+avg+'% — '+lvl.emoji+' '+lvl.label;
+  if(turns>0)speak('Great conversation! You spoke '+turns+' times. Well done!',0.9);
 }
 function getContextualResponse(exchange,transcript){
   const lc=transcript.toLowerCase();
   for(const resp of exchange.responses){
-    if(resp.kw&&resp.kw.some(k=>lc.includes(k))){
-      const r=resp.replies;
-      return r[Math.floor(Math.random()*r.length)];
-    }
+    if(resp.kw&&resp.kw.some(k=>lc.includes(k))){const r=resp.replies;return r[Math.floor(Math.random()*r.length)];}
   }
-  return exchange.defaultReply||"That is interesting! Can you tell me more about that?";
+  return exchange.defaultReply||"That is interesting! Tell me more!";
 }
 function getWordClarity(speechResults){
   const best=speechResults[0];
   const bestWords=best.transcript.trim().split(/\s+/).filter(w=>w);
   if(!bestWords.length)return[];
-  if(speechResults.length<2){
-    const conf=best.confidence||0.6;
-    return bestWords.map(w=>({word:w,grade:conf>=0.7?'exact':conf>=0.4?'near':'miss'}));
-  }
+  if(speechResults.length<2){const conf=best.confidence||0.6;return bestWords.map(w=>({word:w,grade:conf>=0.7?'exact':conf>=0.4?'near':'miss'}));}
   const alts=[];
   for(let i=1;i<Math.min(speechResults.length,4);i++)alts.push(speechResults[i].transcript.toLowerCase().split(/\s+/));
   return bestWords.map(word=>{
     const wl=word.toLowerCase();
-    const matchCount=alts.filter(alt=>alt.some(aw=>aw===wl||levenshtein(wl,aw)<=1)).length;
-    if(matchCount===alts.length)return{word,grade:'exact'};
-    if(matchCount>0)return{word,grade:'near'};
-    return{word,grade:'miss'};
+    const m=alts.filter(alt=>alt.some(aw=>aw===wl||levenshtein(wl,aw)<=1)).length;
+    if(m===alts.length)return{word,grade:'exact'};if(m>0)return{word,grade:'near'};return{word,grade:'miss'};
   });
 }
 function renderFreeformChips(wordGrades,containerId){
@@ -937,25 +981,6 @@ function renderFreeformChips(wordGrades,containerId){
     const label=w.grade==='exact'?'ชัดเจน':w.grade==='near'?'ไม่แน่ใจ':'ไม่ชัด';
     return'<span class="diff-chip '+cls+'"><span>'+w.word+'</span><span class="chip-label">'+label+'</span></span>';
   }).join('');
-}
-function teacherRetry(){
-  setDisplay('teacher-mic-area','block');setDisplay('teacher-result-area','none');
-  setTeacherMicIdle();
-  document.getElementById('teacher-mic-status').textContent='กดไมค์แล้วพูดใหม่';
-  setTimeout(()=>speak(teacherTopic.exchanges[teacherStep].q,0.8),300);
-}
-function teacherNext(){
-  const isLast=teacherStep>=teacherTopic.exchanges.length-1;
-  if(isLast){showTeacherFinished();}
-  else{teacherStep++;renderTeacherStep();}
-}
-function showTeacherFinished(){
-  document.getElementById('teacher-active-view').style.display='none';
-  document.getElementById('teacher-finished-view').style.display='flex';
-  const avg=teacherScores.length?Math.round(teacherScores.reduce((a,b)=>a+b,0)/teacherScores.length):0;
-  const lvl=getPronLevel(avg);
-  document.getElementById('teacher-final-score-text').textContent='คะแนนเฉลี่ย: '+avg+'% — '+lvl.emoji+' '+lvl.label;
-  speak('Congratulations! You completed the lesson. Your average score is '+avg+' percent.',0.9);
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
