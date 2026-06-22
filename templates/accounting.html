@@ -6113,12 +6113,12 @@ function printSimpleDelivery(id){
       +(comp.taxId?'<div class="biz-sub">เลขผู้เสียภาษี '+comp.taxId+'</div>':'')
       +'</div>'
       +'<div><div class="doc-title">📦 ใบส่งสินค้า <span class="doc-tag">('+tag+')</span></div>'
-      +'<div class="doc-date">วันที่: '+thDate+'</div>'
       +'</div></div>'
       +'<div class="info">'
-      +(inv.invNo?'<div class="ib"><div class="lbl">เลขที่บิล</div><div class="val">'+inv.invNo+'</div></div>':'')
       +'<div class="ib"><div class="lbl">ลูกค้า / ผู้รับสินค้า</div><div class="val">'+(customer||'—')+'</div></div>'
+      +(inv.invNo?'<div class="ib"><div class="lbl">เลขที่บิล</div><div class="val">'+inv.invNo+'</div></div>':'<div class="ib"></div>')
       +'<div class="ib"><div class="lbl">สถานที่ส่ง</div><div class="val" style="font-size:11px">'+(inv.delivAddr||'—')+'</div></div>'
+      +'<div class="ib"><div class="lbl">วันที่</div><div class="val">'+thDate+'</div></div>'
       +(inv.po?'<div class="ib"><div class="lbl">เลขที่ P/O</div><div class="val">'+inv.po+'</div></div>':'')
       +(r.desc?'<div class="ib"><div class="lbl">รายการ</div><div class="val" style="font-size:11px">'+r.desc+'</div></div>':'')
       +'</div>'
