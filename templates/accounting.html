@@ -6847,11 +6847,7 @@ function saveLineIds(){accSet('expense_line_ids',_lineIds);}
 function saveLineGroupData(){accSet('expense_line_group',_lineGroupUrl);}
 
 function toggleLinePanel(){
-  const w=window.screen.availWidth;
-  const h=window.screen.availHeight;
-  const pw=420;
-  window.open('https://web.line.me','LineWebChat',
-    'width='+pw+',height='+h+',left='+(w-pw)+',top=0,resizable=yes,scrollbars=yes');
+  window.location.href='line://';
 }
 function switchLineTab(tab,btn){
   document.querySelectorAll('.line-tab').forEach(t=>t.classList.remove('active'));
