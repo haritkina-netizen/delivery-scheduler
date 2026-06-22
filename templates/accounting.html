@@ -661,8 +661,9 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
     display:flex;justify-content:flex-end;gap:6px;padding-top:6px!important}
 
   /* sub-item / slip panel (expanded row) must show as full-width block, not a hidden card cell */
-  #tbody tr[id^="sg_"] td,#incTbody tr[id^="incsg_"] td{display:block!important;text-align:left;padding:0!important;min-height:0!important;border:none!important}
+  #tbody tr[id^="sg_"] td,#incTbody tr[id^="incsg_"] td{display:block!important;text-align:left;padding:0!important;min-height:0!important;border:none!important;overflow:hidden;box-sizing:border-box;max-width:100vw}
   #tbody tr[id^="sg_"] td::before,#incTbody tr[id^="incsg_"] td::before{content:none!important;display:none}
+  [id^="incsi_"],[id^="si_"]{overflow:hidden;max-width:100%}
 
   /* summary cards stack 1-col on very small, else stay */
   .scards{flex-wrap:wrap}
@@ -4163,16 +4164,16 @@ function incBuildSubInner(r){
           </div>
           ${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)?`<div style="font-size:10px;color:#5b7d76;margin-top:3px">= ${(s.lang||0)*BOTTLES_PER_CRATE+(s.bottle||0)} ขวด</div>`:''}`;
 
-      return`<div style="background:var(--bg,#fff);border:0.5px solid #b5e4d1;border-radius:10px;margin:0 10px 8px;padding:10px 12px;overflow:hidden">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;min-width:0">
+      return`<div style="background:var(--bg,#fff);border:0.5px solid #b5e4d1;border-radius:10px;margin:0 10px 8px;padding:10px 12px;overflow:hidden;box-sizing:border-box;width:calc(100% - 20px)">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;width:100%;box-sizing:border-box;overflow:hidden">
           <span style="font-size:11px;color:#bbb;flex-shrink:0">${i+1}</span>
           <input type="text" placeholder="รหัสสินค้า" value="${esc(s.code||'')}"
             onchange="incSubCode(${rid},'${s.sid}',this.value)"
-            style="width:80px;flex-shrink:0;border:1px solid #b5e4d1;border-radius:6px;padding:4px 6px;font-size:11px;font-family:inherit;background:#f0fdf7;color:#065f46;text-align:center"/>
+            style="width:72px;flex-shrink:0;border:1px solid #b5e4d1;border-radius:6px;padding:4px 6px;font-size:11px;font-family:inherit;background:#f0fdf7;color:#065f46;text-align:center;box-sizing:border-box"/>
           <input type="text" placeholder="ชื่อสินค้า" value="${esc(s.desc)}"
             onchange="incSubDesc(${rid},'${s.sid}',this.value)"
             oninput="subAcShowInc(this)" onblur="setTimeout(subAcHide,150)"
-            style="flex:1;min-width:0;border:none;border-bottom:1px solid #e0e0e0;padding:4px 2px;font-size:13px;font-family:inherit;background:transparent;color:var(--text,#1a1a1a)"/>
+            style="flex:1;min-width:0;width:0;border:none;border-bottom:1px solid #e0e0e0;padding:4px 2px;font-size:13px;font-family:inherit;background:transparent;color:var(--text,#1a1a1a);overflow:hidden;text-overflow:ellipsis"/>
           <button onclick="incDelSub(${rid},'${s.sid}')"
             style="flex-shrink:0;background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:0 2px;line-height:1">×</button>
         </div>
