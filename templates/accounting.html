@@ -4773,6 +4773,10 @@ function incClearFilter(){
   if(bf)bf.textContent='เลือกวันที่';if(bt)bt.textContent='เลือกวันที่';
   window._incCfSelected=new Set();incCfUpdateLabel();
   document.getElementById('incFVat').value='';
+  // เรียงตามเลขที่บิล น้อย→มาก อัตโนมัติ
+  _incSortMode=3;
+  const icon=document.getElementById('incSortIcon');
+  if(icon){icon.textContent=INC_SORT_ICONS[3];icon.title=INC_SORT_TIPS[3];}
   incApplyFilter();
 }
 
