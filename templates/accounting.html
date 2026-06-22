@@ -6000,22 +6000,22 @@ const PRODUCT_PRESETS=[
   {code:'8857200113939',desc:'เครื่องดื่มว่านหางจระเข้ผสมน้ำกระเจี๊ยบและน้ำพุทราจีน 33.80% 300 ml/24 ขวด'},
   {code:'8857200111270',desc:'เครื่องดื่มชาดำผสมเนื้อว่าน หางจระเข้ กลิ่นฮันนี่เลมอน 300 ml/24 ขวด'},
 ];
-function getSubDescSuggestions(q, sourceRows){
+function getSubDescSuggestions(q, sourceRows, usePresets){
   const ql=(q||'').trim();
-  // พิมพ์เลข 1-6 → แสดง preset ตามลำดับทันที
-  const n=parseInt(ql,10);
-  if(ql===String(n) && n>=1 && n<=PRODUCT_PRESETS.length){
-    return [PRODUCT_PRESETS[n-1]];
-  }
   const seen=new Set();
   const results=[];
-  // presets ก่อน
-  PRODUCT_PRESETS.forEach(p=>{
-    if(!ql||p.desc.toLowerCase().includes(ql.toLowerCase())){
-      seen.add(p.desc);results.push(p);
+  if(usePresets){
+    // พิมพ์เลข 1-6 → แสดง preset ตามลำดับทันที
+    const n=parseInt(ql,10);
+    if(ql===String(n) && n>=1 && n<=PRODUCT_PRESETS.length){
+      return [PRODUCT_PRESETS[n-1]];
     }
-  });
-  // ข้อมูลเก่าถัดไป
+    PRODUCT_PRESETS.forEach(p=>{
+      if(!ql||p.desc.toLowerCase().includes(ql.toLowerCase())){
+        seen.add(p.desc);results.push(p);
+      }
+    });
+  }
   (sourceRows||[]).forEach(r=>(r.subs||[]).forEach(s=>{
     const desc=s.desc;
     if(!desc||seen.has(desc))return;
@@ -6025,12 +6025,12 @@ function getSubDescSuggestions(q, sourceRows){
   return results.slice(0,12);
 }
 /* wrappers accessible from oninput attributes */
-function subAcShowExp(el){subAcShow(el,rows);}
-function subAcShowInc(el){subAcShow(el,window.incRows);}
+function subAcShowExp(el){subAcShow(el,rows,false);}
+function subAcShowInc(el){subAcShow(el,window.incRows,true);}
 let _subAcEl=null;
-function subAcShow(inputEl, sourceRows){
+function subAcShow(inputEl, sourceRows, usePresets){
   subAcHide();
-  const suggs=getSubDescSuggestions(inputEl.value, sourceRows);
+  const suggs=getSubDescSuggestions(inputEl.value, sourceRows, usePresets);
   if(!suggs.length)return;
   if(!_subAcEl){_subAcEl=document.createElement('div');_subAcEl.className='ac-dropdown';document.body.appendChild(_subAcEl);}
   _subAcEl.innerHTML=suggs.map(s=>'<div class="ac-item" data-val="'+s.desc.replace(/"/g,'&quot;')+'" data-code="'+(s.code||'').replace(/"/g,'&quot;')+'">'+s.desc+(s.code?' <span style="color:#999;font-size:11px">('+s.code+')</span>':'')+'</div>').join('');
