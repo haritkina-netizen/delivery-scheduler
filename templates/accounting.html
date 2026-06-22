@@ -608,38 +608,57 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
 
   /* TABLE → CARD ROWS (ledger + income overview) */
   #page-ledger thead,#incsub-overview thead{display:none}
-  #page-ledger .tbl-wrap,#incsub-overview .tbl-wrap{padding:.4rem .8rem;overflow:visible}
-  #tbody tr,#incTbody tr{display:block;background:var(--bg2);border:0.5px solid var(--line);border-radius:10px;margin-bottom:10px;padding:7px 11px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  #page-ledger .tbl-wrap,#incsub-overview .tbl-wrap{padding:.4rem .6rem;overflow:visible}
+  #tbody tr,#incTbody tr{display:block;background:var(--bg2);border:0.5px solid var(--line);border-radius:12px;margin-bottom:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
   #tbody tr.hide,#incTbody tr.hide{display:none}
-  #tbody td,#incTbody td{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 0!important;border:none!important;text-align:right;min-height:30px}
-  #tbody td::before,#incTbody td::before{font-size:11px;color:var(--text2);font-weight:700;text-align:left;flex:0 0 auto;white-space:nowrap}
-  #tbody td input,#tbody td select,#incTbody td input,#incTbody td select{width:auto!important;flex:1;min-width:0;text-align:right}
+
+  /* hide all td labels by default, show only what we need */
+  #tbody td,#incTbody td{display:none;border:none!important;padding:0!important}
+  #tbody td::before,#incTbody td::before{display:none}
+  #tbody td input,#tbody td select,#incTbody td input,#incTbody td select{width:auto!important;min-width:0}
+
+  /* col 1: hidden (seq/id) */
   #tbody td:nth-of-type(1),#incTbody td:nth-of-type(1){display:none}
-  /* ledger labels */
-  #tbody td:nth-of-type(2)::before{content:"📅 วันที่"}
-  #tbody td:nth-of-type(3)::before{content:"หมวดหมู่"}
-  #tbody td:nth-of-type(4)::before{content:"รายการ"}
-  #tbody td:nth-of-type(5)::before{content:"ผู้รับเงิน"}
-  #tbody td:nth-of-type(6)::before{content:"ผู้ลงบันทึก"}
-  #tbody td:nth-of-type(7)::before{content:"VAT"}
-  #tbody td:nth-of-type(8)::before{content:"จำนวนเงิน"}
-  #tbody td:nth-of-type(9)::before{content:"VAT 7%"}
-  #tbody td:nth-of-type(10)::before{content:"รวมทั้งสิ้น";font-weight:700}
-  #tbody td:nth-of-type(10){border-top:0.5px solid var(--line)!important;margin-top:2px;padding-top:6px!important;font-weight:700;color:var(--text)}
-  #tbody td:nth-of-type(11){justify-content:flex-end}
-  /* income labels */
-  #incTbody td:nth-of-type(2)::before{content:"📅 วันที่"}
-  #incTbody td:nth-of-type(3)::before{content:"หมวดหมู่"}
-  #incTbody td:nth-of-type(4)::before{content:"รายการ"}
-  #incTbody td:nth-of-type(5)::before{content:"ลูกค้า / ผู้จ่าย"}
-  #incTbody td:nth-of-type(6)::before{content:"ผู้ลงบันทึก"}
-  #incTbody td:nth-of-type(7)::before{content:"VAT"}
-  #incTbody td:nth-of-type(8)::before{content:"จำนวนเงิน"}
-  #incTbody td:nth-of-type(9)::before{content:"VAT 7%"}
-  #incTbody td:nth-of-type(10)::before{content:"รวมทั้งสิ้น";font-weight:700}
-  #incTbody td:nth-of-type(10){border-top:0.5px solid var(--line)!important;margin-top:2px;padding-top:6px!important;font-weight:700;color:var(--text)}
-  #incTbody td:nth-of-type(11)::before{content:"สถานะ"}
-  #incTbody td:nth-of-type(12){justify-content:flex-end}
+
+  /* ── TOP ROW: date (left) + category (right) ── */
+  #tbody td:nth-of-type(2),#incTbody td:nth-of-type(2){
+    display:inline-flex;align-items:center;font-size:11.5px;color:var(--text2);margin-bottom:4px;float:left}
+  #tbody td:nth-of-type(3),#incTbody td:nth-of-type(3){
+    display:inline-flex;align-items:center;font-size:11px;font-weight:700;
+    background:var(--accent-bg,rgba(0,0,0,.07));color:var(--accent,var(--text2));
+    padding:2px 8px;border-radius:20px;margin-bottom:4px;float:right}
+  /* clearfix after top row */
+  #tbody td:nth-of-type(3)::after,#incTbody td:nth-of-type(3)::after{content:"";display:table;clear:both}
+
+  /* ── DESCRIPTION (รายการ) ── */
+  #tbody td:nth-of-type(4),#incTbody td:nth-of-type(4){
+    display:block;clear:both;font-size:14px;font-weight:600;color:var(--text);
+    padding:2px 0 4px!important;line-height:1.35;word-break:break-word}
+
+  /* ── RECIPIENT / CUSTOMER (small muted) ── */
+  #tbody td:nth-of-type(5),#incTbody td:nth-of-type(5){
+    display:block;font-size:11.5px;color:var(--text2);padding-bottom:6px!important}
+
+  /* col 6 (ผู้ลงบันทึก): hidden */
+  /* col 7 (VAT toggle): hidden */
+  /* col 8 (จำนวนเงิน ก่อน VAT): hidden */
+  /* col 9 (VAT 7%): hidden */
+
+  /* ── TOTAL ── */
+  #tbody td:nth-of-type(10),#incTbody td:nth-of-type(10){
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-top:0.5px solid var(--line)!important;padding-top:6px!important;margin-top:2px}
+  #tbody td:nth-of-type(10)::before{display:inline;content:"รวม";font-size:11px;color:var(--text2);font-weight:600}
+  #incTbody td:nth-of-type(10)::before{display:inline;content:"รวม";font-size:11px;color:var(--text2);font-weight:600}
+  #tbody td:nth-of-type(10) input,#incTbody td:nth-of-type(10) input{
+    font-size:16px;font-weight:700;color:var(--text);text-align:right;background:none;border:none;padding:0;pointer-events:none}
+
+  /* ── STATUS (income only, col 11) ── */
+  #incTbody td:nth-of-type(11){display:flex;justify-content:flex-end;padding-top:4px!important}
+
+  /* ── ACTIONS (col 11 ledger / col 12 income) ── */
+  #tbody td:nth-of-type(11),#incTbody td:nth-of-type(12){
+    display:flex;justify-content:flex-end;gap:6px;padding-top:6px!important}
 
   /* sub-item / slip panel (expanded row) must show as full-width block, not a hidden card cell */
   #tbody tr[id^="sg_"] td,#incTbody tr[id^="incsg_"] td{display:block!important;text-align:left;padding:0!important;min-height:0!important;border:none!important}
