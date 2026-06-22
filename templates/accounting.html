@@ -3845,7 +3845,7 @@ async function incLoadData(){
 }
 
 /* ── INCOME SORT ── */
-let _incSortMode=0;
+let _incSortMode=3;
 const INC_SORT_ICONS=['↕','↑','↓','#↑','#↓'];
 const INC_SORT_TIPS=['เรียงตามลำดับเดิม','วันที่ เก่า→ใหม่','วันที่ ใหม่→เก่า','เลขที่บิล น้อย→มาก','เลขที่บิล มาก→น้อย'];
 function incCycleSortMode(){
@@ -6804,6 +6804,8 @@ document.getElementById('page-ledger').style.opacity='1';
 (async function init(){
   await Promise.all([loadCats(), loadRecorders(), incLoadCats(), loadCompanyProfile(), _loadCustProfiles()]);
   cfBuild(); incCfBuild();
+  const _isi=document.getElementById('incSortIcon');
+  if(_isi){_isi.textContent=INC_SORT_ICONS[_incSortMode];_isi.title=INC_SORT_TIPS[_incSortMode];}
   const [incLoaded, expLoaded] = await Promise.all([incLoadData(), loadData()]);
   if(incLoaded){incRenderTable();incRecalc();}
   else{incRenderTable();incRecalc();}
