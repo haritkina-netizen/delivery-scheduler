@@ -2586,7 +2586,16 @@ function renderTable(){
         }
       </td>
       <td class="ac" id="vc_${r.id}">${r.hasVat&&amt?fmt(vat):'-'}</td>
-      <td class="ac" style="font-weight:600" id="tc_${r.id}">${amt?fmt(amt+vat):'-'}</td>
+      <td class="ac" style="font-weight:600;padding:2px 4px" id="tc_${r.id}">
+        ${hasSubs
+          ?`<span style="display:block;text-align:right;font-size:12px;color:#999;padding:5px 7px">${amt?fmt(amt+vat):'-'}</span>`
+          :`<input type="number" min="0" step="0.01" placeholder="0.00" value="${amt?(amt+vat):''}"
+              onchange="totalChange(${r.id},this.value)"
+              title="กรอกยอดรวม — ระบบคำนวณย้อนกลับหายอดก่อน VAT ให้อัตโนมัติ"
+              style="text-align:right;width:100%;font-family:inherit;border:1px solid transparent;
+                border-radius:5px;padding:5px 7px;font-size:13px;font-weight:600;background:transparent;color:#1a1a1a"/>`
+        }
+      </td>
       <td style="text-align:center;padding:3px 4px;white-space:nowrap">
         <button onclick="printPaymentVoucher(${r.id})" title="ออกใบสำคัญจ่าย"
           style="background:none;border:1px solid #c8d8ee;border-radius:4px;cursor:pointer;color:#1a3a5c;font-size:12px;padding:2px 5px;margin-right:2px">📄</button>
@@ -2753,7 +2762,18 @@ function amtChange(id,val){
   const amt=rowAmt(r),vat=rowVat(r);
   const vc=document.getElementById('vc_'+id),tc=document.getElementById('tc_'+id);
   if(vc)vc.textContent=r.hasVat&&amt?fmt(vat):'-';
-  if(tc)tc.textContent=amt?fmt(amt+vat):'-';
+  if(tc){const inp=tc.querySelector('input');if(inp)inp.value=amt?(amt+vat):'';}
+  recalc();saveData();
+}
+function totalChange(id,val){
+  const r=rows.find(x=>x.id===id);if(!r)return;
+  const total=parseFloat(val)||0;
+  r.amount=r.hasVat?total/1.07:total;
+  const amt=rowAmt(r),vat=rowVat(r);
+  const amtInp=document.querySelector(`tr[data-id="${id}"] input[type=number]:not([onchange*="totalChange"])`);
+  if(amtInp)amtInp.value=r.amount?r.amount.toFixed(2):'';
+  const vc=document.getElementById('vc_'+id);
+  if(vc)vc.textContent=r.hasVat&&amt?fmt(vat):'-';
   recalc();saveData();
 }
 /* sub desc: just save, no visual update needed */
