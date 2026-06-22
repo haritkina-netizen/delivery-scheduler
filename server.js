@@ -18,6 +18,10 @@ if (USE_PG) {
   query = (sql, params = []) => pool.query(sql, params).then(r => r.rows);
 
   pool.query(`
+    CREATE TABLE IF NOT EXISTS acc_store (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL DEFAULT '{}'
+    );
     CREATE TABLE IF NOT EXISTS routes (
       id SERIAL PRIMARY KEY,
       date TEXT NOT NULL UNIQUE,
@@ -55,6 +59,10 @@ if (USE_PG) {
   try { BetterSqlite3 = require('better-sqlite3'); } catch(e) { console.error('better-sqlite3 not available. Set DATABASE_URL for PostgreSQL.'); process.exit(1); }
   const db = new BetterSqlite3(DB_PATH);
   db.exec(`
+    CREATE TABLE IF NOT EXISTS acc_store (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL DEFAULT '{}'
+    );
     CREATE TABLE IF NOT EXISTS routes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date TEXT NOT NULL UNIQUE,
@@ -129,6 +137,27 @@ const server = http.createServer(async (req, res) => {
 
   if (m === 'OPTIONS') { res.writeHead(204); res.end(); return; }
   if (p === '/' || p === '/index.html') return serveFile(res, path.join(__dirname, 'templates', 'index.html'));
+
+  // ── Accounting key-value store ────────────────────────────────────────────
+  if (p.startsWith('/api/acc/store')) {
+    const key = url.searchParams.get('key') || '';
+    if (!key) return send(res, 400, { error: 'key required' });
+    if (m === 'GET') {
+      const rows = await query('SELECT value FROM acc_store WHERE key=$1', [key]);
+      return send(res, 200, { value: rows.length ? JSON.parse(rows[0].value) : null });
+    }
+    if (m === 'PUT') {
+      const body = await readBody(req);
+      const val = JSON.stringify(body.value ?? body);
+      await query(
+        USE_PG
+          ? 'INSERT INTO acc_store(key,value) VALUES($1,$2) ON CONFLICT(key) DO UPDATE SET value=$2'
+          : 'INSERT OR REPLACE INTO acc_store(key,value) VALUES($1,$2)',
+        [key, val]
+      );
+      return send(res, 200, { ok: true });
+    }
+  }
   if (p === '/accounting' || p === '/accounting.html') return serveFile(res, path.join(__dirname, 'templates', 'accounting.html'));
   if (p.startsWith('/static/')) return serveFile(res, path.join(__dirname, p));
 

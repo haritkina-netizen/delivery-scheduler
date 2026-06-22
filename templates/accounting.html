@@ -1406,6 +1406,23 @@ body[data-pal="teal"] .sb-item.active{color:#3a2c08}
 </div>
 
 <script>
+/* ── SERVER STORE (shared across all users/devices) ── */
+async function accGet(key){
+  try{
+    const r=await fetch('/api/acc/store?key='+encodeURIComponent(key));
+    const d=await r.json();
+    return d.value;
+  }catch(e){return null;}
+}
+async function accSet(key,val){
+  try{
+    await fetch('/api/acc/store?key='+encodeURIComponent(key),{
+      method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({value:val})
+    });
+  }catch(e){}
+}
+
 const CATS=[
   {name:"เงินเดือน/ค่าจ้าง",bg:"#B5D4F4",fg:"#0C447C"},
   {name:"ค่าเช่า/สถานที่",bg:"#C0DD97",fg:"#27500A"},
@@ -1840,18 +1857,16 @@ function saveData(manual=false){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(()=>{
     const data={meta:{biz:document.getElementById('bizName').value,period:document.getElementById('period').value,preparer:document.getElementById('preparer').value},rows,nid};
-    try{
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    accSet(STORAGE_KEY,data).then(()=>{
       const b=document.getElementById('savedBadge');
-      b.textContent=(manual?'✅ บันทึกสำเร็จ! — ':'✅ บันทึกแล้ว — ')+new Date().toLocaleTimeString('th-TH');
-    }catch(e){}
+      if(b)b.textContent=(manual?'✅ บันทึกสำเร็จ! — ':'✅ บันทึกแล้ว — ')+new Date().toLocaleTimeString('th-TH');
+    });
   },manual?0:800);
 }
-function loadData(){
+async function loadData(){
   try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(!raw)return false;
-    const data=JSON.parse(raw);
+    const data=await accGet(STORAGE_KEY);
+    if(!data)return false;
     if(data.meta){
       document.getElementById('bizName').value=data.meta.biz||''
       document.getElementById('period').value=data.meta.period||''
@@ -2120,14 +2135,10 @@ function recOpts(selected){
       : '');
 }
 
-function saveRecorders(){
-  try{ localStorage.setItem('expense_recorders', JSON.stringify(_recorders)); }catch(e){}
-}
-function loadRecorders(){
-  try{
-    const raw = localStorage.getItem('expense_recorders');
-    if(raw){ const arr=JSON.parse(raw); if(Array.isArray(arr)&&arr.length) _recorders=arr; }
-  }catch(e){}
+function saveRecorders(){accSet('expense_recorders',_recorders);}
+async function loadRecorders(){
+  const arr=await accGet('expense_recorders');
+  if(Array.isArray(arr)&&arr.length)_recorders=arr;
 }
 
 /* modal */
@@ -2197,20 +2208,10 @@ const CAT_PALETTE=[
   {bg:"#DDD5F3",fg:"#4A2D8F"},{bg:"#A8E6CF",fg:"#1B5E3B"},{bg:"#FFD3B6",fg:"#7C3D00"},
 ];
 
-function saveCats(){
-  try{localStorage.setItem('expense_cats',JSON.stringify(CATS));}catch(e){}
-}
-function loadCats(){
-  try{
-    const raw=localStorage.getItem('expense_cats');
-    if(raw){
-      const arr=JSON.parse(raw);
-      if(Array.isArray(arr)&&arr.length){
-        CATS.length=0;
-        arr.forEach(c=>CATS.push(c));
-      }
-    }
-  }catch(e){}
+function saveCats(){accSet('expense_cats',CATS);}
+async function loadCats(){
+  const arr=await accGet('expense_cats');
+  if(Array.isArray(arr)&&arr.length){CATS.length=0;arr.forEach(c=>CATS.push(c));}
 }
 
 function openCatModal(){
@@ -3007,7 +3008,7 @@ function clearAll(){
     };
     rows=[];nid=1;
     renderTable();
-    localStorage.removeItem(STORAGE_KEY);
+    accSet(STORAGE_KEY,{rows:[],nid:1,meta:snap.meta});
     document.getElementById('savedBadge').textContent='🗑️ ล้างข้อมูลแล้ว';
     recalc();
     pushUndo('clearAll', snap, '🗑️ ล้างข้อมูล '+snap.rows.length+' รายการแล้ว');
@@ -3692,11 +3693,10 @@ function incCi(n){return INC_CATS.find(x=>x.name===n)||{bg:'#eee',fg:'#555'};}
 function incChip(n){const c=incCi(n);return`<span class="chip" style="background:${c.bg};color:${c.fg}">${n}</span>`;}
 function incCatOpts(sel){return INC_CATS.map(c=>'<option value="'+c.name+'"'+(c.name===sel?' selected':'')+'>'+c.name+'</option>').join('');}
 
-function incSaveCats(){try{localStorage.setItem('income_cats',JSON.stringify(INC_CATS));}catch(e){}}
-function incLoadCats(){
-  try{const raw=localStorage.getItem('income_cats');
-    if(raw){const arr=JSON.parse(raw);if(Array.isArray(arr)&&arr.length){INC_CATS.length=0;arr.forEach(c=>INC_CATS.push(c));}}
-  }catch(e){}
+function incSaveCats(){accSet('income_cats',INC_CATS);}
+async function incLoadCats(){
+  const arr=await accGet('income_cats');
+  if(Array.isArray(arr)&&arr.length){INC_CATS.length=0;arr.forEach(c=>INC_CATS.push(c));}
 }
 
 /* ── INCOME CATEGORY MULTI-SELECT FILTER ── */
@@ -3748,21 +3748,15 @@ function incSaveData(manual=false){
   clearTimeout(incSaveTimer);
   incSaveTimer=setTimeout(()=>{
     const data={rows:incRows,nid:incNid};
-    try{
-      localStorage.setItem(INC_STORAGE_KEY,JSON.stringify(data));
-      if(manual){
-        const b=document.getElementById('savedBadge');
-        if(b)b.textContent='✅ บันทึกรายรับสำเร็จ! — '+new Date().toLocaleTimeString('th-TH');
-      }
-    }catch(e){}
+    accSet(INC_STORAGE_KEY,data).then(()=>{
+      if(manual){const b=document.getElementById('savedBadge');if(b)b.textContent='✅ บันทึกรายรับสำเร็จ! — '+new Date().toLocaleTimeString('th-TH');}
+    });
   },manual?0:800);
 }
-function incLoadData(){
+async function incLoadData(){
   try{
-    const raw=localStorage.getItem(INC_STORAGE_KEY);
-    if(!raw)return false;
-    const data=JSON.parse(raw);
-    if(data.rows&&data.rows.length){
+    const data=await accGet(INC_STORAGE_KEY);
+    if(data&&data.rows&&data.rows.length){
       incNid=data.nid||(INC_ID_OFFSET+1);
       incRows=data.rows;window.incRows=incRows;
       return true;
@@ -4753,7 +4747,7 @@ function incClearAll(){
     const snap={rows:JSON.parse(JSON.stringify(incRows)),nid:incNid};
     incRows=[];window.incRows=incRows;incNid=INC_ID_OFFSET+1;
     incRenderTable();
-    localStorage.removeItem(INC_STORAGE_KEY);
+    accSet(INC_STORAGE_KEY,{rows:[],nid:INC_ID_OFFSET+1});
     const b=document.getElementById('savedBadge');if(b)b.textContent='🗑️ ล้างข้อมูลรายรับแล้ว';
     incRecalc();
     pushUndo('incClearAll',snap,'🗑️ ล้างข้อมูลรายรับ '+snap.rows.length+' รายการแล้ว');
@@ -5392,10 +5386,13 @@ function saveCompanyProfile(){
     phone:document.getElementById('compPhone').value||'',
     fax:document.getElementById('compFax').value||''
   };
-  localStorage.setItem('company_profile',JSON.stringify(p));
+  accSet('company_profile',p);
+  _companyProfileCache=p;
 }
-function loadCompanyProfile(){
-  try{const p=JSON.parse(localStorage.getItem('company_profile')||'{}');
+let _companyProfileCache={};
+async function loadCompanyProfile(){
+  try{const p=await accGet('company_profile')||{};
+    _companyProfileCache=p;
     const f=id=>document.getElementById(id);
     if(f('compAddr'))f('compAddr').value=p.addr||'';
     if(f('compTaxId'))f('compTaxId').value=p.taxId||'';
@@ -5403,29 +5400,23 @@ function loadCompanyProfile(){
     if(f('compFax'))f('compFax').value=p.fax||'';
   }catch(e){}
 }
-function getCompanyProfile(){
-  try{return JSON.parse(localStorage.getItem('company_profile')||'{}');}catch(e){return{};}
-}
+function getCompanyProfile(){return _companyProfileCache||{};}
 
 /* ── Invoice detail fields per income row ── */
 /* ── Customer Profile Store ── */
+let _custProfilesCache={};
+async function _loadCustProfiles(){
+  const d=await accGet('customer_profiles');
+  if(d&&typeof d==='object')_custProfilesCache=d;
+}
 function saveCustomerProfile(name,inv){
   if(!name)return;
-  try{
-    const all=JSON.parse(localStorage.getItem('customer_profiles')||'{}');
-    if(!all[name])all[name]={};
-    ['custAddr','custTaxId','custPhone','delivAddr'].forEach(k=>{
-      if(inv[k])all[name][k]=inv[k];
-    });
-    localStorage.setItem('customer_profiles',JSON.stringify(all));
-  }catch(e){}
+  if(!_custProfilesCache[name])_custProfilesCache[name]={};
+  ['custAddr','custTaxId','custPhone','delivAddr'].forEach(k=>{if(inv[k])_custProfilesCache[name][k]=inv[k];});
+  accSet('customer_profiles',_custProfilesCache);
 }
-function getCustomerProfile(name){
-  try{return JSON.parse(localStorage.getItem('customer_profiles')||'{}')[name]||null;}catch(e){return null;}
-}
-function getAllCustomerProfiles(){
-  try{return JSON.parse(localStorage.getItem('customer_profiles')||'{}');}catch(e){return{};}
-}
+function getCustomerProfile(name){return _custProfilesCache[name]||null;}
+function getAllCustomerProfiles(){return _custProfilesCache||{};}
 /* รวมข้อมูลลูกค้า: เอาจากโปรไฟล์ที่บันทึกไว้ก่อน ถ้าช่องไหนยังไม่มี ให้ค้นจากบิลเก่าที่มีชื่อลูกค้าตรงกัน (เรียงจากล่าสุด) มาเติมให้ */
 function getCustomerInfo(name,excludeId){
   const prof=getCustomerProfile(name)||{};
@@ -6419,9 +6410,7 @@ function openSettings(){
       +sorted.map(y=>'<button class="year-chip '+(_selectedYear===y?'sel':'')+'" onclick="selectYear('+y+')">'+y+'</button>').join('');
   }
   // load saved sheets url
-  const url=localStorage.getItem('sheetsUrl')||'';
-  const inp=document.getElementById('sheetsUrl');
-  if(inp)inp.value=url;
+  accGet('sheetsUrl').then(u=>{const inp=document.getElementById('sheetsUrl');if(inp&&u)inp.value=u;});
   document.getElementById('settingsModal').classList.add('open');
 }
 
@@ -6475,7 +6464,7 @@ async function exportByYear(){
 
 function saveSheetsUrl(){
   const v=document.getElementById('sheetsUrl').value.trim();
-  if(v)localStorage.setItem('sheetsUrl',v);
+  if(v)accSet('sheetsUrl',v);
 }
 
 function showScriptHelp(){
@@ -6494,7 +6483,7 @@ function copyScriptCode(){
 }
 
 async function syncToSheets(){
-  const url=(document.getElementById('sheetsUrl').value||localStorage.getItem('sheetsUrl')||'').trim();
+  const url=(document.getElementById('sheetsUrl').value||'').trim();
   if(!url){alert('กรุณาใส่ Apps Script URL ก่อนครับ\n\nกด "วิธีตั้งค่า →" เพื่อดูขั้นตอน');return;}
   const status=document.getElementById('syncStatus');
   status.className='sync-status';status.textContent='⏳ กำลัง sync...';
@@ -6514,7 +6503,7 @@ async function syncToSheets(){
     const json=await res.json();
     if(json.ok){
       const ts=new Date().toLocaleString('th-TH');
-      localStorage.setItem('lastSync',ts);
+      accSet('lastSync',ts);
       status.className='sync-status ok';
       status.textContent='✅ Sync สำเร็จ เมื่อ '+ts+' ('+expData.length+' รายจ่าย / '+incData.length+' รายรับ)';
     } else {
@@ -6527,7 +6516,7 @@ async function syncToSheets(){
 }
 
 async function pullFromSheets(){
-  const url=(document.getElementById('sheetsUrl').value||localStorage.getItem('sheetsUrl')||'').trim();
+  const url=(document.getElementById('sheetsUrl').value||'').trim();
   if(!url){alert('กรุณาใส่ Apps Script URL ก่อนครับ');return;}
   const status=document.getElementById('syncStatus');
   status.className='sync-status';status.textContent='⏳ กำลังดึงข้อมูล...';
@@ -6632,25 +6621,24 @@ function setPalette(p){
 
 /* ── INIT ── */
 setPalette(localStorage.getItem('retroPal')||'denim');
-loadCats();
-loadRecorders();
 populateMonthSelects();
-incLoadCats();
-incLoadData();
-loadCompanyProfile();
 document.body.dataset.theme='ledger';
-const loaded=loadData();
-if(!loaded){
-  const now=new Date();
-  document.getElementById('period').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('savedBadge').textContent='💡 ข้อมูลจะถูกบันทึกอัตโนมัติ';
-}
-updateMeta();
-incRenderTable();
-incRecalc();
-// force initial page visible
 document.getElementById('page-ledger').style.display='block';
 document.getElementById('page-ledger').style.opacity='1';
+
+(async function init(){
+  await Promise.all([loadCats(), loadRecorders(), incLoadCats(), loadCompanyProfile(), _loadCustProfiles()]);
+  cfBuild(); incCfBuild();
+  const [incLoaded, expLoaded] = await Promise.all([incLoadData(), loadData()]);
+  if(incLoaded){incRenderTable();incRecalc();}
+  else{incRenderTable();incRecalc();}
+  if(!expLoaded){
+    const now=new Date();
+    document.getElementById('period').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    document.getElementById('savedBadge').textContent='💡 ข้อมูลจะถูกบันทึกอัตโนมัติ';
+  }
+  updateMeta();
+})();
 </script>
 </body>
 </html>
