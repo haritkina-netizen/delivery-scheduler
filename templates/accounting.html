@@ -4569,8 +4569,15 @@ function docInvField(kind,field,val){
   const r=incRows.find(function(x){return x.id===id;});
   if(!r)return;
   if(!r.inv)r.inv={};
-  if(field==='invNo'&&(!r.desc||r.desc===r.inv.invNo)){
-    r.desc=val;
+  if(field==='invNo'&&val){
+    const dup=incRows.find(function(x){return x.id!==id&&x.inv&&x.inv.invNo===val;});
+    if(dup){
+      alert('⚠️ เลขที่บิล "'+val+'" ซ้ำกับรายการที่มีอยู่แล้ว!\nลูกค้า: '+(dup.supplier||'-')+'\nวันที่: '+(dup.date||'-'));
+      const el=document.getElementById('doc-'+kind+'-invno');
+      if(el)el.value=r.inv.invNo||'';
+      return;
+    }
+    if(!r.desc||r.desc===r.inv.invNo)r.desc=val;
   }
   r.inv[field]=val;
   if(r.supplier&&['custAddr','custTaxId','custPhone','delivAddr'].includes(field)){
