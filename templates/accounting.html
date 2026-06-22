@@ -6002,12 +6002,27 @@ const PRODUCT_PRESETS=[
 ];
 function getSubDescSuggestions(q, sourceRows){
   const ql=(q||'').trim();
-  // ถ้าพิมพ์เลข 1-6 ให้แสดง preset ตามลำดับนั้นก่อน
+  // พิมพ์เลข 1-6 → แสดง preset ตามลำดับทันที
   const n=parseInt(ql,10);
   if(ql===String(n) && n>=1 && n<=PRODUCT_PRESETS.length){
     return [PRODUCT_PRESETS[n-1]];
   }
-  return PRODUCT_PRESETS.filter(p=>!ql||p.desc.toLowerCase().includes(ql.toLowerCase()));
+  const seen=new Set();
+  const results=[];
+  // presets ก่อน
+  PRODUCT_PRESETS.forEach(p=>{
+    if(!ql||p.desc.toLowerCase().includes(ql.toLowerCase())){
+      seen.add(p.desc);results.push(p);
+    }
+  });
+  // ข้อมูลเก่าถัดไป
+  (sourceRows||[]).forEach(r=>(r.subs||[]).forEach(s=>{
+    const desc=s.desc;
+    if(!desc||seen.has(desc))return;
+    if(ql&&!desc.toLowerCase().includes(ql.toLowerCase()))return;
+    seen.add(desc);results.push({desc,code:s.code||''});
+  }));
+  return results.slice(0,12);
 }
 /* wrappers accessible from oninput attributes */
 function subAcShowExp(el){subAcShow(el,rows);}
