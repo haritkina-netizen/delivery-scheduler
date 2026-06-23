@@ -852,7 +852,9 @@ body.dark .drag-handle:hover { color: #64748b; }
 
   tbody tr, tbody tr td { background: white !important; background-image: none !important; }
   tfoot tr, tfoot tr td { font-weight: 600; background: white !important; }
-  #stopTableBody td.col-action, th.col-action { display: none !important; }
+  #stopTableBody td.col-action, #stopTableBody td.no-print,
+  #stopTableFoot td.col-action, #stopTableFoot td.no-print,
+  th.col-action, th.no-print { display: none !important; }
 
   .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .qty-zero { color: #94a3b8 !important; }
