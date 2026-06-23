@@ -835,6 +835,21 @@ body.dark .drag-handle:hover { color: #64748b; }
   }
   thead tr:first-child th { font-weight: 700; border-bottom: 1px solid #94a3b8 !important; }
   .col-addr { max-width: 160px !important; word-break: break-word; }
+
+  /* Reset mobile card layout back to normal table for print */
+  thead { display: table-header-group !important; }
+  #stopTableBody tr { display: table-row !important; background: white !important; border: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; position: static !important; }
+  #stopTableBody td { display: table-cell !important; text-align: center !important; border: 1px solid #94a3b8 !important; padding: 4px 6px !important; }
+  #stopTableBody td[data-label]::before { display: none !important; }
+  #stopTableBody .col-seq { position: static !important; }
+  #stopTableBody .col-seq .seq-num { background: none !important; color: #0f172a !important; width: auto !important; height: auto !important; border-radius: 0 !important; font-size: inherit !important; }
+  #stopTableBody .col-addr { display: table-cell !important; text-align: left !important; padding-right: 6px !important; margin: 0 !important; border-bottom: 1px solid #94a3b8 !important; padding-bottom: 4px !important; }
+  #stopTableBody .qty-cell.qty-zero { display: table-cell !important; }
+  #stopTableBody .col-price { border-top: none !important; margin: 0 !important; padding-top: 4px !important; }
+  #stopTableFoot { display: table-footer-group !important; }
+  #stopTableFoot tr { display: table-row !important; background: white !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }
+  #stopTableFoot td { display: table-cell !important; border: 1px solid #94a3b8 !important; padding: 4px 6px !important; }
+
   tbody tr, tbody tr td { background: white !important; background-image: none !important; }
   tfoot tr, tfoot tr td { font-weight: 600; background: white !important; }
 
