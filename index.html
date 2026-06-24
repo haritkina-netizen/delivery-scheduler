@@ -123,6 +123,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tc-avatar{font-size:28px;flex-shrink:0;line-height:1}
 .tc-replay{background:none;border:none;color:#94A3B8;font-size:12px;cursor:pointer;padding:2px 0;display:block;margin-top:3px}
 .tc-replay:hover{color:#4F46E5}
+/* VOCAB MATCH */
+.vm-choice{padding:14px 12px;border-radius:16px;border:2px solid #E2E8F0;background:#FFF;font-size:15px;font-weight:600;cursor:pointer;text-align:center;color:#1E293B;transition:all .15s;line-height:1.3}
+.vm-choice:active{transform:scale(.97)}
+.vm-choice.correct{background:#D1FAE5;border-color:#10B981;color:#065F46;pointer-events:none}
+.vm-choice.wrong{background:#FEE2E2;border-color:#EF4444;color:#991B1B;pointer-events:none}
+.vm-choice.dim{opacity:.45;pointer-events:none}
+.vm-level-card{border-radius:18px;padding:14px 16px;cursor:pointer;border:none;text-align:left;transition:transform .15s;width:100%}
+.vm-level-card:active{transform:scale(.97)}
 </style>
 </head>
 <body>
@@ -140,6 +148,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="feature-card" onclick="goTo('pronunciation')"><div class="ficon">🎤</div><div class="ftitle">ออกเสียง</div><div class="fsub">พูด · AI ตรวจเลย</div></button>
     <button class="feature-card" onclick="goTo('listening')"><div class="ficon">🎧</div><div class="ftitle">การฟัง</div><div class="fsub">ฟัง · พิมพ์ · คะแนน</div></button>
     <button class="feature-card" onclick="goTo('chatbot')"><div class="ficon">👩‍🏫</div><div class="ftitle">ครู AI</div><div class="fsub">สนทนา · ตรวจออกเสียง</div></button>
+    <button class="feature-card" onclick="goTo('vocabmatch')" style="grid-column:span 2"><div class="ficon">🃏</div><div class="ftitle">จับคู่คำศัพท์</div><div class="fsub">20 ระดับ · SRS · 500 คำ</div></button>
   </div>
 </div>
 
@@ -410,12 +419,53 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- VOCAB MATCH -->
+<div id="screen-vocabmatch" class="screen">
+  <!-- Level select -->
+  <div id="vm-level-view">
+    <div class="header"><h1>🃏 จับคู่คำศัพท์</h1><p>เลือกระดับ · SRS · ต้องตอบถูก 3 ครั้งจึงจะผ่าน</p></div>
+    <div id="vm-level-grid" style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+  </div>
+  <!-- Game view -->
+  <div id="vm-game-view" style="display:none;padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <button onclick="exitVMGame()" style="background:none;border:none;color:#4F46E5;font-weight:700;cursor:pointer;font-size:14px">← กลับ</button>
+      <span id="vm-progress-text" style="font-size:13px;color:#64748B;font-weight:600"></span>
+    </div>
+    <div style="background:#E2E8F0;border-radius:4px;height:6px;margin-bottom:18px">
+      <div id="vm-progress-bar" style="height:100%;background:#4F46E5;border-radius:4px;transition:width .4s;width:0%"></div>
+    </div>
+    <div id="vm-direction-label" style="font-size:12px;color:#94A3B8;font-weight:600;text-align:center;margin-bottom:8px"></div>
+    <div class="card" style="text-align:center;padding:28px 20px;margin:0 0 16px">
+      <div id="vm-question-text" style="font-size:30px;font-weight:800;color:#1E293B;line-height:1.3"></div>
+      <div id="vm-question-sub" style="font-size:14px;color:#94A3B8;margin-top:6px"></div>
+    </div>
+    <div id="vm-choices" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+    <div id="vm-feedback" style="display:none;margin-top:16px;text-align:center">
+      <div id="vm-feedback-icon" style="font-size:36px;margin-bottom:4px"></div>
+      <div id="vm-feedback-text" style="font-size:16px;font-weight:700;color:#1E293B;margin-bottom:4px"></div>
+      <div id="vm-correct-ans" style="font-size:14px;color:#64748B;margin-bottom:12px"></div>
+      <button class="btn btn-primary" onclick="vmNext()" style="min-width:160px">ถัดไป →</button>
+    </div>
+  </div>
+  <!-- Done view -->
+  <div id="vm-done-view" style="display:none;text-align:center;padding:40px 20px">
+    <div id="vm-done-emoji" style="font-size:72px;margin-bottom:12px">🎉</div>
+    <div id="vm-done-title" style="font-size:24px;font-weight:800;color:#1E293B;margin-bottom:8px"></div>
+    <div id="vm-done-sub" style="font-size:15px;color:#64748B;margin-bottom:8px"></div>
+    <div id="vm-done-badge" style="font-size:13px;margin-bottom:24px"></div>
+    <button class="btn btn-primary btn-full" style="max-width:300px;margin:0 auto 10px;display:block" onclick="restartVMLevel()">🔄 เล่นใหม่</button>
+    <button class="btn btn-outline btn-full" style="max-width:300px;margin:0 auto;display:block" onclick="exitVMGame()">← เลือกระดับ</button>
+  </div>
+</div>
+
 <nav class="bottom-nav">
   <button class="nav-btn active" id="nav-home" onclick="goTo('home')"><span class="icon">🏠</span><span>หน้าหลัก</span></button>
   <button class="nav-btn" id="nav-vocabulary" onclick="goTo('vocabulary')"><span class="icon">📚</span><span>คำศัพท์</span></button>
   <button class="nav-btn" id="nav-pronunciation" onclick="goTo('pronunciation')"><span class="icon">🎤</span><span>ออกเสียง</span></button>
   <button class="nav-btn" id="nav-listening" onclick="goTo('listening')"><span class="icon">🎧</span><span>การฟัง</span></button>
   <button class="nav-btn" id="nav-chatbot" onclick="goTo('chatbot')"><span class="icon">👩‍🏫</span><span>ครู AI</span></button>
+  <button class="nav-btn" id="nav-vocabmatch" onclick="goTo('vocabmatch')"><span class="icon">🃏</span><span>จับคู่คำ</span></button>
 </nav>
 
 <script>
@@ -562,6 +612,7 @@ function goTo(s){
   if(s==='pronunciation')initPron();
   if(s==='listening')initListen();
   if(s==='chatbot')initChatbot();
+  if(s==='vocabmatch')initVMScreen();
 }
 
 function speak(text,rate){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate||0.8;speechSynthesis.speak(u);}
@@ -981,6 +1032,192 @@ function renderFreeformChips(wordGrades,containerId){
     const label=w.grade==='exact'?'ชัดเจน':w.grade==='near'?'ไม่แน่ใจ':'ไม่ชัด';
     return'<span class="diff-chip '+cls+'"><span>'+w.word+'</span><span class="chip-label">'+label+'</span></span>';
   }).join('');
+}
+
+// ─── VOCAB MATCH DATA ───────────────────────────────────────────────────────
+const VM_LEVELS=[
+{id:1,name:"A1-1",title:"ทักทายพื้นฐาน",badge:"A1",color:"#10B981",colorDark:"#065F46",
+ words:[["hello","สวัสดี"],["goodbye","ลาก่อน"],["yes","ใช่"],["no","ไม่"],["please","กรุณา"],["thank you","ขอบคุณ"],["sorry","ขอโทษ"],["help","ช่วย"],["water","น้ำ"],["food","อาหาร"],["good","ดี"],["bad","แย่"],["big","ใหญ่"],["small","เล็ก"],["hot","ร้อน"],["cold","เย็น"],["man","ผู้ชาย"],["woman","ผู้หญิง"],["house","บ้าน"],["car","รถยนต์"],["day","วัน"],["night","กลางคืน"],["name","ชื่อ"],["time","เวลา"],["number","หมายเลข"]]},
+{id:2,name:"A1-2",title:"ครอบครัว & โรงเรียน",badge:"A1",color:"#3B82F6",colorDark:"#1E40AF",
+ words:[["father","พ่อ"],["mother","แม่"],["brother","พี่/น้องชาย"],["sister","พี่/น้องสาว"],["friend","เพื่อน"],["teacher","ครู"],["student","นักเรียน"],["school","โรงเรียน"],["book","หนังสือ"],["pen","ปากกา"],["read","อ่าน"],["write","เขียน"],["learn","เรียนรู้"],["study","เรียน"],["class","ชั้นเรียน"],["test","สอบ"],["chair","เก้าอี้"],["table","โต๊ะ"],["door","ประตู"],["window","หน้าต่าง"],["bag","กระเป๋า"],["lunch","อาหารกลางวัน"],["homework","การบ้าน"],["library","ห้องสมุด"],["uniform","เครื่องแบบ"]]},
+{id:3,name:"A2-1",title:"กริยาพื้นฐาน",badge:"A2",color:"#8B5CF6",colorDark:"#5B21B6",
+ words:[["run","วิ่ง"],["walk","เดิน"],["eat","กิน"],["drink","ดื่ม"],["sleep","นอน"],["wake up","ตื่นนอน"],["go","ไป"],["come","มา"],["buy","ซื้อ"],["sell","ขาย"],["give","ให้"],["take","เอา"],["say","พูด"],["tell","บอก"],["ask","ถาม"],["answer","ตอบ"],["open","เปิด"],["close","ปิด"],["start","เริ่ม"],["stop","หยุด"],["make","ทำ/สร้าง"],["think","คิด"],["know","รู้"],["want","ต้องการ"],["like","ชอบ"]]},
+{id:4,name:"A2-2",title:"สิ่งของรอบตัว",badge:"A2",color:"#F59E0B",colorDark:"#92400E",
+ words:[["office","สำนักงาน"],["job","งาน"],["money","เงิน"],["bank","ธนาคาร"],["shop","ร้านค้า"],["market","ตลาด"],["road","ถนน"],["city","เมือง"],["phone","โทรศัพท์"],["computer","คอมพิวเตอร์"],["email","อีเมล"],["picture","รูปภาพ"],["music","เพลง"],["film","หนัง"],["party","งานปาร์ตี้"],["game","เกม"],["sport","กีฬา"],["team","ทีม"],["player","นักกีฬา"],["score","คะแนน"],["goal","เป้าหมาย"],["price","ราคา"],["ticket","ตั๋ว"],["key","กุญแจ"],["map","แผนที่"]]},
+{id:5,name:"A2-3",title:"คำคุณศัพท์",badge:"A2",color:"#EF4444",colorDark:"#991B1B",
+ words:[["happy","มีความสุข"],["sad","เศร้า"],["angry","โกรธ"],["scared","กลัว"],["tired","เหนื่อย"],["hungry","หิว"],["thirsty","กระหายน้ำ"],["clean","สะอาด"],["dirty","สกปรก"],["full","เต็ม/อิ่ม"],["empty","ว่างเปล่า"],["fast","เร็ว"],["slow","ช้า"],["early","เช้า/แต่เนิ่นๆ"],["late","สาย/ช้า"],["easy","ง่าย"],["hard","ยาก"],["young","อ่อน/เยาว์"],["old","แก่/เก่า"],["new","ใหม่"],["long","ยาว"],["short","สั้น"],["high","สูง"],["low","ต่ำ"],["right","ถูกต้อง/ขวา"]]},
+{id:6,name:"A2-4",title:"เวลา & สถานที่",badge:"A2",color:"#06B6D4",colorDark:"#0E7490",
+ words:[["today","วันนี้"],["tomorrow","พรุ่งนี้"],["yesterday","เมื่อวาน"],["morning","ตอนเช้า"],["afternoon","ตอนบ่าย"],["evening","ตอนเย็น"],["week","สัปดาห์"],["month","เดือน"],["year","ปี"],["always","เสมอ"],["never","ไม่เคย"],["sometimes","บางครั้ง"],["before","ก่อน"],["after","หลัง"],["near","ใกล้"],["far","ไกล"],["left","ซ้าย"],["inside","ข้างใน"],["outside","ข้างนอก"],["above","ด้านบน"],["below","ด้านล่าง"],["here","ที่นี่"],["there","ที่นั่น"],["between","ระหว่าง"],["around","รอบๆ"]]},
+{id:7,name:"B1-1",title:"กริยาระดับกลาง",badge:"B1",color:"#84CC16",colorDark:"#365314",
+ words:[["understand","เข้าใจ"],["remember","จำ"],["forget","ลืม"],["believe","เชื่อ"],["decide","ตัดสินใจ"],["choose","เลือก"],["explain","อธิบาย"],["describe","บรรยาย"],["suggest","แนะนำ"],["mention","กล่าวถึง"],["agree","เห็นด้วย"],["disagree","ไม่เห็นด้วย"],["prepare","เตรียม"],["arrange","จัดการ"],["manage","จัดการ/บริหาร"],["achieve","บรรลุ"],["succeed","สำเร็จ"],["fail","ล้มเหลว"],["improve","ปรับปรุง"],["develop","พัฒนา"],["increase","เพิ่ม"],["reduce","ลด"],["create","สร้าง"],["solve","แก้ปัญหา"],["avoid","หลีกเลี่ยง"]]},
+{id:8,name:"B1-2",title:"งาน & ธุรกิจ",badge:"B1",color:"#F97316",colorDark:"#7C2D12",
+ words:[["salary","เงินเดือน"],["contract","สัญญา"],["meeting","การประชุม"],["project","โครงการ"],["deadline","กำหนดส่ง"],["client","ลูกค้า"],["profit","กำไร"],["loss","ขาดทุน"],["budget","งบประมาณ"],["investment","การลงทุน"],["insurance","ประกัน"],["tax","ภาษี"],["receipt","ใบเสร็จ"],["discount","ส่วนลด"],["product","สินค้า"],["service","บริการ"],["quality","คุณภาพ"],["delivery","การจัดส่ง"],["complaint","การร้องเรียน"],["manager","ผู้จัดการ"],["employee","พนักงาน"],["company","บริษัท"],["business","ธุรกิจ"],["interview","สัมภาษณ์"],["promotion","การเลื่อนตำแหน่ง"]]},
+{id:9,name:"B1-3",title:"ร่างกาย & สุขภาพ",badge:"B1",color:"#EC4899",colorDark:"#831843",
+ words:[["headache","ปวดหัว"],["fever","ไข้"],["cough","ไอ"],["pain","ความเจ็บปวด"],["medicine","ยา"],["doctor","หมอ"],["hospital","โรงพยาบาล"],["exercise","ออกกำลังกาย"],["diet","อาหารการกิน"],["weight","น้ำหนัก"],["muscle","กล้ามเนื้อ"],["heart","หัวใจ"],["blood","เลือด"],["breath","ลมหายใจ"],["stomach","ท้อง"],["tooth","ฟัน"],["knee","เข่า"],["ankle","ข้อเท้า"],["shoulder","ไหล่"],["throat","ลำคอ"],["skin","ผิวหนัง"],["bone","กระดูก"],["allergy","ภูมิแพ้"],["surgery","การผ่าตัด"],["symptom","อาการ"]]},
+{id:10,name:"B1-4",title:"ธรรมชาติ & การเดินทาง",badge:"B1",color:"#14B8A6",colorDark:"#134E4A",
+ words:[["weather","อากาศ"],["rain","ฝน"],["sunshine","แสงแดด"],["cloud","เมฆ"],["wind","ลม"],["river","แม่น้ำ"],["mountain","ภูเขา"],["beach","ชายหาด"],["island","เกาะ"],["forest","ป่า"],["flower","ดอกไม้"],["animal","สัตว์"],["bird","นก"],["fish","ปลา"],["passport","หนังสือเดินทาง"],["hotel","โรงแรม"],["airport","สนามบิน"],["train","รถไฟ"],["bus","รถบัส"],["taxi","แท็กซี่"],["journey","การเดินทาง"],["destination","จุดหมาย"],["luggage","กระเป๋าเดินทาง"],["reservation","การจอง"],["souvenir","ของที่ระลึก"]]},
+{id:11,name:"B2-1",title:"กริยาระดับสูง",badge:"B2",color:"#6366F1",colorDark:"#312E81",
+ words:[["negotiate","เจรจา"],["convince","โน้มน้าว"],["encourage","ให้กำลังใจ"],["criticize","วิจารณ์"],["evaluate","ประเมิน"],["investigate","สืบสวน"],["demonstrate","แสดงให้เห็น"],["accomplish","บรรลุเป้าหมาย"],["acknowledge","ยอมรับ"],["anticipate","คาดการณ์"],["contribute","มีส่วนร่วม"],["determine","กำหนด/ตัดสิน"],["establish","ก่อตั้ง"],["identify","ระบุ"],["maintain","รักษา/ดูแล"],["obtain","ได้รับ/หา"],["overcome","เอาชนะ"],["perform","ดำเนินการ/แสดง"],["recognize","จดจำ/ยอมรับ"],["recommend","แนะนำ"],["reflect","สะท้อน/ไตร่ตรอง"],["represent","เป็นตัวแทน"],["respond","ตอบสนอง"],["struggle","ต่อสู้/ดิ้นรน"],["transform","เปลี่ยนแปลง"]]},
+{id:12,name:"B2-2",title:"วิชาการ & ทางการ",badge:"B2",color:"#0EA5E9",colorDark:"#0C4A6E",
+ words:[["analysis","การวิเคราะห์"],["research","การวิจัย"],["evidence","หลักฐาน"],["conclusion","ข้อสรุป"],["theory","ทฤษฎี"],["hypothesis","สมมติฐาน"],["argument","การโต้แย้ง"],["perspective","มุมมอง"],["principle","หลักการ"],["concept","แนวคิด"],["factor","ปัจจัย"],["aspect","ด้าน/แง่มุม"],["process","กระบวนการ"],["structure","โครงสร้าง"],["function","หน้าที่/ฟังก์ชัน"],["system","ระบบ"],["effect","ผล/ผลกระทบ"],["cause","สาเหตุ"],["result","ผลลัพธ์"],["method","วิธีการ"],["approach","วิธีการ/แนวทาง"],["issue","ประเด็น/ปัญหา"],["context","บริบท"],["relationship","ความสัมพันธ์"],["challenge","ความท้าทาย"]]},
+{id:13,name:"B2-3",title:"บุคลิกภาพ",badge:"B2",color:"#A855F7",colorDark:"#581C87",
+ words:[["confident","มั่นใจ"],["creative","มีความคิดสร้างสรรค์"],["ambitious","ทะเยอทะยาน"],["reliable","น่าเชื่อถือ"],["flexible","ยืดหยุ่น"],["patient","อดทน"],["honest","ซื่อสัตย์"],["generous","ใจกว้าง"],["polite","สุภาพ"],["responsible","รับผิดชอบ"],["sensitive","อ่อนไหว"],["independent","เป็นตัวของตัวเอง"],["organized","มีระเบียบ"],["enthusiastic","กระตือรือร้น"],["determined","มุ่งมั่น"],["optimistic","มองโลกในแง่ดี"],["practical","ปฏิบัติจริง"],["sociable","เข้ากับคนง่าย"],["competitive","ชอบแข่งขัน"],["stubborn","ดื้อรั้น"],["shy","ขี้อาย"],["humble","ถ่อมตัว"],["mature","โตเป็นผู้ใหญ่"],["loyal","ซื่อสัตย์/จงรักภักดี"],["courageous","กล้าหาญ"]]},
+{id:14,name:"B2-4",title:"สังคม & นามธรรม",badge:"B2",color:"#DC2626",colorDark:"#7F1D1D",
+ words:[["freedom","อิสรภาพ"],["justice","ความยุติธรรม"],["equality","ความเท่าเทียม"],["power","อำนาจ"],["authority","อำนาจหน้าที่"],["responsibility","ความรับผิดชอบ"],["opportunity","โอกาส"],["progress","ความก้าวหน้า"],["tradition","ประเพณี"],["culture","วัฒนธรรม"],["society","สังคม"],["economy","เศรษฐกิจ"],["democracy","ประชาธิปไตย"],["peace","สันติภาพ"],["conflict","ความขัดแย้ง"],["communication","การสื่อสาร"],["education","การศึกษา"],["knowledge","ความรู้"],["experience","ประสบการณ์"],["imagination","จินตนาการ"],["attitude","ทัศนคติ"],["personality","บุคลิกภาพ"],["behavior","พฤติกรรม"],["emotion","อารมณ์"],["diversity","ความหลากหลาย"]]},
+{id:15,name:"C1-1",title:"กริยาซับซ้อน",badge:"C1",color:"#1E293B",colorDark:"#0F172A",
+ words:[["accommodate","รองรับ/ปรับให้เหมาะ"],["alleviate","บรรเทา"],["advocate","สนับสนุน/โฆษณา"],["contemplate","ครุ่นคิด"],["diminish","ลดน้อยลง"],["emphasize","เน้น/ย้ำ"],["facilitate","อำนวยความสะดวก"],["generate","ผลิต/สร้าง"],["implement","นำไปใช้/ปฏิบัติ"],["incorporate","รวมเข้าด้วยกัน"],["innovate","คิดค้นสิ่งใหม่"],["integrate","บูรณาการ"],["manipulate","ควบคุม/บิดเบือน"],["navigate","นำทาง/จัดการ"],["optimize","ปรับให้เหมาะสม"],["perceive","รับรู้/มองเห็น"],["prioritize","จัดลำดับความสำคัญ"],["stimulate","กระตุ้น"],["sustain","ดำรงรักษา"],["undermine","บ่อนทำลาย"],["collaborate","ร่วมมือกัน"],["articulate","แสดงออกได้ชัดเจน"],["consolidate","รวม/ทำให้มั่นคง"],["mitigate","บรรเทา/ลดทอน"],["substantiate","พิสูจน์ยืนยัน"]]},
+{id:16,name:"C1-2",title:"คำคุณศัพท์ขั้นสูง",badge:"C1",color:"#475569",colorDark:"#0F172A",
+ words:[["ambiguous","กำกวม"],["comprehensive","ครอบคลุม"],["controversial","เป็นที่โต้เถียง"],["elaborate","ละเอียด/ซับซ้อน"],["fundamental","พื้นฐาน/สำคัญมาก"],["inevitable","หลีกเลี่ยงไม่ได้"],["sophisticated","ซับซ้อน/ประณีต"],["significant","มีนัยสำคัญ"],["substantial","มาก/สำคัญ"],["versatile","หลากหลาย/ปรับตัวได้"],["predominant","เด่น/เหนือกว่า"],["rigorous","เข้มงวด/เคร่งครัด"],["transparent","โปร่งใส"],["coherent","สอดคล้องกัน/ชัดเจน"],["compelling","น่าสนใจ/น่าเชื่อ"],["pragmatic","ปฏิบัติจริง"],["resilient","ทนทาน/ฟื้นตัวได้"],["strategic","เชิงกลยุทธ์"],["explicit","ชัดเจน/โจ่งแจ้ง"],["implicit","โดยนัย"],["profound","ลึกซึ้ง"],["relevant","เกี่ยวข้อง"],["sustainable","ยั่งยืน"],["concise","กระชับ"],["innovative","คิดค้นใหม่"]]},
+{id:17,name:"C1-3",title:"ภาษาวิชาการ",badge:"C1",color:"#0F766E",colorDark:"#042F2E",
+ words:[["methodology","วิธีวิทยา"],["framework","กรอบงาน"],["paradigm","แนวคิดหลัก"],["empirical","เชิงประสบการณ์"],["theoretical","เชิงทฤษฎี"],["analytical","เชิงวิเคราะห์"],["qualitative","เชิงคุณภาพ"],["quantitative","เชิงปริมาณ"],["correlation","ความสัมพันธ์เชิงสถิติ"],["implication","ผลกระทบ/นัย"],["assumption","สมมติฐาน/ข้อสันนิษฐาน"],["interpretation","การตีความ"],["justification","การให้เหตุผล"],["generalization","การสรุปทั่วไป"],["contradiction","ความขัดแย้ง"],["validity","ความถูกต้อง/ความสมเหตุสมผล"],["reliability","ความน่าเชื่อถือ"],["variable","ตัวแปร"],["significance","ความสำคัญ/นัยสำคัญ"],["consistency","ความสม่ำเสมอ"],["coherence","ความสอดคล้อง"],["evaluation","การประเมิน"],["objective","วัตถุประสงค์/เป็นกลาง"],["subjective","อัตวิสัย/ส่วนตัว"],["abstract","นามธรรม/บทคัดย่อ"]]},
+{id:18,name:"C1-4",title:"การบริหาร & นโยบาย",badge:"C1",color:"#7C3AED",colorDark:"#3B0764",
+ words:[["infrastructure","โครงสร้างพื้นฐาน"],["bureaucracy","ระบบราชการ"],["globalization","โลกาภิวัตน์"],["sustainability","ความยั่งยืน"],["accountability","ความรับผิดชอบต่อสาธารณะ"],["transparency","ความโปร่งใส"],["integrity","ความซื่อสัตย์/ความสมบูรณ์"],["innovation","นวัตกรรม"],["collaboration","การร่วมมือ"],["efficiency","ประสิทธิภาพ"],["productivity","ผลิตภาพ"],["effectiveness","ประสิทธิผล"],["outcome","ผลลัพธ์"],["benchmark","เกณฑ์มาตรฐาน"],["milestone","เหตุการณ์สำคัญ"],["initiative","ความคิดริเริ่ม"],["limitation","ข้อจำกัด"],["breakthrough","การค้นพบ/ความก้าวหน้าครั้งใหญ่"],["precedent","บรรทัดฐาน"],["consequence","ผลที่ตามมา"],["circumstance","สถานการณ์/สภาพแวดล้อม"],["phenomenon","ปรากฏการณ์"],["inequality","ความไม่เท่าเทียม"],["competitiveness","ขีดความสามารถในการแข่งขัน"],["governance","การปกครอง/การกำกับดูแล"]]},
+{id:19,name:"C2-1",title:"ใกล้เจ้าของภาษา",badge:"C2",color:"#B45309",colorDark:"#451A03",
+ words:[["nuance","รายละเอียดปลีกย่อย"],["paradox","ความขัดแย้งในตัวเอง"],["dichotomy","การแบ่งเป็นสองส่วน"],["synergy","ผลร่วม/ประสิทธิผลรวม"],["momentum","แรงขับเคลื่อน"],["trajectory","เส้นทาง/แนวโน้ม"],["equilibrium","ความสมดุล"],["catalyst","ตัวเร่ง/ผู้กระตุ้น"],["reciprocal","ซึ่งกันและกัน"],["eloquent","มีวาทศิลป์"],["meticulous","ละเอียดรอบคอบ"],["resilience","ความสามารถในการฟื้นตัว"],["tenacity","ความเด็ดเดี่ยว"],["perseverance","ความอดทนมุ่งมั่น"],["juxtapose","วางเปรียบเทียบ"],["ameliorate","ปรับปรุง/บรรเทา"],["cultivate","ปลูกฝัง/พัฒนา"],["proliferate","แพร่ขยาย"],["clandestine","ลับๆ/ปิดบัง"],["ambivalence","ความรู้สึกสองจิตสองใจ"],["pragmatism","หลักปฏิบัตินิยม"],["versatility","ความสามารถหลากหลาย"],["circumspect","ระมัดระวัง/รอบคอบ"],["acumen","ความเฉลียวฉลาด"],["discern","แยกแยะ/มองออก"]]},
+{id:20,name:"C2-2",title:"ระดับเชี่ยวชาญ",badge:"C2",color:"#7F1D1D",colorDark:"#450A0A",
+ words:[["ubiquitous","มีอยู่ทั่วไป"],["ephemeral","ชั่วคราว/ชั่วแล่น"],["esoteric","ลึกลับ/เข้าใจยาก"],["enigmatic","ลึกลับ/ปริศนา"],["serendipity","การค้นพบสิ่งดีโดยบังเอิญ"],["melancholy","ความโศกเศร้า"],["insidious","แอบแฝง/แยบยล"],["precarious","ไม่มั่นคง/เสี่ยง"],["superfluous","เกินจำเป็น"],["convoluted","ซับซ้อนสับสน"],["quintessential","ที่สุดของ/แบบฉบับ"],["idiosyncratic","แปลกเฉพาะตัว"],["perspicacious","เฉียบคม/ช่างสังเกต"],["magnanimous","ใจกว้าง/ยิ่งใหญ่"],["propitious","เป็นมงคล/เอื้ออำนวย"],["sycophantic","ประจบสอพลอ"],["perfidious","ทรยศ/หักหลัง"],["lugubrious","เศร้าโศก"],["sagacious","ฉลาดเฉียบแหลม"],["temerity","ความกล้าบ้าบิ่น"],["intransigent","ดื้อดึง/ไม่ยอมปรองดอง"],["vicarious","ผ่านคนอื่น/โดยอ้อม"],["ostensibly","ดูเหมือน/อ้างว่า"],["inexorable","ไม่อาจหยุดยั้ง"],["obfuscate","ทำให้สับสน/อำพราง"]]}
+];
+
+// ─── VOCAB MATCH STATE ────────────────────────────────────────────────────────
+let vm={levelIdx:-1,queue:[],item:null,choices:[],correct:0,total:0,answered:false};
+
+function vmSaveKey(i){return'vm_prog_'+i;}
+function vmGetProg(i){return parseInt(localStorage.getItem(vmSaveKey(i))||'0',10);}
+function vmSetProg(i,n){localStorage.setItem(vmSaveKey(i),String(n));}
+
+function initVMScreen(){
+  setDisplay('vm-level-view','block');
+  setDisplay('vm-game-view','none');
+  setDisplay('vm-done-view','none');
+  renderVMLevelGrid();
+}
+
+function renderVMLevelGrid(){
+  const grid=document.getElementById('vm-level-grid');
+  grid.innerHTML='';
+  VM_LEVELS.forEach((lv,i)=>{
+    const prog=vmGetProg(i);
+    const total=lv.words.length;
+    const pct=Math.round(prog/total*100);
+    const btn=document.createElement('button');
+    btn.className='vm-level-card';
+    btn.style.cssText='background:'+lv.color+';color:#FFF';
+    btn.innerHTML=
+      '<div style="font-size:11px;font-weight:700;opacity:.8;margin-bottom:2px">'+lv.badge+'</div>'+
+      '<div style="font-size:14px;font-weight:800;margin-bottom:2px">'+lv.name+'</div>'+
+      '<div style="font-size:12px;opacity:.85;margin-bottom:8px">'+lv.title+'</div>'+
+      '<div style="background:rgba(255,255,255,.25);border-radius:4px;height:5px;margin-bottom:4px">'+
+        '<div style="background:#FFF;height:100%;border-radius:4px;width:'+pct+'%"></div>'+
+      '</div>'+
+      '<div style="font-size:11px;opacity:.8">'+prog+'/'+total+' คำ</div>';
+    btn.onclick=()=>startVMLevel(i);
+    grid.appendChild(btn);
+  });
+}
+
+function startVMLevel(idx){
+  vm.levelIdx=idx;
+  vm.correct=0;vm.total=0;vm.answered=false;
+  const lv=VM_LEVELS[idx];
+  vm.queue=lv.words.map((_,wi)=>({wi,streak:0}));
+  shuffleArr(vm.queue);
+  setDisplay('vm-level-view','none');
+  setDisplay('vm-game-view','block');
+  setDisplay('vm-done-view','none');
+  vmNextQuestion();
+}
+
+function shuffleArr(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}}
+
+function vmNextQuestion(){
+  if(vm.queue.length===0){showVMDone();return;}
+  vm.item=vm.queue.shift();
+  vm.answered=false;
+  const lv=VM_LEVELS[vm.levelIdx];
+  const w=lv.words[vm.item.wi];
+  const dir=vm.total%2===0?'en2th':'th2en';
+  vm.item.dir=dir;
+  const question=dir==='en2th'?w[0]:w[1];
+  const correctAns=dir==='en2th'?w[1]:w[0];
+  const others=lv.words.filter((_,i)=>i!==vm.item.wi);
+  shuffleArr(others);
+  const distractors=others.slice(0,3).map(x=>dir==='en2th'?x[1]:x[0]);
+  vm.choices=[correctAns,...distractors];shuffleArr(vm.choices);
+  document.getElementById('vm-direction-label').textContent=dir==='en2th'?'🇬🇧 → 🇹🇭 เลือกความหมายภาษาไทย':'🇹🇭 → 🇬🇧 เลือกคำภาษาอังกฤษ';
+  document.getElementById('vm-question-text').textContent=question;
+  document.getElementById('vm-question-sub').textContent='';
+  const done=lv.words.length-vm.queue.length-1;
+  const total=lv.words.length;
+  document.getElementById('vm-progress-text').textContent='เหลือ '+vm.queue.length+' คำ';
+  document.getElementById('vm-progress-bar').style.width=Math.max(0,Math.round((done/total)*100))+'%';
+  const box=document.getElementById('vm-choices');
+  box.innerHTML='';
+  vm.choices.forEach(ch=>{
+    const btn=document.createElement('button');
+    btn.className='vm-choice';
+    btn.textContent=ch;
+    btn.onclick=()=>selectVMChoice(ch,correctAns);
+    box.appendChild(btn);
+  });
+  setDisplay('vm-feedback','none');
+}
+
+function selectVMChoice(chosen,correct){
+  if(vm.answered)return;
+  vm.answered=true;vm.total++;
+  const isCorrect=chosen===correct;
+  document.querySelectorAll('.vm-choice').forEach(btn=>{
+    if(btn.textContent===correct)btn.classList.add('correct');
+    else if(btn.textContent===chosen&&!isCorrect)btn.classList.add('wrong');
+    else btn.classList.add('dim');
+  });
+  const fb=document.getElementById('vm-feedback');
+  const lv=VM_LEVELS[vm.levelIdx];
+  const w=lv.words[vm.item.wi];
+  if(isCorrect){
+    vm.correct++;vm.item.streak++;
+    document.getElementById('vm-feedback-icon').textContent='✅';
+    document.getElementById('vm-feedback-text').textContent='ถูกต้อง! ('+vm.item.streak+'/3)';
+    document.getElementById('vm-correct-ans').textContent=vm.item.streak<3?'ตอบถูกอีก '+(3-vm.item.streak)+' ครั้งจะผ่าน':'🎉 ผ่านแล้ว!';
+    if(vm.item.streak<3)vm.queue.splice(Math.min(3,vm.queue.length),0,vm.item);
+    else{
+      const prog=vmGetProg(vm.levelIdx);
+      if(vm.item.streak===3)vmSetProg(vm.levelIdx,Math.min(lv.words.length,prog+1));
+    }
+  } else {
+    vm.item.streak=0;
+    document.getElementById('vm-feedback-icon').textContent='❌';
+    document.getElementById('vm-feedback-text').textContent='ผิด คำตอบที่ถูก:';
+    document.getElementById('vm-correct-ans').textContent='"'+correct+'"';
+    vm.queue.splice(Math.min(4,vm.queue.length),0,vm.item);
+  }
+  setDisplay('vm-feedback','block');
+}
+
+function vmNext(){
+  setDisplay('vm-feedback','none');
+  vmNextQuestion();
+}
+
+function showVMDone(){
+  setDisplay('vm-game-view','none');
+  setDisplay('vm-done-view','block');
+  const lv=VM_LEVELS[vm.levelIdx];
+  const prog=vmGetProg(vm.levelIdx);
+  const pct=Math.round(vm.correct/Math.max(1,vm.total)*100);
+  document.getElementById('vm-done-emoji').textContent=pct>=80?'🏆':pct>=60?'👍':'💪';
+  document.getElementById('vm-done-title').textContent='เล่นจบแล้ว!';
+  document.getElementById('vm-done-sub').textContent='ตอบถูก '+vm.correct+'/'+vm.total+' ข้อ ('+pct+'%)';
+  document.getElementById('vm-done-badge').innerHTML='<span style="background:'+lv.color+';color:#FFF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">'+lv.name+' '+lv.title+' · ผ่าน '+prog+'/'+lv.words.length+' คำ</span>';
+}
+
+function restartVMLevel(){startVMLevel(vm.levelIdx);}
+
+function exitVMGame(){
+  setDisplay('vm-game-view','none');
+  setDisplay('vm-done-view','none');
+  setDisplay('vm-level-view','block');
+  renderVMLevelGrid();
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
