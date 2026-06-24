@@ -1083,9 +1083,11 @@ const VM_LEVELS=[
 // ─── VOCAB MATCH STATE ────────────────────────────────────────────────────────
 let vm={levelIdx:-1,queue:[],item:null,choices:[],correct:0,total:0,answered:false};
 
-function vmSaveKey(i){return'vm_prog_'+i;}
-function vmGetProg(i){return parseInt(localStorage.getItem(vmSaveKey(i))||'0',10);}
-function vmSetProg(i,n){localStorage.setItem(vmSaveKey(i),String(n));}
+// Store SET of mastered word-indices per level, e.g. vm_m_0 = "[0,3,7]"
+function vmMasteredKey(i){return'vm_m_'+i;}
+function vmGetMastered(i){try{return new Set(JSON.parse(localStorage.getItem(vmMasteredKey(i))||'[]'));}catch(e){return new Set();}}
+function vmSaveMastered(i,set){localStorage.setItem(vmMasteredKey(i),JSON.stringify([...set]));}
+function vmGetProg(i){return vmGetMastered(i).size;}
 function vmIsPassed(i){return vmGetProg(i)>=VM_LEVELS[i].words.length;}
 function vmIsUnlocked(i){return i===0||vmIsPassed(i-1);}
 
@@ -1137,12 +1139,11 @@ function startVMLevel(idx){
   vm.levelIdx=idx;
   vm.correct=0;vm.total=0;vm.answered=false;
   const lv=VM_LEVELS[idx];
-  const prog=vmGetProg(idx);
-  if(vmIsPassed(idx)){
-    vm.queue=lv.words.map((_,wi)=>({wi,streak:0}));
-  } else {
-    vm.queue=lv.words.map((_,wi)=>({wi,streak:0}));
-  }
+  const mastered=vmGetMastered(idx);
+  // Only queue words not yet mastered; if all mastered (review mode) queue everything
+  const unmastered=lv.words.map((_,wi)=>wi).filter(wi=>!mastered.has(wi));
+  const toQueue=unmastered.length>0?unmastered:lv.words.map((_,wi)=>wi);
+  vm.queue=toQueue.map(wi=>({wi,streak:0}));
   shuffleArr(vm.queue);
   setDisplay('vm-level-view','none');
   setDisplay('vm-game-view','block');
@@ -1170,10 +1171,10 @@ function vmNextQuestion(){
   document.getElementById('vm-direction-label').textContent=dir==='en2th'?'🇬🇧 → 🇹🇭 เลือกความหมายภาษาไทย':'🇹🇭 → 🇬🇧 เลือกคำภาษาอังกฤษ';
   document.getElementById('vm-question-text').textContent=question;
   document.getElementById('vm-question-sub').textContent='';
-  const done=lv.words.length-vm.queue.length-1;
+  const mastered=vmGetMastered(vm.levelIdx);
   const total=lv.words.length;
-  document.getElementById('vm-progress-text').textContent='เหลือ '+vm.queue.length+' คำ';
-  document.getElementById('vm-progress-bar').style.width=Math.max(0,Math.round((done/total)*100))+'%';
+  document.getElementById('vm-progress-text').textContent='จำได้ '+mastered.size+'/'+total+' คำ · เหลือ '+vm.queue.length;
+  document.getElementById('vm-progress-bar').style.width=Math.round(mastered.size/total*100)+'%';
   const box=document.getElementById('vm-choices');
   box.innerHTML='';
   vm.choices.forEach(ch=>{
@@ -1203,10 +1204,13 @@ function selectVMChoice(chosen,correct){
     document.getElementById('vm-feedback-icon').textContent='✅';
     document.getElementById('vm-feedback-text').textContent='ถูกต้อง! ('+vm.item.streak+'/3)';
     document.getElementById('vm-correct-ans').textContent=vm.item.streak<3?'ตอบถูกอีก '+(3-vm.item.streak)+' ครั้งจะผ่าน':'🎉 ผ่านแล้ว!';
-    if(vm.item.streak<3)vm.queue.splice(Math.min(3,vm.queue.length),0,vm.item);
-    else{
-      const prog=vmGetProg(vm.levelIdx);
-      if(vm.item.streak===3)vmSetProg(vm.levelIdx,Math.min(lv.words.length,prog+1));
+    if(vm.item.streak<3){
+      vm.queue.splice(Math.min(3,vm.queue.length),0,vm.item);
+    } else {
+      // streak reached 3 — mark this word as permanently mastered
+      const mastered=vmGetMastered(vm.levelIdx);
+      mastered.add(vm.item.wi);
+      vmSaveMastered(vm.levelIdx,mastered);
     }
   } else {
     vm.item.streak=0;
@@ -1227,14 +1231,15 @@ function showVMDone(){
   setDisplay('vm-game-view','none');
   setDisplay('vm-done-view','block');
   const lv=VM_LEVELS[vm.levelIdx];
-  const prog=vmGetProg(vm.levelIdx);
+  const mastered=vmGetMastered(vm.levelIdx);
+  const prog=mastered.size;
   const passed=vmIsPassed(vm.levelIdx);
   const nextIdx=vm.levelIdx+1;
   const hasNext=nextIdx<VM_LEVELS.length;
   const pct=Math.round(vm.correct/Math.max(1,vm.total)*100);
   document.getElementById('vm-done-emoji').textContent=passed?'🏆':pct>=60?'👍':'💪';
   document.getElementById('vm-done-title').textContent=passed?'ผ่านระดับแล้ว! 🎉':'ยังไม่ผ่านระดับ';
-  document.getElementById('vm-done-sub').textContent='ตอบถูก '+vm.correct+'/'+vm.total+' ข้อ · จำได้ '+prog+'/'+lv.words.length+' คำ';
+  document.getElementById('vm-done-sub').textContent='ตอบถูก '+vm.correct+'/'+vm.total+' ข้อ · จำได้แล้ว '+prog+'/'+lv.words.length+' คำ';
   let badgeHtml='<span style="background:'+lv.color+';color:#FFF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">'+lv.name+' '+lv.title+'</span>';
   if(passed&&hasNext){
     const nlv=VM_LEVELS[nextIdx];
