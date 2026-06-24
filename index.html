@@ -428,10 +428,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
   <!-- Game view -->
   <div id="vm-game-view" style="display:none;padding:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
       <button onclick="exitVMGame()" style="background:none;border:none;color:#4F46E5;font-weight:700;cursor:pointer;font-size:14px">← กลับ</button>
       <span id="vm-progress-text" style="font-size:13px;color:#64748B;font-weight:600"></span>
     </div>
+    <div id="vm-level-name" style="font-size:12px;color:#94A3B8;font-weight:600;text-align:center;margin-bottom:6px"></div>
     <div style="background:#E2E8F0;border-radius:4px;height:6px;margin-bottom:18px">
       <div id="vm-progress-bar" style="height:100%;background:#4F46E5;border-radius:4px;transition:width .4s;width:0%"></div>
     </div>
@@ -454,6 +455,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div id="vm-done-title" style="font-size:24px;font-weight:800;color:#1E293B;margin-bottom:8px"></div>
     <div id="vm-done-sub" style="font-size:15px;color:#64748B;margin-bottom:8px"></div>
     <div id="vm-done-badge" style="font-size:13px;margin-bottom:24px"></div>
+    <button id="vm-next-level-btn" class="btn btn-green btn-full" style="max-width:300px;margin:0 auto 10px;display:none">▶ ระดับถัดไป</button>
     <button class="btn btn-primary btn-full" style="max-width:300px;margin:0 auto 10px;display:block" onclick="restartVMLevel()">🔄 เล่นใหม่</button>
     <button class="btn btn-outline btn-full" style="max-width:300px;margin:0 auto;display:block" onclick="exitVMGame()">← เลือกระดับ</button>
   </div>
@@ -1084,6 +1086,8 @@ let vm={levelIdx:-1,queue:[],item:null,choices:[],correct:0,total:0,answered:fal
 function vmSaveKey(i){return'vm_prog_'+i;}
 function vmGetProg(i){return parseInt(localStorage.getItem(vmSaveKey(i))||'0',10);}
 function vmSetProg(i,n){localStorage.setItem(vmSaveKey(i),String(n));}
+function vmIsPassed(i){return vmGetProg(i)>=VM_LEVELS[i].words.length;}
+function vmIsUnlocked(i){return i===0||vmIsPassed(i-1);}
 
 function initVMScreen(){
   setDisplay('vm-level-view','block');
@@ -1099,31 +1103,51 @@ function renderVMLevelGrid(){
     const prog=vmGetProg(i);
     const total=lv.words.length;
     const pct=Math.round(prog/total*100);
+    const passed=vmIsPassed(i);
+    const unlocked=vmIsUnlocked(i);
     const btn=document.createElement('button');
     btn.className='vm-level-card';
-    btn.style.cssText='background:'+lv.color+';color:#FFF';
-    btn.innerHTML=
-      '<div style="font-size:11px;font-weight:700;opacity:.8;margin-bottom:2px">'+lv.badge+'</div>'+
-      '<div style="font-size:14px;font-weight:800;margin-bottom:2px">'+lv.name+'</div>'+
-      '<div style="font-size:12px;opacity:.85;margin-bottom:8px">'+lv.title+'</div>'+
-      '<div style="background:rgba(255,255,255,.25);border-radius:4px;height:5px;margin-bottom:4px">'+
-        '<div style="background:#FFF;height:100%;border-radius:4px;width:'+pct+'%"></div>'+
-      '</div>'+
-      '<div style="font-size:11px;opacity:.8">'+prog+'/'+total+' คำ</div>';
-    btn.onclick=()=>startVMLevel(i);
+    if(unlocked){
+      btn.style.cssText='background:'+lv.color+';color:#FFF';
+      const statusLine=passed
+        ?'<div style="font-size:11px;font-weight:800;color:#FFF;background:rgba(0,0,0,.25);border-radius:20px;padding:2px 8px;display:inline-block">✅ ผ่านแล้ว!</div>'
+        :'<div style="font-size:11px;opacity:.8">'+prog+'/'+total+' คำ</div>';
+      btn.innerHTML=
+        '<div style="font-size:11px;font-weight:700;opacity:.8;margin-bottom:2px">'+lv.badge+'</div>'+
+        '<div style="font-size:14px;font-weight:800;margin-bottom:2px">'+lv.name+'</div>'+
+        '<div style="font-size:12px;opacity:.85;margin-bottom:8px">'+lv.title+'</div>'+
+        '<div style="background:rgba(255,255,255,.25);border-radius:4px;height:5px;margin-bottom:6px">'+
+          '<div style="background:#FFF;height:100%;border-radius:4px;width:'+pct+'%"></div>'+
+        '</div>'+statusLine;
+      btn.onclick=()=>startVMLevel(i);
+    } else {
+      btn.style.cssText='background:#E2E8F0;color:#94A3B8;cursor:not-allowed';
+      btn.innerHTML=
+        '<div style="font-size:20px;margin-bottom:4px">🔒</div>'+
+        '<div style="font-size:13px;font-weight:800;margin-bottom:2px">'+lv.name+'</div>'+
+        '<div style="font-size:12px;margin-bottom:6px">'+lv.title+'</div>'+
+        '<div style="font-size:11px">ผ่านระดับ '+VM_LEVELS[i-1].name+' ก่อน</div>';
+    }
     grid.appendChild(btn);
   });
 }
 
 function startVMLevel(idx){
+  if(!vmIsUnlocked(idx))return;
   vm.levelIdx=idx;
   vm.correct=0;vm.total=0;vm.answered=false;
   const lv=VM_LEVELS[idx];
-  vm.queue=lv.words.map((_,wi)=>({wi,streak:0}));
+  const prog=vmGetProg(idx);
+  if(vmIsPassed(idx)){
+    vm.queue=lv.words.map((_,wi)=>({wi,streak:0}));
+  } else {
+    vm.queue=lv.words.map((_,wi)=>({wi,streak:0}));
+  }
   shuffleArr(vm.queue);
   setDisplay('vm-level-view','none');
   setDisplay('vm-game-view','block');
   setDisplay('vm-done-view','none');
+  document.getElementById('vm-level-name').textContent=lv.badge+' '+lv.name+' — '+lv.title;
   vmNextQuestion();
 }
 
@@ -1204,11 +1228,24 @@ function showVMDone(){
   setDisplay('vm-done-view','block');
   const lv=VM_LEVELS[vm.levelIdx];
   const prog=vmGetProg(vm.levelIdx);
+  const passed=vmIsPassed(vm.levelIdx);
+  const nextIdx=vm.levelIdx+1;
+  const hasNext=nextIdx<VM_LEVELS.length;
   const pct=Math.round(vm.correct/Math.max(1,vm.total)*100);
-  document.getElementById('vm-done-emoji').textContent=pct>=80?'🏆':pct>=60?'👍':'💪';
-  document.getElementById('vm-done-title').textContent='เล่นจบแล้ว!';
-  document.getElementById('vm-done-sub').textContent='ตอบถูก '+vm.correct+'/'+vm.total+' ข้อ ('+pct+'%)';
-  document.getElementById('vm-done-badge').innerHTML='<span style="background:'+lv.color+';color:#FFF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">'+lv.name+' '+lv.title+' · ผ่าน '+prog+'/'+lv.words.length+' คำ</span>';
+  document.getElementById('vm-done-emoji').textContent=passed?'🏆':pct>=60?'👍':'💪';
+  document.getElementById('vm-done-title').textContent=passed?'ผ่านระดับแล้ว! 🎉':'ยังไม่ผ่านระดับ';
+  document.getElementById('vm-done-sub').textContent='ตอบถูก '+vm.correct+'/'+vm.total+' ข้อ · จำได้ '+prog+'/'+lv.words.length+' คำ';
+  let badgeHtml='<span style="background:'+lv.color+';color:#FFF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">'+lv.name+' '+lv.title+'</span>';
+  if(passed&&hasNext){
+    const nlv=VM_LEVELS[nextIdx];
+    badgeHtml+='<div style="margin-top:10px;font-size:13px;color:#10B981;font-weight:700">🔓 ปลดล็อก '+nlv.name+' — '+nlv.title+' แล้ว!</div>';
+  } else if(!passed){
+    badgeHtml+='<div style="margin-top:8px;font-size:13px;color:#EF4444;font-weight:600">ต้องจำครบ '+lv.words.length+' คำจึงจะผ่านระดับ</div>';
+  }
+  document.getElementById('vm-done-badge').innerHTML=badgeHtml;
+  const nextBtn=document.getElementById('vm-next-level-btn');
+  if(passed&&hasNext){nextBtn.style.display='block';nextBtn.onclick=()=>startVMLevel(nextIdx);}
+  else nextBtn.style.display='none';
 }
 
 function restartVMLevel(){startVMLevel(vm.levelIdx);}
