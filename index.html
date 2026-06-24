@@ -1202,12 +1202,12 @@ function selectVMChoice(chosen,correct){
   if(isCorrect){
     vm.correct++;vm.item.streak++;
     document.getElementById('vm-feedback-icon').textContent='✅';
-    document.getElementById('vm-feedback-text').textContent='ถูกต้อง! ('+vm.item.streak+'/3)';
-    document.getElementById('vm-correct-ans').textContent=vm.item.streak<3?'ตอบถูกอีก '+(3-vm.item.streak)+' ครั้งจะผ่าน':'🎉 ผ่านแล้ว!';
-    if(vm.item.streak<3){
+    document.getElementById('vm-feedback-text').textContent='ถูกต้อง! ('+vm.item.streak+'/2)';
+    document.getElementById('vm-correct-ans').textContent=vm.item.streak<2?'ตอบถูกอีก '+(2-vm.item.streak)+' ครั้งจะผ่าน':'🎉 ผ่านแล้ว!';
+    if(vm.item.streak<2){
       vm.queue.splice(Math.min(3,vm.queue.length),0,vm.item);
     } else {
-      // streak reached 3 — mark this word as permanently mastered
+      // streak reached 2 — mark this word as permanently mastered
       const mastered=vmGetMastered(vm.levelIdx);
       mastered.add(vm.item.wi);
       vmSaveMastered(vm.levelIdx,mastered);
