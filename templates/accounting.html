@@ -6225,8 +6225,16 @@ function printSimpleDelivery(id){
    PAYMENT TRACKING — การติดตามการชำระเงิน
 ══════════════════════════════════════════════════════ */
 
+/* ยอดที่ต้องชำระจริงหลังหักค่าตัวแทนจำหน่าย — ถ้าตั้งค่า dealer (จำนวนขวด × อัตราต่อขวด) ไว้ ให้ใช้ค่านั้น */
+function rowNetPayable(r){
+  const d=r.dealer;
+  if(d&&parseFloat(d.qty)>0&&parseFloat(d.rate)>0){
+    return Math.round(parseFloat(d.qty)*parseFloat(d.rate)*100)/100;
+  }
+  return rowAmt(r)+rowVat(r);
+}
 function getPaymentStatus(r){
-  const grand=rowAmt(r)+rowVat(r);
+  const grand=rowNetPayable(r);
   const paid=(r.payments||[]).reduce((a,p)=>a+(parseFloat(p.amount)||0),0);
   if(paid<=0)return{status:'unpaid',label:'ยังไม่ชำระ',paid:0,grand};
   if(paid>=grand-0.01)return{status:'paid',label:'ชำระครบแล้ว',paid,grand};
@@ -6331,15 +6339,31 @@ async function renderPaymentSection(rid){
     </tr>`;
   }
 
+  const d=r.dealer||{};
+  const fullGrand=rowAmt(r)+rowVat(r);
+  const hasDealer=parseFloat(d.qty)>0&&parseFloat(d.rate)>0;
   el.innerHTML=`<div class="pay-section">
     <div class="pay-header">
       <span class="pay-title">💰 การชำระเงิน</span>
-      <span class="pay-badge ${ps.status}">${ps.label}</span>
-      <div class="pay-summary">
-        <span>ยอดรวม: <b>${fmt(grand)}</b></span>
+      <span class="pay-badge ${ps.status}" id="pay_badge_${rid}">${ps.label}</span>
+      <div class="pay-summary" id="pay_summary_${rid}">
+        ${hasDealer?`<span style="color:#999;text-decoration:line-through">ยอดเต็ม: ${fmt(fullGrand)}</span>`:''}
+        <span>ยอดที่ต้องชำระ: <b>${fmt(grand)}</b></span>
         <span>ชำระแล้ว: <b style="color:#5b7d76">${fmt(paid)}</b></span>
         ${remaining>0?`<span>คงเหลือ: <b style="color:#dc2626">${fmt(remaining)}</b></span>`:''}
       </div>
+    </div>
+    <div class="dealer-box" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12px">
+      <span style="font-weight:700;color:#92400e">🏷️ หักค่าตัวแทนจำหน่าย</span>
+      <label style="display:flex;align-items:center;gap:4px;color:#92400e">จำนวน
+        <input type="number" id="dlr_qty_${rid}" min="0" step="1" value="${d.qty||''}" placeholder="0"
+          oninput="setDealer(${rid})" style="width:70px;border:1px solid #fcd34d;border-radius:4px;padding:3px 6px;font-family:inherit;font-size:12px"/> ขวด</label>
+      <span style="color:#92400e">×</span>
+      <label style="display:flex;align-items:center;gap:4px;color:#92400e">อัตรา
+        <input type="number" id="dlr_rate_${rid}" min="0" step="0.01" value="${d.rate||''}" placeholder="0.00"
+          oninput="setDealer(${rid})" style="width:80px;border:1px solid #fcd34d;border-radius:4px;padding:3px 6px;font-family:inherit;font-size:12px"/> ฿/ขวด</label>
+      <span style="color:#92400e">=</span>
+      <span style="font-weight:700;color:#b45309">ยอดที่ต้องชำระจริง: <span id="dlr_result_${rid}">${hasDealer?fmt(grand):'—'}</span></span>
     </div>
     ${r.payments.length?`
     <table class="pay-table">
@@ -6417,6 +6441,34 @@ function pfDpOpen(rid){
   };
   dpRenderCalendar(panelId,'day');
 }
+/* บันทึกค่าตัวแทนจำหน่าย + อัปเดตยอดสด โดยไม่เสีย focus */
+function setDealer(rid){
+  const r=(window.incRows||[]).find(x=>x.id===rid);if(!r)return;
+  const qty=parseFloat(document.getElementById('dlr_qty_'+rid)?.value)||0;
+  const rate=parseFloat(document.getElementById('dlr_rate_'+rid)?.value)||0;
+  if(qty>0&&rate>0){r.dealer={qty,rate};}else{delete r.dealer;}
+  incSaveData();
+  // อัปเดตยอดสดในส่วน header (ไม่แตะ input ค่าตัวแทน → focus คงอยู่)
+  const ps=getPaymentStatus(r);
+  const grand=ps.grand,paid=ps.paid,remaining=Math.max(0,grand-paid);
+  const hasDealer=qty>0&&rate>0;
+  const fullGrand=rowAmt(r)+rowVat(r);
+  const resEl=document.getElementById('dlr_result_'+rid);
+  if(resEl)resEl.textContent=hasDealer?fmt(grand):'—';
+  const sumEl=document.getElementById('pay_summary_'+rid);
+  if(sumEl)sumEl.innerHTML=
+    (hasDealer?`<span style="color:#999;text-decoration:line-through">ยอดเต็ม: ${fmt(fullGrand)}</span>`:'')+
+    `<span>ยอดที่ต้องชำระ: <b>${fmt(grand)}</b></span>`+
+    `<span>ชำระแล้ว: <b style="color:#5b7d76">${fmt(paid)}</b></span>`+
+    (remaining>0?`<span>คงเหลือ: <b style="color:#dc2626">${fmt(remaining)}</b></span>`:'');
+  const badgeEl=document.getElementById('pay_badge_'+rid);
+  if(badgeEl){badgeEl.className='pay-badge '+ps.status;badgeEl.textContent=ps.label;}
+  const amtEl=document.getElementById('pf_amt_'+rid);
+  if(amtEl)amtEl.placeholder=fmt(remaining||grand);
+  // อัปเดต badge ในตารางหลัก
+  const mainBadge=document.querySelector(`#incpay_${rid}`)?.closest('tr')?.previousElementSibling?.querySelector('.pay-badge');
+  if(mainBadge){mainBadge.className='pay-badge '+ps.status;mainBadge.textContent=ps.label;}
+}
 function addPayment(rid){
   const r=(window.incRows||[]).find(x=>x.id===rid);if(!r)return;
   if(!r.payments)r.payments=[];
@@ -6470,6 +6522,9 @@ async function printReceipt(id){
     items.push({no:1,desc:r.desc||r.cat||'สินค้า/บริการ',amount:rowAmt(r)});
   }
   const base=rowAmt(r),vat=rowVat(r),grand=base+vat;
+  const dlr=r.dealer||{};
+  const hasDealer=parseFloat(dlr.qty)>0&&parseFloat(dlr.rate)>0;
+  const netPayable=hasDealer?rowNetPayable(r):grand;
 
   const itemRows=items.map((it,i)=>`<tr style="${i%2?'background:#f0fdf7':''}">
     <td style="border:1px solid #ccc;padding:5px 8px;font-size:11px;text-align:center">${it.no}</td>
@@ -6541,7 +6596,10 @@ async function printReceipt(id){
     +'<div class="total-bar"><div class="total-box">'
     +'<div class="trow"><span>ยอดรวมก่อน VAT</span><span class="val">'+fmt2(base)+'</span></div>'
     +(r.hasVat?'<div class="trow"><span>VAT 7%</span><span class="val">'+fmt2(vat)+'</span></div>':'')
-    +'<div class="trow grand"><span>ยอดรวมทั้งสิ้น</span><span class="val">'+fmt2(grand)+'</span></div>'
+    +(hasDealer?'<div class="trow"><span>ยอดรวมทั้งสิ้น</span><span class="val">'+fmt2(grand)+'</span></div>'
+       +'<div class="trow"><span>หักค่าตัวแทนจำหน่าย ('+fmt2(parseFloat(dlr.qty))+' ขวด × '+fmt2(parseFloat(dlr.rate))+')</span><span class="val">'+fmt2(netPayable)+'</span></div>'
+       +'<div class="trow grand"><span>ยอดที่ต้องชำระจริง</span><span class="val">'+fmt2(netPayable)+'</span></div>'
+       :'<div class="trow grand"><span>ยอดรวมทั้งสิ้น</span><span class="val">'+fmt2(grand)+'</span></div>')
     +'</div></div>'
     +(payments.length?'<div class="pay-section"><div class="pay-head">ประวัติการชำระเงิน'
     +'<span class="status-badge status-'+ps.status+'">'+ps.label+'</span></div>'
