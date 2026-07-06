@@ -3551,7 +3551,10 @@ function doPrint(){
   const visSorted=[...vis].sort((a,b)=>{
     const oa=catOrder[a.cat]!==undefined?catOrder[a.cat]:999;
     const ob=catOrder[b.cat]!==undefined?catOrder[b.cat]:999;
-    return oa-ob; // เรียงตามหมวด แต่คงลำดับเดิมภายในหมวด (stable sort)
+    if(oa!==ob)return oa-ob; // เรียงตามหมวดก่อน
+    const da=a.date||'',db=b.date||'';
+    if(da!==db)return da<db?-1:1; // แล้วเรียงวันที่ เก่า→ใหม่ ภายในหมวด
+    return 0;
   });
 
   let pn=0;
