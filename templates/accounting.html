@@ -3594,7 +3594,7 @@ function doPrint(){
     if(r.cat!==_lastCat){
       _lastCat=r.cat;
       groupHeader='<tr style="background:'+c.bg+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+
-        '<td colspan="10" style="padding:5px 10px;font-size:11px;font-weight:700;color:'+c.fg+';border-bottom:1px solid '+c.fg+'33">'+
+        '<td colspan="8" style="padding:5px 10px;font-size:11px;font-weight:700;color:'+c.fg+';border-bottom:1px solid '+c.fg+'33">'+
         '◆ '+r.cat+'</td></tr>';
     }
     const main='<tr style="background:'+bg+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+
@@ -3603,8 +3603,6 @@ function doPrint(){
       '<td style="padding:6px 7px;border-bottom:1px solid #eee">'+catBadge+'</td>'+
       '<td style="padding:6px 7px;border-bottom:1px solid #eee;font-size:11px">'+(r.desc||'')+subBadge+'</td>'+
       '<td style="padding:6px 7px;border-bottom:1px solid #eee;font-size:11px">'+(r.supplier||'')+'</td>'+
-      '<td style="padding:6px 7px;border-bottom:1px solid #eee;font-size:11px;color:#555">'+(r.recorder||'')+'</td>'+
-      '<td style="text-align:center;padding:6px 7px;border-bottom:1px solid #eee">'+vatBadge+'</td>'+
       '<td style="text-align:right;padding:6px 8px;border-bottom:1px solid #eee;font-size:11px;font-variant-numeric:tabular-nums">'+(amt?fmt(amt):'-')+'</td>'+
       '<td style="text-align:right;padding:6px 8px;border-bottom:1px solid #eee;font-size:11px;color:#888;font-variant-numeric:tabular-nums">'+(r.hasVat&&amt?fmt(vat):'-')+'</td>'+
       '<td style="text-align:right;padding:6px 8px;border-bottom:1px solid #eee;font-size:11px;font-weight:700;color:#1a3a5c;font-variant-numeric:tabular-nums">'+(amt?fmt(amt+vat):'-')+'</td>'+
@@ -3612,8 +3610,7 @@ function doPrint(){
     const subs=(r.subs&&r.subs.length)?r.subs.map((s,si)=>
       '<tr style="background:#f0f4fa;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+
       '<td style="text-align:center;color:#bbb;font-size:9px;padding:4px 5px;border-bottom:1px solid #eaf0f8">'+pn+'.'+(si+1)+'</td>'+
-      '<td colspan="5" style="padding:4px 10px;font-size:10px;color:#555;border-bottom:1px solid #eaf0f8">↳ '+(s.desc||'รายการย่อย '+(si+1))+'</td>'+
-      '<td style="border-bottom:1px solid #eaf0f8"></td>'+
+      '<td colspan="4" style="padding:4px 10px;font-size:10px;color:#555;border-bottom:1px solid #eaf0f8">↳ '+(s.desc||'รายการย่อย '+(si+1))+'</td>'+
       '<td style="text-align:right;padding:4px 8px;font-size:10px;color:#666;border-bottom:1px solid #eaf0f8;font-variant-numeric:tabular-nums">'+(s.amount?fmt(parseFloat(s.amount)):'-')+'</td>'+
       '<td colspan="2" style="border-bottom:1px solid #eaf0f8"></td>'+
       '</tr>'
@@ -3712,8 +3709,6 @@ function doPrint(){
     '<th style="width:100px">หมวดหมู่</th>'+
     '<th>รายการ</th>'+
     '<th style="width:85px">ผู้รับเงิน</th>'+
-    '<th style="width:70px">ผู้ลงบันทึก</th>'+
-    '<th style="width:48px;text-align:center">VAT</th>'+
     '<th style="width:80px" class="r">จำนวนเงิน</th>'+
     '<th style="width:68px" class="r">VAT 7%</th>'+
     '<th style="width:80px" class="r">รวมทั้งสิ้น</th>'+
