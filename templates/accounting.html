@@ -3733,6 +3733,15 @@ function exportCSV(){
   const biz=document.getElementById('bizName').value||'กิจการ';
   const per=document.getElementById('period').value||'';
   const vis=rows.filter(r=>{const tr=document.querySelector(`#tbody tr[data-id="${r.id}"]`);return tr&&!tr.classList.contains('hide');});
+  const catOrder={};CATS.forEach((c,i)=>catOrder[c.name]=i);
+  vis.sort((a,b)=>{
+    const oa=catOrder[a.cat]!==undefined?catOrder[a.cat]:999;
+    const ob=catOrder[b.cat]!==undefined?catOrder[b.cat]:999;
+    if(oa!==ob)return oa-ob;
+    const da=a.date||'',db=b.date||'';
+    if(da!==db)return da<db?-1:1;
+    return 0;
+  });
   const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
 
   let csv='\uFEFF#,วันที่,หมวดหมู่,รายการ,ผู้รับเงิน,ผู้ลงบันทึก,VAT,'
