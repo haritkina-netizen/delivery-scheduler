@@ -3555,15 +3555,25 @@ function doPrint(){
     catMap[r.cat].base+=amt;catMap[r.cat].vat+=vat;catMap[r.cat].count++;});
 
   // จัดกลุ่มตามหมวดหมู่ (เรียงตามลำดับใน CATS) สำหรับการพิมพ์
+  // เรียงตามวันที่แรกสุดของแต่ละกลุ่มรายการเป็นหลัก (รายการเดี่ยวจึงเรียงตามวันที่ปกติ)
+  // ส่วนรายการที่มีชื่อซ้ำกันหลายรายการจะถูกจัดให้อยู่ติดกัน ณ จุดที่เกิดขึ้นครั้งแรก
   const catOrder={};CATS.forEach((c,i)=>catOrder[c.name]=i);
+  const groupAnchor={};
+  vis.forEach(r=>{
+    const key=(r.cat||'')+'||'+descGroupKey(r.desc);
+    const d=r.date||'';
+    if(!groupAnchor[key]||d<groupAnchor[key])groupAnchor[key]=d;
+  });
   const visSorted=[...vis].sort((a,b)=>{
     const oa=catOrder[a.cat]!==undefined?catOrder[a.cat]:999;
     const ob=catOrder[b.cat]!==undefined?catOrder[b.cat]:999;
     if(oa!==ob)return oa-ob; // เรียงตามหมวดก่อน
-    const keya=descGroupKey(a.desc),keyb=descGroupKey(b.desc);
-    if(keya!==keyb)return keya<keyb?-1:1; // แล้วจัดกลุ่มรายการ (ค่าใช้จ่าย) เดียวกันให้อยู่ด้วยกัน
+    const keya=(a.cat||'')+'||'+descGroupKey(a.desc),keyb=(b.cat||'')+'||'+descGroupKey(b.desc);
+    const ancha=groupAnchor[keya]||'',anchb=groupAnchor[keyb]||'';
+    if(ancha!==anchb)return ancha<anchb?-1:1; // เรียงตามวันที่แรกสุดของกลุ่ม
+    if(keya!==keyb)return keya<keyb?-1:1; // ถ้า anchor วันเดียวกันแต่คนละกลุ่ม แยกตามชื่อ
     const da=a.date||'',db=b.date||'';
-    if(da!==db)return da<db?-1:1; // แล้วเรียงวันที่ เก่า→ใหม่ ภายในกลุ่ม
+    if(da!==db)return da<db?-1:1; // ภายในกลุ่มเดียวกัน เรียงวันที่เก่า→ใหม่
     return 0;
   });
 
@@ -3750,11 +3760,19 @@ function exportCSV(){
   const per=document.getElementById('period').value||'';
   const vis=rows.filter(r=>{const tr=document.querySelector(`#tbody tr[data-id="${r.id}"]`);return tr&&!tr.classList.contains('hide');});
   const catOrder={};CATS.forEach((c,i)=>catOrder[c.name]=i);
+  const groupAnchor={};
+  vis.forEach(r=>{
+    const key=(r.cat||'')+'||'+descGroupKey(r.desc);
+    const d=r.date||'';
+    if(!groupAnchor[key]||d<groupAnchor[key])groupAnchor[key]=d;
+  });
   vis.sort((a,b)=>{
     const oa=catOrder[a.cat]!==undefined?catOrder[a.cat]:999;
     const ob=catOrder[b.cat]!==undefined?catOrder[b.cat]:999;
     if(oa!==ob)return oa-ob;
-    const keya=descGroupKey(a.desc),keyb=descGroupKey(b.desc);
+    const keya=(a.cat||'')+'||'+descGroupKey(a.desc),keyb=(b.cat||'')+'||'+descGroupKey(b.desc);
+    const ancha=groupAnchor[keya]||'',anchb=groupAnchor[keyb]||'';
+    if(ancha!==anchb)return ancha<anchb?-1:1;
     if(keya!==keyb)return keya<keyb?-1:1;
     const da=a.date||'',db=b.date||'';
     if(da!==db)return da<db?-1:1;
