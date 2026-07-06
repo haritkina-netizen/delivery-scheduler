@@ -3667,6 +3667,12 @@ function doPrint(){
   'border-top:1px solid #e8e6e0}'+
 '.sign-box{text-align:center;font-size:10px;color:#555}'+
 '.sign-line{border-top:1px solid #aaa;width:130px;margin:32px auto 5px}'+
+/* page-break control — ป้องกันตัดแถว/ส่วนสรุปขาดกลางหน้า */
+'.main-table thead,.cat-table thead{display:table-header-group}'+
+'.main-table tbody tr,.cat-table tbody tr{page-break-inside:avoid;break-inside:avoid}'+
+'.kpi-row,.section-title{page-break-inside:avoid;break-inside:avoid}'+
+'.cat-table{page-break-inside:avoid;break-inside:avoid}'+
+'.sign-row{page-break-inside:avoid;break-inside:avoid}'+
 '@page{margin:.7cm;size:A4 landscape}'+
 '</style></head><body><div class="page">'+
 
