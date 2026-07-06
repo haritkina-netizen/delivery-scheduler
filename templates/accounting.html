@@ -3522,6 +3522,14 @@ function exportAnnualCSV(){
 }
 
 /* ── PRINT LEDGER ── */
+/* ตัดตัวเลข/ครั้ง/วงเล็บท้ายคำอธิบายออก เพื่อจัดกลุ่มค่าใช้จ่ายประเภทเดียวกันให้อยู่ด้วยกัน
+   เช่น "ค่าแรงปอกถ้วน" กับ "ค่าแรงปอกถ้วน 2 ครั้ง" ให้ถือเป็นกลุ่มเดียวกัน */
+function descGroupKey(desc){
+  return String(desc||'')
+    .replace(/\([^)]*\)\s*$/,'')
+    .replace(/\s*\d+\s*(ครั้ง|ครั|วัน|รอบ|งวด)?\s*$/,'')
+    .trim();
+}
 function doPrint(){
   const biz=document.getElementById('bizName').value||'';
   const per=document.getElementById('period').value||'';
@@ -3552,8 +3560,8 @@ function doPrint(){
     const oa=catOrder[a.cat]!==undefined?catOrder[a.cat]:999;
     const ob=catOrder[b.cat]!==undefined?catOrder[b.cat]:999;
     if(oa!==ob)return oa-ob; // เรียงตามหมวดก่อน
-    const desca=(a.desc||''),descb=(b.desc||'');
-    if(desca!==descb)return desca<descb?-1:1; // แล้วจัดกลุ่มรายการ (ค่าใช้จ่าย) เดียวกันให้อยู่ด้วยกัน
+    const keya=descGroupKey(a.desc),keyb=descGroupKey(b.desc);
+    if(keya!==keyb)return keya<keyb?-1:1; // แล้วจัดกลุ่มรายการ (ค่าใช้จ่าย) เดียวกันให้อยู่ด้วยกัน
     const da=a.date||'',db=b.date||'';
     if(da!==db)return da<db?-1:1; // แล้วเรียงวันที่ เก่า→ใหม่ ภายในกลุ่ม
     return 0;
@@ -3740,8 +3748,8 @@ function exportCSV(){
     const oa=catOrder[a.cat]!==undefined?catOrder[a.cat]:999;
     const ob=catOrder[b.cat]!==undefined?catOrder[b.cat]:999;
     if(oa!==ob)return oa-ob;
-    const desca=(a.desc||''),descb=(b.desc||'');
-    if(desca!==descb)return desca<descb?-1:1;
+    const keya=descGroupKey(a.desc),keyb=descGroupKey(b.desc);
+    if(keya!==keyb)return keya<keyb?-1:1;
     const da=a.date||'',db=b.date||'';
     if(da!==db)return da<db?-1:1;
     return 0;
