@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: delivery-scheduler
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: node server.js
+    envVars:
+      - key: DATABASE_URL
+        sync: false
